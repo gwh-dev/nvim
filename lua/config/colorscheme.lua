@@ -8,6 +8,7 @@ require("catppuccin").setup {
 	integrations = {
 		cmp = true,
 		gitsigns = true, -- For Now
+    neogit = true,
 		nvimtree = false,
 		fidget = true,
 		telescope = true,
@@ -17,6 +18,7 @@ require("catppuccin").setup {
 		treesitter = true,
 		treesitter_context = true,
 		leap = true,
+    lightspeed = false,
     notify = true,
 		dap = true,
 		lualine = false,

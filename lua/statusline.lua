@@ -1,4 +1,28 @@
--- local colors = require("catppuccin.palettes").get_palette()
+local path_sep = require("plenary.path").path.sep
+local fn = vim.fn
+local api = vim.api
+
+local function get_relative_path_filename()
+	local path_head = fn.expand "%:h"
+	-- print("ph " .. path_head)
+	if path_head ~= "" then
+		path_head = path_head ..path_sep
+	end
+
+	return "%#StatusLineNC# " .. path_head .. "%*%#CursorLineNr#%t %*"
+end
+
+local function get_file_modified_status()
+	return '%{&modified?"":""}'
+end
+--
+local function get_file_help_status()
+	return "%h"
+end
+
+local function fname()
+	return string.format("%s%s %s", get_relative_path_filename(), get_file_modified_status(), get_file_help_status())
+end
 
 local modes = {
 	["n"] = "NORMAL",
@@ -24,20 +48,20 @@ local modes = {
 }
 
 local function mode()
-	local current_mode = vim.api.nvim_get_mode().mode
+	local current_mode = api.nvim_get_mode().mode
 	return string.format("%s", modes[current_mode]):upper()
 end
 
-local function filename()
-	local fname = vim.fn.expand "%:t"
-	if fname == "" then
-		return ""
-	end
-	return string.upper(fname)
-end
+-- local function filename()
+-- 	local fname = vim.fn.expand "%:t"
+-- 	if fname == "" then
+-- 		return ""
+-- 	end
+-- 	return string.upper(fname)
+-- end -- Old one
 
 local function lineinfo()
-	return "%c %P"
+	return "%l:%c"
 end
 
 local function diagnostic_status()
@@ -86,12 +110,12 @@ local function status()
 		-- Here goes the parts from before
 		" ", -- Make a small space in the left side
 		mode(), -- Mode changer
-		"┃",
-		filename(),
+		" ┃",
+		fname(),
 		"%=", -- To make a large space everything down is on the right side
 		diagnostic_status(), -- If I didn't put the 'Statusline' highlight, It will change the lineinfo with diagnostic_status colors
 		"%#StatusLine#", -- Changing the colorscheme for lineinfo to 'Statusline' The normal color
-		"┃",
+		" ┃ ",
 		lineinfo(), -- {col number} { the place using % }
 		" ", -- A small space in the right side
 	}

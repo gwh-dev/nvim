@@ -27,27 +27,48 @@ local function init()
 	local use = packer.use
 	packer.reset()
 
-	-- Essentials
+	-- [[ Essentials ]]
 	use "nvim-lua/popup.nvim"
 	use "wbthomason/packer.nvim"
 	use "nvim-lua/plenary.nvim"
+	use "rcarriga/nvim-notify"
 	use "kyazdani42/nvim-web-devicons"
+	
 
-	-- Plugin development
+	-- [[ Plugin development ]]
 	use "folke/neodev.nvim"
 
-	-- Performance
+	-- [[ Performance ]]
 	use "lewis6991/impatient.nvim"
 	use "nathom/filetype.nvim"
 
-	use { -- Colorscheme
+	-- [[ Colorscheme ]]
+	use {
 		"catppuccin/nvim",
 		as = "catppuccin",
 		config = [[require('config.colorscheme')]],
 	}
 
-	-- Editer & Motions
-	use "windwp/nvim-autopairs"
+	-- [[ Motions ]]
+	use {
+		"max397574/better-escape.nvim",
+		config = function()
+			require("better_escape").setup()
+		end,
+	}
+
+	use {
+		"mbbill/undotree",
+		cmd = "UndotreeToggle",
+		config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
+	}
+  
+  use {
+		"declancm/cinnamon.nvim",
+		config = function()
+			require("cinnamon").setup()
+		end,
+	}
 
 	use {
 		"nacro90/numb.nvim",
@@ -58,18 +79,21 @@ local function init()
 
 	use {
 		"ggandor/leap.nvim",
+		event = "VimEnter",
 		config = function()
 			require("leap").add_default_mappings()
 		end,
-		keys = "s",
+	}
+
+	-- [[ Utils ]]
+	use {
+		"lukas-reineke/indent-blankline.nvim",
+		after = "catppuccin",
 	}
 
 	use {
-		"ojroques/nvim-bufdel",
-		cmd = "BufDel",
-		config = function()
-			require("bufdel").setup {}
-		end,
+		"jghauser/mkdir.nvim",
+		event = "BufWritePre",
 	}
 
 	use {
@@ -80,21 +104,25 @@ local function init()
 	}
 
 	use {
-		"lukas-reineke/indent-blankline.nvim",
-		after = "catppuccin",
+		"ojroques/nvim-bufdel",
+		cmd = "BufDel",
+		config = function()
+			require("bufdel").setup {}
+		end,
 	}
+	use "windwp/nvim-autopairs"
 
-	-- Highlight colors
+	-- [[ Highlight colors ]]
 	use {
 		"NvChad/nvim-colorizer.lua",
 		ft = { "css", "javascript", "vim", "html", "latex", "tex", "conf", "yml" },
 		config = [[require('colorizer').setup {}]],
 	}
 
-	-- profiler
+	-- [[ Profiler ]]
 	use { "dstein64/vim-startuptime", cmd = "StartupTime", config = [[vim.g.startuptime_tries = 20]] }
 
-	-- Commenting
+	-- [[ Commenting ]]
 	use {
 		"numToStr/Comment.nvim",
 		config = function()
@@ -104,14 +132,7 @@ local function init()
 		keys = { "gc", "gb", "gcc" },
 	}
 
-	-- Undo tree
-	use {
-		"mbbill/undotree",
-		cmd = "UndotreeToggle",
-		config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
-	}
-
-	-- Search
+	-- [[ Search ]]
 	use {
 		{
 			"nvim-telescope/telescope.nvim",
@@ -125,6 +146,7 @@ local function init()
 				"popup.nvim",
 				"plenary.nvim",
 				"telescope-fzf-native.nvim",
+				"telescope-ui-select.nvim",
 			},
 			config = [[require('config.telescope')]],
 			cmd = "Telescope",
@@ -136,42 +158,43 @@ local function init()
 		},
 	}
 
-	use { --treesitter
+	-- [[ Treesitter ]]
+	use {
 		{
 			"nvim-treesitter/nvim-treesitter",
 			requires = {
 				"nvim-treesitter/nvim-treesitter-refactor",
-				{"p00f/nvim-ts-rainbow", after = "nvim-treesitter"},
-				{ "nvim-treesitter/nvim-treesitter-context", after = "nvim-treesitter" },
-				{ "RRethy/nvim-treesitter-textsubjects", after = "nvim-treesitter" },
+				"nvim-treesitter/nvim-treesitter-context",
+				"RRethy/nvim-treesitter-textsubjects",
+				"RRethy/nvim-treesitter-endwise",
+				"p00f/nvim-ts-rainbow",
 			},
 			wants = {
 				"nvim-treesitter-refactor",
 				"nvim-treesitter-context",
 				"nvim-treesitter-textsubjects",
+				"nvim-treesitter-endwise",
+				"nvim-ts-rainbow",
 			},
-			config = [[require('config.treesitter')]],
 			event = "BufRead",
-			after = "catppuccin",
 			run = ":TSUpdate",
 		},
 		{
 			"windwp/nvim-ts-autotag",
 			ft = { "html", "js" },
+			after = "nvim-treesitter",
 		},
 	}
-	-- Endwise
-	use "RRethy/nvim-treesitter-endwise"
 
-	-- Documentation
-	use {
-		"danymat/neogen",
-		requires = "nvim-treesitter",
-		config = [[require('config.neogen')]],
-		keys = { "<localleader>d", "<localleader>df", "<localleader>dc" },
-	}
+	-- [[ Documentation ]]
+	-- use {
+	-- 	"danymat/neogen",
+	-- 	requires = "nvim-treesitter",
+	-- 	config = [[require('config.neogen')]],
+	-- 	keys = { "<localleader>d", "<localleader>df", "<localleader>dc" },
+	-- }
 
-	-- Git
+	-- [[ Git ]]
 	use {
 		{
 			"lewis6991/gitsigns.nvim",
@@ -188,11 +211,11 @@ local function init()
 		},
 	}
 
-	-- Completion and linting
+	-- [[ Completion and linting ]]
 	use {
 		{
 			"neovim/nvim-lspconfig",
-			config = [[require('config.lsp')]],
+			-- config = [[require('config.lsp')]],
 		},
 		{
 			"jose-elias-alvarez/null-ls.nvim",
@@ -212,7 +235,7 @@ local function init()
 		end,
 	}
 
-	--snippets
+	-- [[ snippets ]]
 	use {
 		{
 			"L3MON4D3/LuaSnip",
@@ -240,7 +263,9 @@ local function init()
 		wants = "LuaSnip",
 	}
 
-	-- Make UI Better
+	-- [[ Make UI Better ]]
+	-- use "stevearc/dressing.nvim"
+	-- use "vigoux/notifier.nvim"
 	use {
 		"folke/todo-comments.nvim",
 		requires = "nvim-lua/plenary.nvim",
@@ -262,7 +287,7 @@ local function init()
 			}
 		end,
 	}
-end -- Don't pass this " end " you will get an ERROR
+end -- Don't pass this "end" you will get an ERROR
 
 local plugins = setmetatable({}, {
 	__index = function(_, key)

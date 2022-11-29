@@ -1,11 +1,12 @@
 local g = vim.g
 local cmd = vim.cmd
-local opt = vim.opt
-opt.termguicolors = true
 
 require "impatient"
 
-vim.g.do_filetype_lua = 1
+-- enable filetype.nvim / I don't think I need this any more :)
+g.do_filetype_lua = 1
+
+-- Leader/local leader
 g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
@@ -14,48 +15,6 @@ g.loaded_python3_provider = 0
 g.loaded_node_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
-
--- Settings
-opt.textwidth = 100
-opt.scrolloff = 7
-opt.wildignore = { "*.o", "*~", "*.pyc" }
-opt.wildmode = "longest,full"
-opt.whichwrap:append "<,>,h,l"
-opt.inccommand = "nosplit"
-opt.lazyredraw = true
-opt.showmatch = true
-opt.ignorecase = true
-opt.smartcase = true
-opt.tabstop = 2
-opt.softtabstop = 0
-opt.expandtab = true
-opt.shiftwidth = 2
-opt.number = true
-opt.relativenumber = true
-opt.smartindent = true
-opt.laststatus = 3
-opt.showmode = false
-opt.shada = [['20,<50,s10,h,/100]]
-opt.hidden = true
-opt.shortmess:append "c"
-opt.joinspaces = false
-opt.guicursor = "a:blinkwait700-blinkon400-blinkoff250"
-opt.updatetime = 100
-opt.conceallevel = 2
-opt.concealcursor = "nc"
-opt.previewheight = 5
-opt.undofile = true
-opt.synmaxcol = 500
-opt.display = "msgsep"
-opt.cursorline = true
-opt.modeline = false
-opt.mouse = "nivh"
-opt.signcolumn = "yes:1"
-opt.cmdheight = 0
-opt.splitbelow = true
-opt.splitright = true
-opt.timeoutlen = 400
-opt.fillchars = [[vert:│,horiz:─,eob: ]]
 
 -- Disable some built-in plugins we don't want
 local disabled_built_ins = {
@@ -76,8 +35,9 @@ for i = 1, 10 do
 end
 
 -- Autocommands
-local autocmd = vim.api.nvim_create_autocmd
-local augroup = vim.api.nvim_create_augroup
+local api = vim.api
+local autocmd = api.nvim_create_autocmd
+local augroup = api.nvim_create_augroup
 
 local misc_aucmds = augroup("misc_aucmds", { clear = true })
 autocmd("BufWinEnter", { group = misc_aucmds, command = "checktime" })
@@ -88,8 +48,27 @@ autocmd("TextYankPost", {
 	end,
 })
 
+-- local mkDir = augroup("mkdir", { clear = true })
+-- autocmd("BufWritePre", {
+-- 	group = mkDir,
+-- 	callback = function()
+-- 		require("utils").writeCreatingDirs()
+-- 	end,
+-- })
+
+local Statusline = augroup("Statusline", { clear = true })
+autocmd("VimEnter", {
+	group = Statusline,
+	once = true,
+	callback = function()
+		-- local statusline = require("statusline")
+		local O = vim.o
+		O.statusline = "%!v:lua.require('statusline').status()"
+	end,
+})
+
 -- Commands
-local create_cmd = vim.api.nvim_create_user_command
+local create_cmd = api.nvim_create_user_command
 create_cmd("PackerInstall", function()
 	cmd [[packadd packer.nvim]]
 	require("plugins").install()
@@ -113,5 +92,4 @@ end, {})
 create_cmd("PackerCompile", function()
 	cmd [[packadd packer.nvim]]
 	require("plugins").compile()
-	require("catppuccin").compile()
 end, {})
