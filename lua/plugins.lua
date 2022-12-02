@@ -2,7 +2,7 @@ local function init()
 	if packer == nil then
 		packer = require "packer"
 		packer.init {
-			disable_commands = true,
+			-- disable_commands = true,
 			display = {
 				open_fn = function()
 					local result, win, buf = require("packer.util").float {
@@ -23,7 +23,6 @@ local function init()
 			},
 		}
 	end
-
 	local use = packer.use
 	packer.reset()
 
@@ -31,12 +30,7 @@ local function init()
 	use "nvim-lua/popup.nvim"
 	use "wbthomason/packer.nvim"
 	use "nvim-lua/plenary.nvim"
-	use "rcarriga/nvim-notify"
 	use "kyazdani42/nvim-web-devicons"
-	
-
-	-- [[ Plugin development ]]
-	use "folke/neodev.nvim"
 
 	-- [[ Performance ]]
 	use "lewis6991/impatient.nvim"
@@ -46,14 +40,43 @@ local function init()
 	use {
 		"catppuccin/nvim",
 		as = "catppuccin",
-		config = [[require('config.colorscheme')]],
+		setup = function()
+			vim.cmd.colorscheme "catppuccin-frappe"
+		end,
+		config = function()
+			require("catppuccin").setup {
+				transparent_background = true,
+				integrations = {
+					cmp = true,
+					gitsigns = true, -- For Now
+					neogit = true,
+					nvimtree = false,
+					-- fidget = false,
+					telescope = true,
+					lsp_trouble = true,
+					native_lsp = { enabled = true },
+					indent_blankline = { enabled = true },
+					treesitter = true,
+					-- treesitter_context = true,
+					-- leap = false,
+					-- lightspeed = false,
+					-- notify = false,
+					-- dap = true,
+					-- lualine = false,
+					-- ts_rainbow = false,
+					-- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+				},
+			}
+		end,
 	}
 
 	-- [[ Motions ]]
+
 	use {
-		"max397574/better-escape.nvim",
+		"monkoose/matchparen.nvim",
+		event = { "BufWinEnter", "BufNewFile" },
 		config = function()
-			require("better_escape").setup()
+			require("matchparen").setup()
 		end,
 	}
 
@@ -62,8 +85,8 @@ local function init()
 		cmd = "UndotreeToggle",
 		config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
 	}
-  
-  use {
+
+	use {
 		"declancm/cinnamon.nvim",
 		config = function()
 			require("cinnamon").setup()
@@ -77,31 +100,27 @@ local function init()
 		end,
 	}
 
-	use {
-		"ggandor/leap.nvim",
-		event = "VimEnter",
-		config = function()
-			require("leap").add_default_mappings()
-		end,
-	}
+	-- use {
+	-- 	"ggandor/leap.nvim",
+	-- 	event = "VimEnter",
+	-- 	config = function()
+	-- 		require("leap").add_default_mappings()
+	-- 	end,
+	-- }
 
 	-- [[ Utils ]]
-	use {
-		"lukas-reineke/indent-blankline.nvim",
-		after = "catppuccin",
-	}
 
 	use {
 		"jghauser/mkdir.nvim",
 		event = "BufWritePre",
 	}
 
-	use {
-		"filipdutescu/renamer.nvim",
-		branch = "master",
-		requires = { { "nvim-lua/plenary.nvim" } },
-		module = "renamer",
-	}
+	-- use {
+	-- 	"filipdutescu/renamer.nvim",
+	-- 	branch = "master",
+	-- 	requires = { { "nvim-lua/plenary.nvim" } },
+	-- 	module = "renamer",
+	-- }
 
 	use {
 		"ojroques/nvim-bufdel",
@@ -110,7 +129,18 @@ local function init()
 			require("bufdel").setup {}
 		end,
 	}
-	use "windwp/nvim-autopairs"
+
+	-- Bracets
+	use {
+		{
+			"kylechui/nvim-surround",
+			tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+			config = function()
+				require("nvim-surround").setup()
+			end,
+		},
+		"windwp/nvim-autopairs",
+	}
 
 	-- [[ Highlight colors ]]
 	use {
@@ -121,16 +151,6 @@ local function init()
 
 	-- [[ Profiler ]]
 	use { "dstein64/vim-startuptime", cmd = "StartupTime", config = [[vim.g.startuptime_tries = 20]] }
-
-	-- [[ Commenting ]]
-	use {
-		"numToStr/Comment.nvim",
-		config = function()
-			require("Comment").setup()
-		end,
-		module = "Comment",
-		keys = { "gc", "gb", "gcc" },
-	}
 
 	-- [[ Search ]]
 	use {
@@ -146,7 +166,6 @@ local function init()
 				"popup.nvim",
 				"plenary.nvim",
 				"telescope-fzf-native.nvim",
-				"telescope-ui-select.nvim",
 			},
 			config = [[require('config.telescope')]],
 			cmd = "Telescope",
@@ -160,31 +179,41 @@ local function init()
 
 	-- [[ Treesitter ]]
 	use {
-		{
-			"nvim-treesitter/nvim-treesitter",
-			requires = {
+		"nvim-treesitter/nvim-treesitter",
+		requires = {
+			{
 				"nvim-treesitter/nvim-treesitter-refactor",
-				"nvim-treesitter/nvim-treesitter-context",
+				after = "nvim-treesitter",
+			},
+			{
 				"RRethy/nvim-treesitter-textsubjects",
-				"RRethy/nvim-treesitter-endwise",
-				"p00f/nvim-ts-rainbow",
+				after = "nvim-treesitter",
 			},
-			wants = {
-				"nvim-treesitter-refactor",
-				"nvim-treesitter-context",
-				"nvim-treesitter-textsubjects",
-				"nvim-treesitter-endwise",
-				"nvim-ts-rainbow",
-			},
-			event = "BufRead",
-			run = ":TSUpdate",
 		},
-		{
-			"windwp/nvim-ts-autotag",
-			ft = { "html", "js" },
-			after = "nvim-treesitter",
-		},
+		event = { "BufRead", "BufNewFile" },
+		run = ":TSUpdate",
 	}
+
+	-- [[ Commenting ]]
+	use {
+		"numToStr/Comment.nvim",
+		requires = {
+			{
+				"JoosepAlviste/nvim-ts-context-commentstring",
+				module = "ts_context_commentstring",
+				keys = "gcc",
+			},
+		},
+		config = function()
+			require("config.comment").config()
+		end,
+		keys = { "gc", "gb" },
+		-- event = { 'BufWinEnter', 'BufNewFile' },
+		after = "nvim-treesitter",
+	}
+
+	-- [[ indent line ]]
+	use "lukas-reineke/indent-blankline.nvim"
 
 	-- [[ Documentation ]]
 	-- use {
@@ -215,7 +244,10 @@ local function init()
 	use {
 		{
 			"neovim/nvim-lspconfig",
-			-- config = [[require('config.lsp')]],
+			config = [[require('config.lsp')]],
+			requires = {
+				"b0o/SchemaStore.nvim",
+			},
 		},
 		{
 			"jose-elias-alvarez/null-ls.nvim",
@@ -224,12 +256,12 @@ local function init()
 				"neovim/nvim-lspconfig",
 			},
 		},
-		"ray-x/lsp_signature.nvim",
+		-- "ray-x/lsp_signature.nvim",
 	}
 
 	use {
 		"folke/trouble.nvim",
-		cmd = "TroubleToggle",
+		cmd = "Trouble",
 		config = function()
 			require("trouble").setup {}
 		end,
@@ -253,10 +285,7 @@ local function init()
 			"lukas-reineke/cmp-under-comparator",
 			{ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" },
-			{ "hrsh7th/cmp-nvim-lsp-document-symbol", after = "nvim-cmp" },
-			{ "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" },
 			{ "hrsh7th/cmp-path", after = "nvim-cmp" },
-			{ "hrsh7th/cmp-cmdline", after = "nvim-cmp" },
 		},
 		config = [[require('config.cmp')]],
 		event = "InsertEnter",
@@ -264,8 +293,6 @@ local function init()
 	}
 
 	-- [[ Make UI Better ]]
-	-- use "stevearc/dressing.nvim"
-	-- use "vigoux/notifier.nvim"
 	use {
 		"folke/todo-comments.nvim",
 		requires = "nvim-lua/plenary.nvim",
@@ -274,19 +301,22 @@ local function init()
 		end,
 	}
 
-	use {
-		"j-hui/fidget.nvim",
-		config = function()
-			require("fidget").setup {
-				window = {
-					blend = 0,
-				},
-				sources = {
-					["null-ls"] = { ignore = true },
-				},
-			}
-		end,
-	}
+	-- use {
+	-- 	"j-hui/fidget.nvim",
+	-- 	config = function()
+	-- 		require("fidget").setup {
+	-- 			text = {
+	-- 				spinner = "dots",
+	-- 			},
+	-- 			window = {
+	-- 				blend = 0,
+	-- 			},
+	-- 			sources = {
+	-- 				["null-ls"] = { ignore = true },
+	-- 			},
+	-- 		}
+	-- 	end,
+	-- }
 end -- Don't pass this "end" you will get an ERROR
 
 local plugins = setmetatable({}, {

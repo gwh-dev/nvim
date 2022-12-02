@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup {
-	-- auto_install = true,
+	auto_install = false,
 	highlight = { enable = true },
 	indent = { enable = false },
 	incremental_selection = {
@@ -12,9 +12,14 @@ require("nvim-treesitter.configs").setup {
 			node_decremental = "<s-tab>",
 		},
 	},
+	autopairs = { enable = true },
 	refactor = {
 		smart_rename = { enable = true, keymaps = { smart_rename = "grr" } },
 		highlight_definitions = { enable = true },
+	},
+	context_commentstring = {
+		enable = true,
+		enable_autocmd = false,
 	},
 	textsubjects = {
 		enable = true,
@@ -35,9 +40,4 @@ require("nvim-treesitter.configs").setup {
 			["ar"] = "@parameter.outer",
 		},
 	},
-	rainbow = {
-		enable = true,
-		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-	},
-	endwise = { enable = true },
 }

@@ -33,7 +33,8 @@ cmp.setup {
 			luasnip.lsp_expand(args.body)
 		end,
 	},
-	completion = { completeopt = "menu,menuone,noinsert" }, sorting = {
+	completion = { completeopt = "menu,menuone,noinsert" },
+	sorting = {
 		comparators = {
 			-- The built-in comparators:
 			cmp.config.compare.offset,
@@ -113,7 +114,7 @@ cmp.setup {
 		{ name = "nvim_lsp_signature_help" },
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
-		{ name = "nvim_lua" },
+		-- { name = "nvim_lua" },
 		{ name = "buffer" },
 		{ name = "path" },
 	},
@@ -141,27 +142,27 @@ autopairs.setup {
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done { map_char = { tex = "" } })
 
 -- `/` cmdline setup.
-cmp.setup.cmdline("/", {
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp_document_symbol" },
-	}, {
-		{ name = "buffer" },
-	}),
-})
+-- cmp.setup.cmdline("/", {
+-- 	sources = cmp.config.sources({
+-- 		{ name = "nvim_lsp_document_symbol" },
+-- 	}, {
+-- 		{ name = "buffer" },
+-- 	}),
+-- })
 -- `:` cmdline setup.
-cmp.setup.cmdline(":", {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = cmp.config.sources({
-		{ name = "path" },
-	}, {
-		{
-			name = "cmdline",
-			option = {
-				ignore_cmds = { "Man", "!" },
-			},
-		},
-	}),
-})
+-- cmp.setup.cmdline(":", {
+-- 	mapping = cmp.mapping.preset.cmdline(),
+-- 	sources = cmp.config.sources({
+-- 		{ name = "path" },
+-- 	}, {
+-- 		{
+-- 			name = "cmdline",
+-- 			option = {
+-- 				ignore_cmds = { "Man", "!" },
+-- 			},
+-- 		},
+-- 	}),
+-- })
 
 -- Set configuration for specific filetype.
 cmp.setup.filetype("gitcommit", {

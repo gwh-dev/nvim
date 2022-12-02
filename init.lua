@@ -1,24 +1,13 @@
-local g = vim.g
 local cmd = vim.cmd
 
 require "impatient"
-
--- enable filetype.nvim / I don't think I need this any more :)
-g.do_filetype_lua = 1
-
--- Leader/local leader
-g.mapleader = [[ ]]
-g.maplocalleader = [[,]]
-
--- Skip some remote provider loading
-g.loaded_python3_provider = 0
-g.loaded_node_provider = 0
-g.loaded_perl_provider = 0
-g.loaded_ruby_provider = 0
+require "opt"
+require "map"
 
 -- Disable some built-in plugins we don't want
 local disabled_built_ins = {
 	"gzip",
+	"2html_plugin",
 	"man",
 	"matchit",
 	"matchparen",
@@ -27,11 +16,16 @@ local disabled_built_ins = {
 	"tar",
 	"zipPlugin",
 	"zip",
+	"netrw",
 	"netrwPlugin",
+	"python_provider",
+	"ruby_provider",
+	"perl_provider",
+	"node_provider",
 }
 
 for i = 1, 10 do
-	g["loaded_" .. disabled_built_ins[i]] = 1
+	vim.g["loaded_" .. disabled_built_ins[i]] = 1
 end
 
 -- Autocommands
@@ -44,21 +38,15 @@ autocmd("BufWinEnter", { group = misc_aucmds, command = "checktime" })
 autocmd("TextYankPost", {
 	group = misc_aucmds,
 	callback = function()
-		vim.highlight.on_yank()
+		vim.highlight.on_yank {
+			-- higroup = "IncSearch",
+			timeout = 40,
+		}
 	end,
 })
 
--- local mkDir = augroup("mkdir", { clear = true })
--- autocmd("BufWritePre", {
--- 	group = mkDir,
--- 	callback = function()
--- 		require("utils").writeCreatingDirs()
--- 	end,
--- })
-
-local Statusline = augroup("Statusline", { clear = true })
 autocmd("VimEnter", {
-	group = Statusline,
+	group = misc_aucmds,
 	once = true,
 	callback = function()
 		-- local statusline = require("statusline")

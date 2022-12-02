@@ -1,13 +1,12 @@
 require("gitsigns").setup {
 	signs = {
-		add = { hl = "GitSignsAddNr", text = "▍", numhl = "NONE" },
-		change = { hl = "GitSignsChangeNr", text = "▍", numhl = "NONE" },
-		delete = { hl = "GitSignsDeleteNr", text = "▍", numhl = "NONE" },
-		topdelete = { hl = "GitSignsDeleteNr", text = "▍", numhl = "NONE" },
-		changedelete = { hl = "GitSignsChangeNr", text = "▍", numhl = "NONE" },
+		add = { hl = "GitSignsAddNr" },
+		change = { hl = "GitSignsChangeNr" },
+		delete = { hl = "GitSignsDeleteNr" },
+		topdelete = { hl = "GitSignsDeleteNr" },
+		changedelete = { hl = "GitSignsChangeNr" },
 	},
+	-- sign_priority = 100,
 	keymaps = {},
+	numhl = false,
 }
--- ▍
--- ▎
--- ▏
