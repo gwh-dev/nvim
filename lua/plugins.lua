@@ -2,7 +2,7 @@ local function init()
 	if packer == nil then
 		packer = require "packer"
 		packer.init {
-			-- disable_commands = true,
+			disable_commands = true,
 			display = {
 				open_fn = function()
 					local result, win, buf = require("packer.util").float {
@@ -20,9 +20,14 @@ local function init()
 					vim.api.nvim_win_set_option(win, "winhighlight", "NormalFloat:Normal")
 					return result, win, buf
 				end,
+				prompt_border = "rounded",
+			},
+			git = {
+				clone_timeout = 800, -- In Seconds
 			},
 		}
 	end
+
 	local use = packer.use
 	packer.reset()
 
@@ -30,7 +35,7 @@ local function init()
 	use "nvim-lua/popup.nvim"
 	use "wbthomason/packer.nvim"
 	use "nvim-lua/plenary.nvim"
-	use "kyazdani42/nvim-web-devicons"
+	-- use "kyazdani42/nvim-web-devicons"
 
 	-- [[ Performance ]]
 	use "lewis6991/impatient.nvim"
@@ -41,7 +46,7 @@ local function init()
 		"catppuccin/nvim",
 		as = "catppuccin",
 		setup = function()
-			vim.cmd.colorscheme "catppuccin-frappe"
+			vim.cmd.colorscheme "catppuccin"
 		end,
 		config = function()
 			require("catppuccin").setup {
@@ -50,28 +55,16 @@ local function init()
 					cmp = true,
 					gitsigns = true, -- For Now
 					neogit = true,
-					nvimtree = false,
-					-- fidget = false,
 					telescope = true,
-					lsp_trouble = true,
 					native_lsp = { enabled = true },
-					indent_blankline = { enabled = true },
 					treesitter = true,
-					-- treesitter_context = true,
-					-- leap = false,
-					-- lightspeed = false,
-					-- notify = false,
-					-- dap = true,
-					-- lualine = false,
-					-- ts_rainbow = false,
-					-- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
 				},
 			}
 		end,
 	}
 
-	-- [[ Motions ]]
-
+	-- [[ Utils ]]
+	--
 	use {
 		"monkoose/matchparen.nvim",
 		event = { "BufWinEnter", "BufNewFile" },
@@ -81,56 +74,10 @@ local function init()
 	}
 
 	use {
-		"mbbill/undotree",
-		cmd = "UndotreeToggle",
-		config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
-	}
-
-	use {
-		"declancm/cinnamon.nvim",
-		config = function()
-			require("cinnamon").setup()
-		end,
-	}
-
-	use {
-		"nacro90/numb.nvim",
-		config = function()
-			require("numb").setup()
-		end,
-	}
-
-	-- use {
-	-- 	"ggandor/leap.nvim",
-	-- 	event = "VimEnter",
-	-- 	config = function()
-	-- 		require("leap").add_default_mappings()
-	-- 	end,
-	-- }
-
-	-- [[ Utils ]]
-
-	use {
 		"jghauser/mkdir.nvim",
 		event = "BufWritePre",
 	}
 
-	-- use {
-	-- 	"filipdutescu/renamer.nvim",
-	-- 	branch = "master",
-	-- 	requires = { { "nvim-lua/plenary.nvim" } },
-	-- 	module = "renamer",
-	-- }
-
-	use {
-		"ojroques/nvim-bufdel",
-		cmd = "BufDel",
-		config = function()
-			require("bufdel").setup {}
-		end,
-	}
-
-	-- Bracets
 	use {
 		{
 			"kylechui/nvim-surround",
@@ -160,12 +107,13 @@ local function init()
 				"nvim-lua/popup.nvim",
 				"nvim-lua/plenary.nvim",
 				"telescope-fzf-native.nvim",
-				"nvim-telescope/telescope-ui-select.nvim",
+				-- "nvim-telescope/telescope-ui-select.nvim",
 			},
 			wants = {
 				"popup.nvim",
 				"plenary.nvim",
 				"telescope-fzf-native.nvim",
+				-- "telescope-ui-select.nvim",
 			},
 			config = [[require('config.telescope')]],
 			cmd = "Telescope",
@@ -181,15 +129,15 @@ local function init()
 	use {
 		"nvim-treesitter/nvim-treesitter",
 		requires = {
-			{
-				"nvim-treesitter/nvim-treesitter-refactor",
-				after = "nvim-treesitter",
-			},
-			{
-				"RRethy/nvim-treesitter-textsubjects",
-				after = "nvim-treesitter",
-			},
+			{ "nvim-treesitter/nvim-treesitter-refactor", after = "nvim-treesitter" },
+			{ "RRethy/nvim-treesitter-textsubjects", after = "nvim-treesitter" },
 		},
+		setup = function()
+			require "config.treesitter"
+		end,
+		config = function()
+			require "config.treesitter"
+		end,
 		event = { "BufRead", "BufNewFile" },
 		run = ":TSUpdate",
 	}
@@ -205,32 +153,53 @@ local function init()
 			},
 		},
 		config = function()
-			require("config.comment").config()
+			require("Comment").setup {
+				ignore = "^$", -- ignore empty lines
+				pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+			}
 		end,
-		keys = { "gc", "gb" },
+		-- keys = { "gc", "gb" },
 		-- event = { 'BufWinEnter', 'BufNewFile' },
 		after = "nvim-treesitter",
 	}
-
-	-- [[ indent line ]]
-	use "lukas-reineke/indent-blankline.nvim"
 
 	-- [[ Documentation ]]
 	-- use {
 	-- 	"danymat/neogen",
 	-- 	requires = "nvim-treesitter",
-	-- 	config = [[require('config.neogen')]],
+	-- 	config = function()
+	-- 		require("neogen").setup { enabled = true, jump_map = "<tab>" }
+	-- 	end,
 	-- 	keys = { "<localleader>d", "<localleader>df", "<localleader>dc" },
 	-- }
 
 	-- [[ Git ]]
+
+	use {
+		"mbbill/undotree",
+		cmd = "UndotreeToggle",
+		config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
+	}
+
 	use {
 		{
 			"lewis6991/gitsigns.nvim",
-			requires = "nvim-lua/plenary.nvim",
-			config = [[require('config.gitsigns')]],
+			-- requires = "nvim-lua/plenary.nvim",
+			config = function()
+				require("gitsigns").setup()
+			end,
 		},
-		{ "TimUntersberger/neogit", cmd = "Neogit", config = [[require('config.neogit')]] },
+		{
+			"TimUntersberger/neogit",
+			cmd = "Neogit",
+			config = function()
+				require("neogit").setup {
+					disable_commit_confirmation = true,
+					disable_signs = true,
+					disable_builtin_notifications = true,
+				}
+			end,
+		},
 		{
 			"akinsho/git-conflict.nvim",
 			tag = "*",
@@ -245,9 +214,9 @@ local function init()
 		{
 			"neovim/nvim-lspconfig",
 			config = [[require('config.lsp')]],
-			requires = {
-				"b0o/SchemaStore.nvim",
-			},
+			-- requires = {
+			-- 	"b0o/SchemaStore.nvim",
+			-- },
 		},
 		{
 			"jose-elias-alvarez/null-ls.nvim",
@@ -256,15 +225,6 @@ local function init()
 				"neovim/nvim-lspconfig",
 			},
 		},
-		-- "ray-x/lsp_signature.nvim",
-	}
-
-	use {
-		"folke/trouble.nvim",
-		cmd = "Trouble",
-		config = function()
-			require("trouble").setup {}
-		end,
 	}
 
 	-- [[ snippets ]]
@@ -279,10 +239,10 @@ local function init()
 	use {
 		"hrsh7th/nvim-cmp",
 		requires = {
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "onsails/lspkind.nvim" },
+			{ "lukas-reineke/cmp-under-comparator" },
 			{ "hrsh7th/cmp-buffer", after = "nvim-cmp" },
-			"hrsh7th/cmp-nvim-lsp",
-			"onsails/lspkind.nvim",
-			"lukas-reineke/cmp-under-comparator",
 			{ "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" },
 			{ "hrsh7th/cmp-path", after = "nvim-cmp" },
@@ -292,31 +252,29 @@ local function init()
 		wants = "LuaSnip",
 	}
 
-	-- [[ Make UI Better ]]
+	-- Debugger
 	use {
-		"folke/todo-comments.nvim",
-		requires = "nvim-lua/plenary.nvim",
-		config = function()
-			require("todo-comments").setup {}
-		end,
+		{
+			"mfussenegger/nvim-dap",
+			config = [[require('config.dap')]],
+			requires = {
+				"leoluz/nvim-dap-go",
+			},
+			wants = {
+				"nvim-dap-go",
+			},
+			cmd = { "DapToggleBreakpoint", "Debug", "DapToggleRepl" },
+		},
+		{
+			"rcarriga/nvim-dap-ui",
+			requires = "nvim-dap",
+			wants = "nvim-dap",
+			after = "nvim-dap",
+		},
+		{
+			"theHamsta/nvim-dap-virtual-text",
+		},
 	}
-
-	-- use {
-	-- 	"j-hui/fidget.nvim",
-	-- 	config = function()
-	-- 		require("fidget").setup {
-	-- 			text = {
-	-- 				spinner = "dots",
-	-- 			},
-	-- 			window = {
-	-- 				blend = 0,
-	-- 			},
-	-- 			sources = {
-	-- 				["null-ls"] = { ignore = true },
-	-- 			},
-	-- 		}
-	-- 	end,
-	-- }
 end -- Don't pass this "end" you will get an ERROR
 
 local plugins = setmetatable({}, {

@@ -1,40 +1,42 @@
 local path_sep = require("plenary.path").path.sep
+
 local fn = vim.fn
 local api = vim.api
-local modes = {
-	["n"] = "NORMAL",
-	["no"] = "NORMAL",
-	["v"] = "VISUAL",
-	["V"] = "VISUAL LINE",
-	[""] = "VISUAL BLOCK",
-	["s"] = "SELECT",
-	["S"] = "SELECT LINE",
-	[""] = "SELECT BLOCK",
-	["i"] = "INSERT",
-	["ic"] = "INSERT",
-	["R"] = "REPLACE",
-	["Rv"] = "VISUAL REPLACE",
-	["c"] = "COMMAND",
-	["cv"] = "VIM EX",
-	["ce"] = "EX",
-	["r"] = "PROMPT",
-	["rm"] = "MOAR",
-	["r?"] = "CONFIRM",
-	["!"] = "SHELL",
-	["t"] = "TERMINAL",
-}
+local fmt = string.format
 
-local function mode()
-	local current_mode = api.nvim_get_mode().mode
-	return string.format("%s", modes[current_mode]):upper()
-end
+-- local modes = {
+-- 	["n"] = "NORMAL",
+-- 	["no"] = "NORMAL",
+-- 	["v"] = "VISUAL",
+-- 	["V"] = "VISUAL LINE",
+-- 	[""] = "VISUAL BLOCK",
+-- 	["s"] = "SELECT",
+-- 	["S"] = "SELECT LINE", [""] = "SELECT BLOCK",
+-- 	["i"] = "INSERT",
+-- 	["ic"] = "INSERT",
+-- 	["R"] = "REPLACE",
+-- 	["Rv"] = "VISUAL REPLACE",
+-- 	["c"] = "COMMAND",
+-- 	["cv"] = "VIM EX",
+-- 	["ce"] = "EX",
+-- 	["r"] = "PROMPT",
+-- 	["rm"] = "MOAR",
+-- 	["r?"] = "CONFIRM",
+-- 	["!"] = "SHELL",
+-- 	["t"] = "TERMINAL",
+-- }
+
+-- local function mode()
+-- 	local current_mode = api.nvim_get_mode().mode
+-- 	return fmt("%s", modes[current_mode]):upper()
+-- end
 
 local function filesize()
-	local file = vim.fn.expand "%:p"
+	local file = fn.expand "%:p"
 	if file == nil or #file == 0 then
 		return ""
 	end
-	local size = vim.fn.getfsize(file)
+	local size = fn.getfsize(file)
 	if size <= 0 then
 		return ""
 	end
@@ -48,7 +50,7 @@ local function filesize()
 	end
 
 	local format = i == 1 and "%d%s" or "%.1f%s"
-	return string.format(format, size, suffixes[i])
+	return fmt(format, size, suffixes[i])
 end
 
 local function lineinfo()
@@ -74,7 +76,7 @@ local function get_file_help_status()
 end
 
 local function fname()
-	return string.format("%s%s %s", get_relative_path_filename(), get_file_modified_status(), get_file_help_status())
+	return fmt("%s%s %s", get_relative_path_filename(), get_file_modified_status(), get_file_help_status())
 end
 
 -- local function vcs()
@@ -120,7 +122,7 @@ local function lsp_progress()
 		local name = lsp.name or ""
 		msg = lsp.message or ""
 		local percentage = lsp.percentage or 0
-		local title = ("%#StatusLineNC# " .. lsp.title) or ""
+		local title = lsp.title or ""
 		return string.format("%%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
 	else
 		for _, client in ipairs(clients) do
@@ -152,16 +154,16 @@ local function diagnostic_status()
 	local info = ""
 
 	if count["errors"] ~= 0 then
-		errors = " %#LspDiagnosticsError# " .. count["errors"]
+		errors = " %#DiagnosticError#Error: " .. count["errors"]
 	end
 	if count["warnings"] ~= 0 then
-		warnings = " %#LspDiagnosticsWarning# " .. count["warnings"]
+		warnings = " %#DiagnosticWarn#Warn: " .. count["warnings"]
 	end
 	if count["hints"] ~= 0 then
-		hints = " %#LspDiagnosticsHint# " .. count["hints"]
+		hints = " %#DiagnosticHint#Hint: " .. count["hints"]
 	end
 	if count["info"] ~= 0 then
-		info = " %#LspDiagnosticsInformation# " .. count["info"]
+		info = " %#DiagnosticInfo#Info: " .. count["info"]
 	end
 
 	local diagnostic_list = {
@@ -177,12 +179,12 @@ end
 local function status()
 	local parts = {
 		-- Here goes the parts from before
-		mode(), -- Mode changer
-		"%#StatusLineNC#",
-		" |",
+		-- mode(), -- Mode changer
+		-- "%#StatusLineNC#",
+		-- " |",
 		fname(),
 		"%#StatusLineNC#",
-		" | ",
+		"|  ",
 		"%#StatusLine#",
 		string.upper(lsp_progress()),
 		"%=", -- To make a large space everything down is on the right side

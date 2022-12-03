@@ -1,5 +1,4 @@
 -- require("neodev").setup { lspconfig = { cmd = { "lua-language-server" }, prefer_null_ls = true } }
-
 local lspconfig = require "lspconfig"
 local null_ls = require "null-ls"
 -- local colors = require("catppuccin.palettes").get_palette "frappe"
@@ -9,7 +8,7 @@ local cmd = vim.cmd
 local fn = vim.fn
 local buf_keymap = vim.api.nvim_buf_set_keymap
 
-vim.diagnostic.config { virtual_lines = { only_current_line = true }, virtual_text = false }
+vim.diagnostic.config { signs = false, virtual_lines = { only_current_line = true }, virtual_text = false }
 lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
 	virtual_text = false,
 	signs = false,
@@ -28,22 +27,18 @@ lsp.handlers["window/showMessage"] = function(err, method, params, client_id)
 	vim.notify(method.message, severity[params.type])
 end
 
---require("lsp_signature").setup { bind = true, handler_opts = { border = "single" } }
-
 local keymap_opts = { noremap = true, silent = true }
 local function on_attach(client)
-	--require("lsp_signature").on_attach { bind = true, handler_opts = { border = "single" } }
 	buf_keymap(0, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", keymap_opts)
 	buf_keymap(0, "n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>', keymap_opts)
-	-- buf_keymap(0, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', keymap_opts)
+	buf_keymap(0, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", keymap_opts)
 	buf_keymap(0, "n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>', keymap_opts)
 	buf_keymap(0, "n", "gS", "<cmd>lua vim.lsp.buf.signature_help()<CR>", keymap_opts)
 	buf_keymap(0, "n", "gTD", "<cmd>lua vim.lsp.buf.type_definition()<CR>", keymap_opts)
-	-- buf_keymap(0, "n", "<leader>rn", '<cmd>lua require"renamer".rename()<CR>', keymap_opts)
-	-- buf_keymap(0, "v", "<leader>rn", '<cmd>lua require"renamer".rename()<CR>', keymap_opts)
+	buf_keymap(0, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", keymap_opts)
 	buf_keymap(0, "n", "gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>', keymap_opts)
 	buf_keymap(0, "n", "gA", "<cmd>lua vim.lsp.buf.code_action()<CR>", keymap_opts)
-	buf_keymap(0, "v", "gA", "<cmd>lua vim.lsp.buf.range_code_action()<CR>", keymap_opts)
+	buf_keymap(0, "v", "gA", "<cmd>lua vim.lsp.buf.code_action()<CR>", keymap_opts)
 	buf_keymap(0, "n", "]e", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>', keymap_opts)
 	buf_keymap(0, "n", "[e", '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>', keymap_opts)
 
@@ -56,7 +51,6 @@ local function on_attach(client)
 		cmd "au CursorHold <buffer> lua vim.lsp.buf.document_highlight()"
 		cmd "au CursorMoved <buffer> lua vim.lsp.buf.clear_references()"
 	end
-
 	cmd "augroup END"
 end
 
@@ -85,12 +79,12 @@ local servers = {
 		},
 	},
 	jsonls = {
-		settings = {
-			json = {
-				schemas = require("schemastore").json.schemas(),
-				validate = { enable = true },
-			},
-		},
+		-- settings = {
+		-- 	json = {
+		-- 		schemas = require("schemastore").json.schemas(),
+		-- 		validate = { enable = true },
+		-- 	},
+		-- },
 		setup = {
 			commands = {
 				Format = {
@@ -131,8 +125,14 @@ local null_diag = null_ls.builtins.diagnostics
 local null_act = null_ls.builtins.code_actions
 null_ls.setup {
 	sources = {
+		null_fmt.prettier,
+		null_fmt.rustfmt,
+		null_fmt.shfmt,
 		null_fmt.stylua,
+
 		null_act.gitsigns,
+
+		null_diag.selene,
 	},
 	on_attach = on_attach,
 }

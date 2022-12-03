@@ -13,9 +13,9 @@ telescope.setup { defaults = {
 			override_file_sorter = true,
 			case_mode = "smart_case",
 		},
-		["ui-select"] = {
-			require("telescope.themes").get_dropdown { layout_config = { prompt_position = "top" } },
-		},
+		-- ["ui-select"] = {
+		-- 	require("telescope.themes").get_dropdown { layout_config = { prompt_position = "top" } },
+		-- },
 	},
 	pickers = {
 		buffers = {
@@ -29,4 +29,4 @@ telescope.setup { defaults = {
 
 telescope.load_extension "fzf"
 -- telescope.load_extension 'notify'
-telescope.load_extension 'ui-select'
+-- telescope.load_extension 'ui-select'

@@ -127,7 +127,7 @@ autopairs.setup {
 	-- 	javascript = { "string", "template_string" },
 	-- 	java = false,
 	-- },
-	disable_filetype = { "TelescopePrompt" },
+  disable_filetype = { "TelescopePrompt" },
 	fast_wrap = {
 		map = "<M-e>",
 		chars = { "{", "[", "(", '"', "'" },
@@ -140,29 +140,6 @@ autopairs.setup {
 	},
 }
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done { map_char = { tex = "" } })
-
--- `/` cmdline setup.
--- cmp.setup.cmdline("/", {
--- 	sources = cmp.config.sources({
--- 		{ name = "nvim_lsp_document_symbol" },
--- 	}, {
--- 		{ name = "buffer" },
--- 	}),
--- })
--- `:` cmdline setup.
--- cmp.setup.cmdline(":", {
--- 	mapping = cmp.mapping.preset.cmdline(),
--- 	sources = cmp.config.sources({
--- 		{ name = "path" },
--- 	}, {
--- 		{
--- 			name = "cmdline",
--- 			option = {
--- 				ignore_cmds = { "Man", "!" },
--- 			},
--- 		},
--- 	}),
--- })
 
 -- Set configuration for specific filetype.
 cmp.setup.filetype("gitcommit", {
