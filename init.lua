@@ -1,34 +1,40 @@
 local cmd = vim.cmd
 local g = vim.g
 
-require "impatient"
+require("impatient")
 
 -- Leader/local leader
 g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
+-- Some plugins
+g.did_load_filetypes = 1
+g.loaded_matchparen = 1
+
+-- Disable providers
+g.loaded_perl_provider = 0
+g.loaded_node_provider = 0
+g.loaded_python3_provider = 0
+g.loaded_ruby_provider = 0
+
 -- Disable some built-in plugins we don't want
 local disabled_built_ins = {
-	"gzip",
-	"2html_plugin",
-	"man",
-	"matchit",
-	"matchparen",
-	"shada_plugin",
-	"tarPlugin",
-	"tar",
-	"zipPlugin",
-	"zip",
-	"netrw",
-	"netrwPlugin",
-	"python_provider",
-	"ruby_provider",
-	"perl_provider",
-	"node_provider",
+    "gzip",
+    "2html_plugin",
+    "man",
+    "matchit",
+    "matchparen",
+    "shada_plugin",
+    "tarPlugin",
+    "tar",
+    "zipPlugin",
+    "zip",
+    "netrw",
+    "netrwPlugin",
 }
 
 for i = 1, 10 do
-	g["loaded_" .. disabled_built_ins[i]] = 1
+    g["loaded_" .. disabled_built_ins[i]] = 1
 end
 
 -- Autocommands
@@ -39,47 +45,46 @@ local augroup = api.nvim_create_augroup
 local misc_aucmds = augroup("misc_aucmds", { clear = true })
 autocmd("BufWinEnter", { group = misc_aucmds, command = "checktime" })
 autocmd("TextYankPost", {
-	group = misc_aucmds,
-	callback = function()
-		vim.highlight.on_yank {
-			-- higroup = "IncSearch",
-			timeout = 40,
-		}
-	end,
+    group = misc_aucmds,
+    callback = function()
+        vim.highlight.on_yank({
+            higroup = "IncSearch",
+            timeout = 40,
+        })
+    end,
 })
 
 autocmd("VimEnter", {
-	group = misc_aucmds,
-	once = true,
-	callback = function()
-		-- local statusline = require("statusline")
-		local O = vim.o
-		O.statusline = "%!v:lua.require('statusline').status()"
-	end,
+    group = misc_aucmds,
+    once = true,
+    callback = function()
+        -- local statusline = require("statusline")
+        local O = vim.o
+        O.statusline = "%!v:lua.require('statusline').status()"
+    end,
 })
 
 -- Commands
 local create_cmd = api.nvim_create_user_command
 create_cmd("PackerInstall", function()
-	cmd [[packadd packer.nvim]]
-	require("plugins").install()
+    cmd([[packadd packer.nvim]])
+    require("plugins").install()
 end, {})
 create_cmd("PackerUpdate", function()
-	cmd [[packadd packer.nvim]]
-	require("plugins").update()
+    cmd([[packadd packer.nvim]])
+    require("plugins").update()
 end, {})
 create_cmd("PackerSync", function()
-	cmd [[packadd packer.nvim]]
-	require("plugins").sync()
+    cmd([[packadd packer.nvim]])
+    require("plugins").sync()
 end, {})
 create_cmd("PackerClean", function()
-	cmd [[packadd packer.nvim]]
-	require("plugins").clean()
+    cmd([[packadd packer.nvim]])
+    require("plugins").clean()
 end, {})
 create_cmd("PackerCompile", function()
-	cmd [[packadd packer.nvim]]
-	cmd [[CatppuccinCompile]]
-	require("plugins").compile()
+    cmd([[packadd packer.nvim]])
+    require("plugins").compile()
 end, {})
 
 local map = vim.keymap.set
@@ -111,38 +116,71 @@ map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
 map("x", "K", ":move '<-2<CR>gv-gv")
 map("x", "J", ":move '>+1<CR>gv-gv")
 
--- Yank to clipboard
 -- map({ "n", "v", "x" }, "y+", [[<cmd>set opfunc=util#clipboard_yank<cr>g@]], { nowait = true })
 local nowait = { nowait = true, silent = true }
 -- Stop Highlighting
 map("n", "<leader>h", "<cmd>noh<CR>", nowait)
+
 -- Telescope
-map("n", "<leader>g", [[<cmd>Telescope git_files theme=get_dropdown<cr>]], nowait)
-map("n", "<leader>F", [[<Cmd>Telescope find_files theme=get_dropdown<cr>]], nowait)
-map("n", "<leader>l", [[<cmd>Telescope live_grep theme=get_dropdown<cr>]], nowait)
-map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_dropdown<cr>]], nowait)
+-- local telescope = require("telescope.builtin")
+
+map(
+    "n",
+    "<leader>fi",
+    [[<cmd>Telescope find_files theme=get_dropdown<cr>]],
+    nowait
+)
+
+map(
+    "n",
+    "<leader>g",
+    [[<cmd>Telescope git_files theme=get_dropdown<cr>]],
+    nowait
+)
+
+map(
+    "n",
+    "<leader>l",
+    [[<cmd>Telescope live_grep theme=get_dropdown<cr>]],
+    nowait
+)
+
+map(
+    "n",
+    "<leader>d",
+    [[<cmd>Telescope diagnostics theme=get_dropdown<cr>]],
+    nowait
+)
+
+map(
+    "n",
+    "<leader>p",
+    [[<cmd>Telescope neoclip a extra=star,plus,b theme=get_dropdown<cr>]],
+    nowait
+)
 
 -- Version Control "GIT"
+
 map("n", "<leader>gs", [[<cmd>Neogit<cr>]])
 
 local opt = vim.opt
 
 -- Binary
 opt.wildignore = {
-	"*.aux,*.out,*.toc",
-	"*.o,*.obj,*.dll,*.jar,*.pyc,__pycache__,*.rbc,*.class",
-	-- media
-	"*.ai,*.bmp,*.gif,*.ico,*.jpg,*.jpeg,*.png,*.psd,*.webp",
-	"*.avi,*.m4a,*.mp3,*.oga,*.ogg,*.wav,*.webm",
-	"*.eot,*.otf,*.ttf,*.woff",
-	"*.doc,*.pdf",
-	-- archives
-	"*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz",
-	-- temp/system
-	"*.*~,*~ ",
-	"*.swp,.lock,.DS_Store,._*,tags.lock",
-	-- version control
-	".git,.svn",
+    "*.aux,*.out,*.toc",
+    "*.o,*.obj,*.dll,*.jar,*.pyc,__pycache__,*.rbc,*.class",
+    -- media
+    "*.ai,*.bmp,*.gif,*.ico,*.jpg,*.jpeg,*.png,*.psd,*.webp",
+    "*.avi,*.m4a,*.mp3,*.oga,*.ogg,*.wav,*.webm",
+    "*.eot,*.otf,*.ttf,*.woff",
+    "*.doc,*.pdf",
+    -- archives
+    "*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz",
+    -- temp/system
+    "*.*~,*~ ",
+    "*.swp,.lock,.DS_Store,._*,tags.lock",
+    -- version control
+    ".git,.svn",
 }
 
 opt.wildoptions = "pum"
@@ -151,7 +189,7 @@ opt.wildcharm = 26 -- equals set wildcharm=<C-Z>, used in the mapping section
 opt.pumheight = 20 -- Limit the amount of autocomplete items shown
 opt.textwidth = 100
 opt.scrolloff = 7
-opt.whichwrap:append "<,>,h,l"
+opt.whichwrap:append("<,>,h,l")
 opt.inccommand = "nosplit"
 opt.lazyredraw = true
 opt.showmatch = true
@@ -168,7 +206,7 @@ opt.laststatus = 3
 opt.showmode = false
 opt.shada = [['20,<50,s10,h,/100]]
 opt.hidden = true
-opt.shortmess:append "c"
+opt.shortmess:append("c")
 opt.joinspaces = false
 opt.guicursor = "a:blinkwait700-blinkon400-blinkoff250"
 opt.updatetime = 100
