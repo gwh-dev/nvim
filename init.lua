@@ -1,7 +1,7 @@
 local cmd = vim.cmd
 local g = vim.g
 
-require("impatient")
+pcall(require, "impatient")
 
 -- Leader/local leader
 g.mapleader = [[ ]]
@@ -9,32 +9,37 @@ g.maplocalleader = [[,]]
 
 -- Some plugins
 g.did_load_filetypes = 1
-g.loaded_matchparen = 1
 
--- Disable providers
-g.loaded_perl_provider = 0
-g.loaded_node_provider = 0
-g.loaded_python3_provider = 0
-g.loaded_ruby_provider = 0
-
--- Disable some built-in plugins we don't want
-local disabled_built_ins = {
-    "gzip",
-    "2html_plugin",
-    "man",
-    "matchit",
-    "matchparen",
-    "shada_plugin",
-    "tarPlugin",
-    "tar",
-    "zipPlugin",
-    "zip",
-    "netrw",
-    "netrwPlugin",
+-- Disable providers that we don't want
+local providers = {
+  "perl",
+  "node",
+  "python3",
+  "ruby",
 }
 
-for i = 1, 10 do
-    g["loaded_" .. disabled_built_ins[i]] = 1
+for i = 1, 4 do
+  g["loaded_" .. providers[i] .. "_provider"] = 0
+end
+
+-- Disable some built-in plugins we don't want
+local builtin = {
+  "gzip",
+  "2html_plugin",
+  "man",
+  "matchit",
+  "matchparen",
+  "shada_plugin",
+  "tarPlugin",
+  "tar",
+  "zipPlugin",
+  "zip",
+  "netrw",
+  "netrwPlugin",
+}
+
+for i = 1, 12 do
+  g["loaded_" .. builtin[i]] = 1
 end
 
 -- Autocommands
@@ -47,51 +52,64 @@ local yank_group = augroup("HighlightYank", {})
 
 autocmd("BufWinEnter", { group = GwH, command = "checktime" })
 autocmd("TextYankPost", {
-    group = yank_group,
-    callback = function()
-        vim.highlight.on_yank({
-            higroup = "IncSearch",
-            timeout = 40,
-        })
-    end,
+  group = yank_group,
+  callback = function()
+    vim.highlight.on_yank {
+      higroup = "IncSearch",
+      timeout = 40,
+    }
+  end,
 })
 
 autocmd("VimEnter", {
-    group = GwH,
-    once = true,
-    callback = function()
-        vim.o.statusline = "%!v:lua.require('statusline').status()"
-    end,
+  group = GwH,
+  once = true,
+  callback = function()
+    vim.o.statusline = "%!v:lua.require('statusline').status()"
+  end,
 })
 
 autocmd("BufWritePre", {
-    group = GwH,
-    pattern = "*",
-    command = "%s/\\s\\+$//e",
+  group = GwH,
+  command = "%s/\\s\\+$//e",
+})
+
+local mkdir = augroup("MkdirRun", {})
+
+autocmd("BufWritePre", {
+  group = mkdir,
+  pattern = "*",
+  callback = function()
+    require("utils").mkdir()
+  end,
 })
 
 -- Commands
 local create_cmd = api.nvim_create_user_command
--- create_cmd("PackerInstall", function()
---     cmd([[packadd packer.nvim]])
---     require("plugins").install()
--- end, {})
--- create_cmd("PackerUpdate", function()
---     cmd([[packadd packer.nvim]])
---     require("plugins").update()
--- end, {})
-create_cmd("PackerSync", function()
-    cmd([[packadd packer.nvim]])
-    require("plugins").sync()
+create_cmd("PackerInstall", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").install()
 end, {})
--- create_cmd("PackerClean", function()
---     cmd([[packadd packer.nvim]])
---     require("plugins").clean()
--- end, {})
--- create_cmd("PackerCompile", function()
---     cmd([[packadd packer.nvim]])
---     require("plugins").compile()
--- end, {})
+create_cmd("PackerUpdate", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").update()
+end, {})
+create_cmd("PackerSync", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").sync()
+end, {})
+create_cmd("PackerClean", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").clean()
+end, {})
+create_cmd("PackerCompile", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").compile()
+end, {})
+create_cmd("PackerStatus", function()
+  cmd [[packadd packer.nvim]]
+  require("plugins").status()
+end, {})
 
 local map = vim.keymap.set
 
@@ -141,20 +159,20 @@ local opt = vim.opt
 
 -- Binary
 opt.wildignore = {
-    "*.aux,*.out,*.toc",
-    "*.o,*.obj,*.dll,*.jar,*.pyc,__pycache__,*.rbc,*.class",
-    -- media
-    "*.ai,*.bmp,*.gif,*.ico,*.jpg,*.jpeg,*.png,*.psd,*.webp",
-    "*.avi,*.m4a,*.mp3,*.oga,*.ogg,*.wav,*.webm",
-    "*.eot,*.otf,*.ttf,*.woff",
-    "*.doc,*.pdf",
-    -- archives
-    "*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz",
-    -- temp/system
-    "*.*~,*~ ",
-    "*.swp,.lock,.DS_Store,._*,tags.lock",
-    -- version control
-    ".git,.svn",
+  "*.aux,*.out,*.toc",
+  "*.o,*.obj,*.dll,*.jar,*.pyc,__pycache__,*.rbc,*.class",
+  -- media
+  "*.ai,*.bmp,*.gif,*.ico,*.jpg,*.jpeg,*.png,*.psd,*.webp",
+  "*.avi,*.m4a,*.mp3,*.oga,*.ogg,*.wav,*.webm",
+  "*.eot,*.otf,*.ttf,*.woff",
+  "*.doc,*.pdf",
+  -- archives
+  "*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz",
+  -- temp/system
+  "*.*~,*~ ",
+  "*.swp,.lock,.DS_Store,._*,tags.lock",
+  -- version control
+  ".git,.svn",
 }
 
 opt.wildoptions = "pum"
@@ -163,7 +181,7 @@ opt.wildcharm = 26 -- equals set wildcharm=<C-Z>, used in the mapping section
 opt.pumheight = 20 -- Limit the amount of autocomplete items shown
 opt.textwidth = 100
 opt.scrolloff = 7
-opt.whichwrap:append("<,>,h,l")
+opt.whichwrap:append "<,>,h,l"
 opt.inccommand = "nosplit"
 opt.lazyredraw = true
 opt.showmatch = true
@@ -180,7 +198,7 @@ opt.laststatus = 3
 opt.showmode = false
 opt.shada = [['20,<50,s10,h,/100]]
 opt.hidden = true
-opt.shortmess:append("c")
+opt.shortmess:append "c"
 opt.joinspaces = false
 opt.guicursor = "a:blinkwait700-blinkon400-blinkoff250"
 opt.updatetime = 50
