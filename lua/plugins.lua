@@ -35,7 +35,6 @@ local function init()
     use("nvim-lua/popup.nvim")
     use("wbthomason/packer.nvim")
     use("nvim-lua/plenary.nvim")
-    -- use "kyazdani42/nvim-web-devicons"
 
     -- [[ Performance ]]
     use("lewis6991/impatient.nvim")
@@ -49,7 +48,6 @@ local function init()
     })
 
     -- [[ Utils ]]
-
     use({
         "monkoose/matchparen.nvim",
         event = { "BufWinEnter", "BufNewFile" },
@@ -62,12 +60,10 @@ local function init()
     })
 
     use({
-        {
-            "kylechui/nvim-surround",
-            tag = "*", -- Use for stability; omit to use `main` branch for the latest features
-            config = [[require("nvim-surround").setup()]],
-        },
-        "windwp/nvim-autopairs",
+        "kylechui/nvim-surround",
+        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+        config = [[require("nvim-surround").setup()]],
+        -- "windwp/nvim-autopairs",
     })
 
     -- [[ Highlight colors ]]
@@ -100,13 +96,11 @@ local function init()
                 "nvim-lua/popup.nvim",
                 "nvim-lua/plenary.nvim",
                 "telescope-fzf-native.nvim",
-                -- "nvim-telescope/telescope-ui-select.nvim",
             },
             wants = {
                 "popup.nvim",
                 "plenary.nvim",
                 "telescope-fzf-native.nvim",
-                -- "telescope-ui-select.nvim",
             },
             config = [[require('config.telescope')]],
             cmd = "Telescope",
@@ -135,10 +129,6 @@ local function init()
                 "nvim-treesitter/nvim-treesitter-refactor",
                 after = "nvim-treesitter",
             },
-            {
-                "RRethy/nvim-treesitter-textsubjects",
-                after = "nvim-treesitter",
-            },
         },
         setup = function()
             require("config.treesitter")
@@ -157,34 +147,13 @@ local function init()
             {
                 "JoosepAlviste/nvim-ts-context-commentstring",
                 module = "ts_context_commentstring",
-                -- keys = "gcc",
             },
         },
         config = [[require("config.comment")]],
-        -- keys = { "gc", "gb" },
-        -- event = { 'BufWinEnter', 'BufNewFile' },
-        -- after = "nvim-treesitter",
+        after = "nvim-treesitter",
     })
 
     -- [[ Git ]]
-
-    use({
-        {
-            "lewis6991/gitsigns.nvim",
-            requires = "nvim-lua/plenary.nvim",
-            config = [[require("config.gitsigns")]],
-        },
-        {
-            "TimUntersberger/neogit",
-            cmd = "Neogit",
-            config = [[require("config.neogit")]],
-        },
-        {
-            "akinsho/git-conflict.nvim",
-            tag = "*",
-            config = [[require("git-conflict").setup()]],
-        },
-    })
 
     use({
         "mbbill/undotree",

@@ -5,8 +5,8 @@ local types = require("cmp.types")
 local str = require("cmp.utils.str")
 -- local fn = vim.fn
 local api = vim.api
-local autopairs = require("nvim-autopairs")
-local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+-- local autopairs = require("nvim-autopairs")
+-- local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 
 luasnip.setup({
     region_check_events = "InsertEnter",
@@ -16,11 +16,7 @@ require("luasnip.loaders.from_vscode").lazy_load()
 
 local function has_words_before()
     local line, col = unpack(api.nvim_win_get_cursor(0))
-    return col ~= 0
-        and api.nvim_buf_get_lines(0, line - 1, line, true)[1]
-                :sub(col, col)
-                :match("%s")
-            == nil
+    return col ~= 0 and api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
 cmp.setup({
@@ -31,8 +27,7 @@ cmp.setup({
         if api.nvim_get_mode().mode == "c" then
             return true
         else
-            return not context.in_treesitter_capture("comment")
-                and not context.in_syntax_group("Comment")
+            return not context.in_treesitter_capture("comment") and not context.in_syntax_group("Comment")
         end
         -- require('cmp_dap').is_dap_buffer()
     end,
@@ -96,23 +91,18 @@ cmp.setup({
             before = function(entry, vim_item)
                 -- Get the full snippet (and only keep first line)
                 local word = entry:get_insert_text()
-                if
-                    entry.completion_item.insertTextFormat
-                    == types.lsp.InsertTextFormat.Snippet
-                then
+                if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
                     word = vim.lsp.util.parse_snippet(word)
                 end
                 word = str.oneline(word)
                 -- concatenates the string
                 local max = 50
                 if string.len(word) >= max then
-                    local before =
-                        string.sub(word, 1, math.floor((max - 3) / 2))
+                    local before = string.sub(word, 1, math.floor((max - 3) / 2))
                     word = before .. "..."
                 end
                 if
-                    entry.completion_item.insertTextFormat
-                        == types.lsp.InsertTextFormat.Snippet
+                    entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
                     and string.sub(vim_item.abbr, -1, -1) == "~"
                 then
                     word = word .. "~"
@@ -133,35 +123,25 @@ cmp.setup({
     },
 })
 
-autopairs.setup({
-    -- check_ts = true,
-    -- ts_config = {
-    lua = { "string", "source" },
-    -- 	javascript = { "string", "template_string" },
-    -- 	java = false,
-    -- },
-    disable_filetype = { "TelescopePrompt" },
-    fast_wrap = {
-        map = "<M-e>",
-        chars = { "{", "[", "(", '"', "'" },
-        pattern = [=[[%'%"%)%>%]%)%}%,]]=],
-        end_key = "$",
-        keys = "qwertyuiopzxcvbnmasdfghjkl",
-        check_comma = true,
-        highlight = "Search",
-        highlight_grey = "Comment",
-    },
-})
-cmp.event:on(
-    "confirm_done",
-    cmp_autopairs.on_confirm_done({ map_char = { tex = "" } })
-)
-
--- Set configuration for specific filetype.
-cmp.setup.filetype("gitcommit", {
-    sources = cmp.config.sources({
-        { name = "cmp_git" }, -- You can specify the `cmp_git` source if you were installed it.
-    }, {
-        { name = "buffer" },
-    }),
-})
+-- autopairs.setup({
+--     -- check_ts = true,
+--     -- ts_config = {
+--     lua = { "string", "source" },
+--     -- 	javascript = { "string", "template_string" },
+--     -- 	java = false,
+--     -- },
+--     disable_filetype = { "TelescopePrompt" },
+--     fast_wrap = {
+--         map = "<M-e>",
+--         chars = { "{", "[", "(", '"', "'" },
+--         pattern = [=[[%'%"%)%>%]%)%}%,]]=],
+--         end_key = "$",
+--         keys = "qwertyuiopzxcvbnmasdfghjkl",
+--         check_comma = true,
+--         highlight = "Search",
+--         highlight_grey = "Comment",
+--     },
+-- })
+-- cmp.event:on(
+--     "confirm_done",
+--     cmp_autopairs.on_confirm_done({ map_char = { tex = "" } })

@@ -1,7 +1,5 @@
--- require("neodev").setup { lspconfig = { cmd = { "lua-language-server" }, prefer_null_ls = true } }
 local lspconfig = require("lspconfig")
 local null_ls = require("null-ls")
--- local colors = require("catppuccin.palettes").get_palette "frappe"
 
 local lsp = vim.lsp
 local cmd = vim.cmd
@@ -11,25 +9,16 @@ local buf_keymap = vim.api.nvim_buf_set_keymap
 vim.diagnostic.config({
     signs = false,
     virtual_lines = { only_current_line = true },
-    virtual_text = false,
+    virtual_text = true,
+    underline = true,
 })
 
-lsp.handlers["textDocument/hover"] = lsp.with(lsp.handlers.hover, {
-    border = "rounded",
+lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
+    signs = false,
+    virtual_text = true,
+    update_in_insert = false,
+    underline = true,
 })
-
-lsp.handlers["textDocument/signatureHelp"] =
-    lsp.with(lsp.handlers.signature_help, {
-        border = "rounded",
-    })
-
-lsp.handlers["textDocument/publishDiagnostics"] =
-    lsp.with(lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = false,
-        signs = false,
-        update_in_insert = false,
-        underline = true,
-    })
 
 local severity = {
     "error",
@@ -44,93 +33,21 @@ end
 
 local keymap_opts = { noremap = true, silent = true }
 local function on_attach(client)
-    buf_keymap(
-        0,
-        "n",
-        "gD",
-        "<cmd>lua vim.lsp.buf.declaration()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "gd",
-        '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>',
-        keymap_opts
-    )
+    buf_keymap(0, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", keymap_opts)
+    buf_keymap(0, "n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>', keymap_opts)
     buf_keymap(0, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", keymap_opts)
-    buf_keymap(
-        0,
-        "n",
-        "gi",
-        '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>',
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "gS",
-        "<cmd>lua vim.lsp.buf.signature_help()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "gTD",
-        "<cmd>lua vim.lsp.buf.type_definition()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "<leader>rn",
-        "<cmd>lua vim.lsp.buf.rename()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "gr",
-        '<cmd>lua require"telescope.builtin".lsp_references()<CR>',
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "gA",
-        "<cmd>lua vim.lsp.buf.code_action()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "v",
-        "gA",
-        "<cmd>lua vim.lsp.buf.code_action()<CR>",
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "]e",
-        '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>',
-        keymap_opts
-    )
-    buf_keymap(
-        0,
-        "n",
-        "[e",
-        '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>',
-        keymap_opts
-    )
+    buf_keymap(0, "n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>', keymap_opts)
+    buf_keymap(0, "n", "gS", "<cmd>lua vim.lsp.buf.signature_help()<CR>", keymap_opts)
+    buf_keymap(0, "n", "gTD", "<cmd>lua vim.lsp.buf.type_definition()<CR>", keymap_opts)
+    buf_keymap(0, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", keymap_opts)
+    buf_keymap(0, "n", "gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>', keymap_opts)
+    buf_keymap(0, "n", "gA", "<cmd>lua vim.lsp.buf.code_action()<CR>", keymap_opts)
+    buf_keymap(0, "v", "gA", "<cmd>lua vim.lsp.buf.code_action()<CR>", keymap_opts)
+    buf_keymap(0, "n", "]e", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>', keymap_opts)
+    buf_keymap(0, "n", "[e", '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>', keymap_opts)
 
     if client.server_capabilities.documentFormattingProvider then
-        buf_keymap(
-            0,
-            "n",
-            "<leader>f",
-            "<cmd>lua vim.lsp.buf.format { async = true }<cr>",
-            keymap_opts
-        )
+        buf_keymap(0, "n", "<leader>f", "<cmd>lua vim.lsp.buf.format { async = true }<cr>", keymap_opts)
     end
 
     cmd("augroup lsp_aucmds")
@@ -153,8 +70,21 @@ local servers = {
         cmd = { "lua-language-server" },
         settings = {
             Lua = {
-                diagnostics = { globals = { "vim" } },
-                runtime = { version = "LuaJIT" },
+                runtime = {
+                    version = "LuaJIT",
+                    path = vim.split(package.path, ";"),
+                },
+                diagnostics = {
+                    globals = { "vim" },
+                },
+                workspace = {
+                    -- Make the server aware of Neovim runtime files
+                    library = {
+                        [fn.expand("$VIMRUNTIME/lua")] = true,
+                        [fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+                        [fn.stdpath("config") .. "/lua"] = true,
+                    },
+                },
             },
         },
     },
@@ -176,11 +106,7 @@ local servers = {
             commands = {
                 Format = {
                     function()
-                        lsp.buf.range_formatting(
-                            {},
-                            { 0, 0 },
-                            { fn.line("$"), 0 }
-                        )
+                        lsp.buf.range_formatting({}, { 0, 0 }, { fn.line("$"), 0 })
                     end,
                 },
             },
@@ -206,28 +132,22 @@ for server, config in pairs(servers) do
         config.on_attach = on_attach
     end
 
-    config.capabilities = vim.tbl_deep_extend(
-        "keep",
-        config.capabilities or {},
-        client_capabilities
-    )
+    config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
     lspconfig[server].setup(config)
 end
 
 -- null-ls setup
 local null_fmt = null_ls.builtins.formatting
 local null_diag = null_ls.builtins.diagnostics
-local null_act = null_ls.builtins.code_actions
+-- local null_act = null_ls.builtins.code_actions
 null_ls.setup({
     sources = {
         null_fmt.prettier,
         null_fmt.rustfmt,
         null_fmt.shfmt,
         null_fmt.stylua,
-
-        null_act.gitsigns,
-
         null_diag.selene,
+        -- null_act.gitsigns,
     },
     on_attach = on_attach,
 })

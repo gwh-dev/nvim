@@ -36,7 +36,7 @@ local function fname()
     local path_head = fn.expand("%:h")
 
     if path_head ~= "" then
-        path_head = "%#StatusLineNC# " .. path_head .. path_sep .. "%*%#CursorLineNr#%t %*"
+        path_head = "%#StatusLineNC# " .. path_head .. path_sep .. "%*%#StatusLine#%t %*"
     end
 
     local fileModified = '%{&modified?"":""}'

@@ -1,7 +1,7 @@
 local catppuccin = require("catppuccin")
 catppuccin.load("frappe")
 catppuccin.setup({
-  transparent_background = true,
+  transparent_background = false,
   integrations = {
     cmp = true,
     gitsigns = true, -- For Now

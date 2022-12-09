@@ -30,8 +30,4 @@ telescope.setup({
     },
 })
 
-local map = vim.keymap.set
-local opts = { nowait = true, silent = true }
-
-
 telescope.load_extension("fzf")

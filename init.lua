@@ -41,11 +41,13 @@ end
 local api = vim.api
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
+local GwH = augroup("misc_aucmds", { clear = true })
 
-local misc_aucmds = augroup("misc_aucmds", { clear = true })
-autocmd("BufWinEnter", { group = misc_aucmds, command = "checktime" })
+local yank_group = augroup("HighlightYank", {})
+
+autocmd("BufWinEnter", { group = GwH, command = "checktime" })
 autocmd("TextYankPost", {
-    group = misc_aucmds,
+    group = yank_group,
     callback = function()
         vim.highlight.on_yank({
             higroup = "IncSearch",
@@ -55,37 +57,41 @@ autocmd("TextYankPost", {
 })
 
 autocmd("VimEnter", {
-    group = misc_aucmds,
+    group = GwH,
     once = true,
     callback = function()
-        -- local statusline = require("statusline")
-        local O = vim.o
-        O.statusline = "%!v:lua.require('statusline').status()"
+        vim.o.statusline = "%!v:lua.require('statusline').status()"
     end,
+})
+
+autocmd("BufWritePre", {
+    group = GwH,
+    pattern = "*",
+    command = "%s/\\s\\+$//e",
 })
 
 -- Commands
 local create_cmd = api.nvim_create_user_command
-create_cmd("PackerInstall", function()
-    cmd([[packadd packer.nvim]])
-    require("plugins").install()
-end, {})
-create_cmd("PackerUpdate", function()
-    cmd([[packadd packer.nvim]])
-    require("plugins").update()
-end, {})
+-- create_cmd("PackerInstall", function()
+--     cmd([[packadd packer.nvim]])
+--     require("plugins").install()
+-- end, {})
+-- create_cmd("PackerUpdate", function()
+--     cmd([[packadd packer.nvim]])
+--     require("plugins").update()
+-- end, {})
 create_cmd("PackerSync", function()
     cmd([[packadd packer.nvim]])
     require("plugins").sync()
 end, {})
-create_cmd("PackerClean", function()
-    cmd([[packadd packer.nvim]])
-    require("plugins").clean()
-end, {})
-create_cmd("PackerCompile", function()
-    cmd([[packadd packer.nvim]])
-    require("plugins").compile()
-end, {})
+-- create_cmd("PackerClean", function()
+--     cmd([[packadd packer.nvim]])
+--     require("plugins").clean()
+-- end, {})
+-- create_cmd("PackerCompile", function()
+--     cmd([[packadd packer.nvim]])
+--     require("plugins").compile()
+-- end, {})
 
 local map = vim.keymap.set
 
@@ -112,6 +118,7 @@ map("n", "<A-j>", "<cmd>resize -2<CR>")
 map("n", "<A-k>", "<cmd>resize +2<CR>")
 map("n", "<A-h>", "<cmd>vertical resize -2<CR>")
 map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
+
 -- Move selected line / block of text in visual mode
 map("x", "K", ":move '<-2<CR>gv-gv")
 map("x", "J", ":move '>+1<CR>gv-gv")
@@ -122,46 +129,13 @@ local nowait = { nowait = true, silent = true }
 map("n", "<leader>h", "<cmd>noh<CR>", nowait)
 
 -- Telescope
--- local telescope = require("telescope.builtin")
+map("n", "<leader>fi", [[<cmd>Telescope find_files theme=get_dropdown<cr>]], nowait)
 
-map(
-    "n",
-    "<leader>fi",
-    [[<cmd>Telescope find_files theme=get_dropdown<cr>]],
-    nowait
-)
+map("n", "<leader>l", [[<cmd>Telescope live_grep theme=get_dropdown<cr>]], nowait)
 
-map(
-    "n",
-    "<leader>g",
-    [[<cmd>Telescope git_files theme=get_dropdown<cr>]],
-    nowait
-)
+map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_dropdown<cr>]], nowait)
 
-map(
-    "n",
-    "<leader>l",
-    [[<cmd>Telescope live_grep theme=get_dropdown<cr>]],
-    nowait
-)
-
-map(
-    "n",
-    "<leader>d",
-    [[<cmd>Telescope diagnostics theme=get_dropdown<cr>]],
-    nowait
-)
-
-map(
-    "n",
-    "<leader>p",
-    [[<cmd>Telescope neoclip a extra=star,plus,b theme=get_dropdown<cr>]],
-    nowait
-)
-
--- Version Control "GIT"
-
-map("n", "<leader>gs", [[<cmd>Neogit<cr>]])
+map("n", "<leader>p", [[<cmd>Telescope neoclip a extra=star,plus,b theme=get_dropdown<cr>]], nowait)
 
 local opt = vim.opt
 
@@ -209,7 +183,7 @@ opt.hidden = true
 opt.shortmess:append("c")
 opt.joinspaces = false
 opt.guicursor = "a:blinkwait700-blinkon400-blinkoff250"
-opt.updatetime = 100
+opt.updatetime = 50
 opt.timeoutlen = 1000
 opt.ttimeoutlen = 10
 opt.timeout = true
@@ -222,7 +196,7 @@ opt.display = "msgsep"
 opt.cursorline = true
 opt.modeline = false
 opt.mouse = "nivh"
-opt.signcolumn = "yes:2"
+opt.signcolumn = "yes"
 opt.cmdheight = 0
 opt.splitbelow = true
 opt.splitright = true
