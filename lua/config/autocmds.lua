@@ -2,12 +2,6 @@ local api = vim.api
 local autocmd = api.nvim_create_autocmd
 local misc_aucmds = api.nvim_create_augroup("misc_aucmds", { clear = true })
 
-autocmd("BufWinEnter", {
-  group = misc_aucmds,
-  callback = function(opt)
-    require("utils").hs_event(opt.buf, misc_aucmds)
-  end,
-})
 
 autocmd("BufWinEnter", { group = misc_aucmds, command = "checktime" })
 autocmd("TextYankPost", {
@@ -29,6 +23,7 @@ autocmd({ "bufenter", "bufwinenter", "cursormoved", "winleave", "vimEnter", "Use
     end
   end,
 })
+
 autocmd("BufWritePre", {
   group = misc_aucmds,
   pattern = "*",

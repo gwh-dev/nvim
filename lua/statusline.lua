@@ -1,4 +1,4 @@
--- local path_sep = require("plenary.path").path.sep
+local path_sep = require("plenary.path").path.sep
 -- local lspsaga = require "lspsaga.symbolwinbar"
 
 local fn = vim.fn
@@ -31,18 +31,18 @@ local function filesize()
     return fmt(format, size, suffixes[i])
 end
 
--- local function fname()
---     local path_head = fn.expand "%:h"
+local function fname()
+    local path_head = fn.expand "%:h"
 
---     if path_head ~= "" then
---         path_head = "%#StatusLineNC# " .. path_head .. path_sep .. "%*%#StatusLine#%t%*"
---     end
+    if path_head ~= "" then
+        path_head = "%#StatusLineNC# " .. path_head .. path_sep .. "%*%#StatusLine#%t%*"
+    end
 
---     local fileModified = ' %{&modified?"":""}'
---     local fileHelp = " %h"
+    local fileModified = ' %{&modified?"":""}'
+    local fileHelp = " %h"
 
---     return path_head .. fileModified .. fileHelp
--- end
+    return path_head .. fileModified .. fileHelp
+end
 
 -- local function lsp()
 --     local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
@@ -120,7 +120,7 @@ local function status()
     end
 
     local parts = {
-        -- fname(), -- show to right path from the last place I have been
+        fname(), -- show to right path from the last place I have been
         "%#statuslinenc#|", -- separator
         -- "%#StatusLine#", -- highlight group
         -- lsp(), -- lsp client name and progress

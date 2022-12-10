@@ -7,16 +7,16 @@ local COMPILE_PATH = fn.stdpath "config" .. "/lua/compiled.lua"
 if fn.empty(fn.glob(INSTALL_PATH)) > 0 then
     print "Clonning packer"
     fn.system { "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", INSTALL_PATH }
-    cmd [[packadd packer.nvim]]
+    cmd "packadd packer.nvim"
     BOOTSTRAP = true
 end
 
 local packer = nil
-local function init()
-    vim.cmd "packadd packer.nvim"
+local function load()
     if packer == nil then
-        local util = require "packer.util"
+        cmd "packadd packer.nvim"
         packer = require "packer"
+        local util = require "packer.util"
         packer.init {
             profile = { enable = true },
             disable_commands = true,
@@ -48,8 +48,8 @@ local function init()
         }
     end
 
-    local use = packer.use
     packer.reset()
+    local use = packer.use
 
     -- Essentials
     use { "wbthomason/packer.nvim" }
@@ -163,41 +163,12 @@ local function init()
     use { "dstein64/vim-startuptime", cmd = "StartupTime", config = [[vim.g.startuptime_tries = 20]] }
 end
 
--- install_packer will use git to install packer to the install_path
-
 local plugins = setmetatable({}, {
     __index = function(_, key)
-        init()
+        load()
         return packer[key]
     end,
 })
-function plugins.command()
-    local create_cmd = vim.api.nvim_create_user_command
-    create_cmd("PackerInstall", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").install()
-    end, {})
-    create_cmd("PackerUpdate", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").update()
-    end, {})
-    create_cmd("PackerSync", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").sync()
-    end, {})
-    create_cmd("PackerClean", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").clean()
-    end, {})
-    create_cmd("PackerCompile", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").compile()
-    end, {})
-    create_cmd("PackerStatus", function()
-        cmd [[packadd packer.nvim]]
-        require("plugins").status()
-    end, {})
-end
 
 if BOOTSTRAP == true then
     plugins.clean()
@@ -206,15 +177,43 @@ if BOOTSTRAP == true then
     print(string.format("packer.nvim installed in: %s and compiled in: %s", INSTALL_PATH, COMPILE_PATH))
 end
 
-if vim.fn.filereadable(COMPILE_PATH) == 1 then
-    require "compiled"
+function plugins.command()
+    local create_cmd = vim.api.nvim_create_user_command
+    create_cmd("PackerInstall", function()
+        cmd [[packadd packer.nvim]]
+        plugins.install()
+    end, {})
+    create_cmd("PackerUpdate", function()
+        cmd [[packadd packer.nvim]]
+        plugins.update()
+    end, {})
+    create_cmd("PackerSync", function()
+        cmd [[packadd packer.nvim]]
+        plugins.sync()
+    end, {})
+    create_cmd("PackerClean", function()
+        cmd [[packadd packer.nvim]]
+        plugins.clean()
+    end, {})
+    create_cmd("PackerCompile", function()
+        cmd [[packadd packer.nvim]]
+        plugins.compile()
+    end, {})
+    create_cmd("PackerStatus", function()
+        cmd [[packadd packer.nvim]]
+        plugins.status()
+    end, {})
+end
+
+if fn.filereadable(COMPILE_PATH) == 1 then
     plugins.command()
+    require "compiled"
 else
+    plugins.command()
     print "I can't find compiled.lua trying again"
     cmd "packadd packer.nvim"
     plugins.compile()
-    require "compiled"
-    plugins.command()
+    pcall(require, "compiled")
 end
 
 return plugins
