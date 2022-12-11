@@ -1,12 +1,4 @@
-local cmp_status_ok, cmp = pcall(require, "cmp")
-if not cmp_status_ok then
-    return
-end
-
-local snip_status_ok, luasnip = pcall(require, "luasnip")
-if not snip_status_ok then
-    return
-end
+local cmp, luasnip = require "cmp", require "luasnip"
 
 luasnip.setup {
     region_check_events = "InsertEnter",
@@ -21,18 +13,32 @@ local function has_words_before()
 end
 
 local lspkind, types, str = require "lspkind", require "cmp.types", require "cmp.utils.str"
+local context = require "cmp.config.context"
 cmp.setup {
     enabled = function()
+        if vim.bo.buftype == "prompt" then
+            return false
+        end
         -- Disable completion in comments
-        local context = require "cmp.config.context"
         -- Keep command mode completion enabled when cursor is in a comment
         if vim.api.nvim_get_mode().mode == "c" then
             return true
         else
             return not context.in_treesitter_capture "comment" and not context.in_syntax_group "Comment"
         end
-        -- require('cmp_dap').is_dap_buffer()
     end,
+    sorting = {
+        comparators = {
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            require("cmp-under-comparator").under,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+        },
+    },
     snippet = {
         expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -56,9 +62,9 @@ cmp.setup {
         documentation = {
             border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
         },
-        completion = {
-            border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-        },
+        -- completion = {
+        --     border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+        -- },
     },
     mapping = cmp.mapping.preset.insert {
         ["<C-j>"] = cmp.mapping(cmp.mapping.scroll_docs(-1), { "i", "c" }),
@@ -92,7 +98,7 @@ cmp.setup {
     formatting = {
         fields = { "kind", "abbr", "menu" },
         format = lspkind.cmp_format {
-            mode = "symbol", -- show only symbol annotations
+            mode = "symbol_text", -- show only symbol annotations
             before = function(entry, vim_item)
                 -- Get the full snippet (and only keep first line)
                 local word = entry:get_insert_text()
@@ -119,10 +125,11 @@ cmp.setup {
         },
     },
     sources = {
+        { name = "nvim_lsp_signature_help" },
         { name = "nvim_lsp" },
         { name = "luasnip" },
-        { name = "buffer" },
         { name = "path" },
+        { name = "buffer" },
     },
 }
 local autopairs, cmp_autopairs = require "nvim-autopairs", require "nvim-autopairs.completion.cmp"

@@ -1,12 +1,11 @@
 local fn = vim.fn
 local cmd = vim.cmd
 local BOOTSTRAP = false
-local INSTALL_PATH = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
-local COMPILE_PATH = fn.stdpath "config" .. "/lua/compiled.lua"
+local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 
-if fn.empty(fn.glob(INSTALL_PATH)) > 0 then
+if fn.empty(fn.glob(install_path)) > 0 then
     print "Clonning packer"
-    fn.system { "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", INSTALL_PATH }
+    fn.system { "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path }
     cmd "packadd packer.nvim"
     BOOTSTRAP = true
 end
@@ -16,13 +15,12 @@ local function load()
     if packer == nil then
         cmd "packadd packer.nvim"
         packer = require "packer"
-        local util = require "packer.util"
         packer.init {
             profile = { enable = true },
             disable_commands = true,
             display = {
                 open_fn = function()
-                    local result, win, buf = util.float {
+                    local result, win, buf = require("packer.util").float {
                         border = {
                             { "╭", "FloatBorder" },
                             { "─", "FloatBorder" },
@@ -41,7 +39,6 @@ local function load()
             git = {
                 clone_timeout = 800, -- In Seconds
             },
-            compile_path = util.join_paths(COMPILE_PATH),
             auto_clean = true,
             compile_on_sync = true,
             auto_reload_compiled = true,
@@ -50,39 +47,49 @@ local function load()
 
     packer.reset()
     local use = packer.use
-
-    -- Essentials
     use { "wbthomason/packer.nvim" }
     use { "nvim-lua/plenary.nvim" }
     use { "nvim-lua/popup.nvim" }
-    -- Performance
     use { "lewis6991/impatient.nvim" }
-    -- Colorscheme
-    use { "folke/tokyonight.nvim" }
-
     use { "windwp/nvim-autopairs" }
-    -- use { "kylechui/nvim-surround", tag = "*", config = [[require("nvim-surround").setup()]] }
+    -- use "EdenEast/nightfox.nvim"
+    use { "folke/tokyonight.nvim" }
+    -- use { "ellisonleao/gruvbox.nvim" }
+    -- use { "Everblush/everblush.nvim", as = "everblush" }
+    -- use { "nyoom-engineering/oxocarbon.nvim", as = "oxocarbon" }
 
+    use "ojroques/nvim-bufdel"
     use {
-        {
-            "neovim/nvim-lspconfig",
-            module = "lspconfig",
-            config = function()
-                require "config.lsp"
-            end,
-            setup = function()
-                vim.defer_fn(function()
-                    require("plugins").loader "nvim-lspconfig"
-                end, 0)
-            end,
-        },
-        { "jose-elias-alvarez/null-ls.nvim", module = "null-ls", after = "nvim-lspconfig" },
-        -- { "glepnir/lspsaga.nvim", branch = "main" },
+        "neovim/nvim-lspconfig",
+        opt = true,
+        config = function()
+            require "config.lsp"
+            vim.defer_fn(function()
+                vim.cmd "silent! e %"
+            end, 0)
+        end,
+        setup = function()
+            lazy "nvim-lspconfig"
+        end,
     }
-    -- snippets
+    use { "jose-elias-alvarez/null-ls.nvim", module = "null-ls", after = "nvim-lspconfig" }
+    use {
+        "glepnir/lspsaga.nvim",
+        branch = "main",
+        after = "nvim-lspconfig",
+        config = function()
+            require "config.saga"
+        end,
+    }
+    use {
+        "simrat39/rust-tools.nvim",
+        ft = "rust",
+        config = function()
+            require("rust-tools").setup {}
+        end,
+    }
     use { "L3MON4D3/LuaSnip", opt = true }
     use { "rafamadriz/friendly-snippets", after = "LuaSnip" }
-    -- cmp
     use {
         "hrsh7th/nvim-cmp",
         event = "InsertEnter",
@@ -90,48 +97,52 @@ local function load()
         wants = "LuaSnip",
         config = [[require('config.cmp')]],
     }
-    use { "onsails/lspkind.nvim" }
-    -- use { "lukas-reineke/cmp-under-comparator" }
-    use { "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" }
+    use "onsails/lspkind.nvim"
+    use "lukas-reineke/cmp-under-comparator"
     use { "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" }
+    use { "saadparwaiz1/cmp_luasnip", after = "nvim-cmp" }
+    use { "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" }
     use { "hrsh7th/cmp-buffer", after = "nvim-cmp" }
     use { "hrsh7th/cmp-path", after = "nvim-cmp" }
-
-    -- Pretty <3
     use {
         "NvChad/nvim-colorizer.lua",
+        opt = true,
         config = [[require('colorizer').setup()]],
-        --setup = [[lazy "nvim-colorizer.lua"]],
+        setup = function()
+            lazy "nvim-colorizer.lua"
+        end,
     }
-    -- [[ Search ]]
-    use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
+    use {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        run = "make",
+        cmd = "Telescope",
+    }
+
     use {
         "nvim-telescope/telescope.nvim",
-        wants = "telescope-fzf-native.nvim",
-        cmd = "Telescope",
-        module = "telescope",
-        config = [[require('config.telescope')]],
+        after = "telescope-fzf-native.nvim",
+        config = function()
+            require "config.telescope"
+        end,
     }
     use { "mbbill/undotree", cmd = "UndotreeToggle", config = [[vim.g.undotree_SetFocusWhenToggle = 1]] }
-    -- [[ Treesitter ]]
     use {
         "nvim-treesitter/nvim-treesitter",
         event = "BufRead",
         run = ":TSUpdate",
-        config = [[require("config.treesitter")]],
+        config = function()
+            require "config.treesitter"
+        end,
     }
     use {
         "RRethy/vim-illuminate",
         after = "nvim-treesitter",
         config = function()
             require("illuminate").configure {
-                -- set highest priority for treesitter, and disable regex search
                 providers = { "treesitter", "lsp" },
             }
         end,
     }
-    -- use { "nvim-treesitter/nvim-treesitter-refactor" }
-    -- [[ Commenting ]]
     use {
         "numToStr/Comment.nvim",
         keys = {
@@ -170,50 +181,34 @@ local plugins = setmetatable({}, {
     end,
 })
 
-if BOOTSTRAP == true then
-    plugins.clean()
-    plugins.compile()
+if BOOTSTRAP then
     plugins.sync()
-    print(string.format("packer.nvim installed in: %s and compiled in: %s", INSTALL_PATH, COMPILE_PATH))
 end
 
-function plugins.command()
-    local create_cmd = vim.api.nvim_create_user_command
-    create_cmd("PackerInstall", function()
-        cmd [[packadd packer.nvim]]
-        plugins.install()
-    end, {})
-    create_cmd("PackerUpdate", function()
-        cmd [[packadd packer.nvim]]
-        plugins.update()
-    end, {})
-    create_cmd("PackerSync", function()
-        cmd [[packadd packer.nvim]]
-        plugins.sync()
-    end, {})
-    create_cmd("PackerClean", function()
-        cmd [[packadd packer.nvim]]
-        plugins.clean()
-    end, {})
-    create_cmd("PackerCompile", function()
-        cmd [[packadd packer.nvim]]
-        plugins.compile()
-    end, {})
-    create_cmd("PackerStatus", function()
-        cmd [[packadd packer.nvim]]
-        plugins.status()
-    end, {})
-end
-
-if fn.filereadable(COMPILE_PATH) == 1 then
-    plugins.command()
-    require "compiled"
-else
-    plugins.command()
-    print "I can't find compiled.lua trying again"
-    cmd "packadd packer.nvim"
+local create_cmd = vim.api.nvim_create_user_command
+create_cmd("Install", function()
+    cmd [[packadd packer.nvim]]
+    plugins.install()
+end, {})
+create_cmd("Update", function()
+    cmd [[packadd packer.nvim]]
+    plugins.update()
+end, {})
+create_cmd("Sync", function()
+    cmd [[packadd packer.nvim]]
+    plugins.sync()
+end, {})
+create_cmd("Clean", function()
+    cmd [[packadd packer.nvim]]
+    plugins.clean()
+end, {})
+create_cmd("Compile", function()
+    cmd [[packadd packer.nvim]]
     plugins.compile()
-    pcall(require, "compiled")
-end
+end, {})
+create_cmd("Status", function()
+    cmd [[packadd packer.nvim]]
+    plugins.status()
+end, {})
 
 return plugins

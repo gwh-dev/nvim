@@ -1,7 +1,7 @@
 local lsp, cmd, fn = vim.lsp, vim.cmd, vim.fn
 local lspconfig = require "lspconfig"
 local null_ls = require "null-ls"
--- local saga = require "lspsaga"
+-- vim.cmd('syntax enable')
 
 local diagnostic = {
     "Error",
@@ -10,18 +10,6 @@ local diagnostic = {
     "Hint",
 }
 
--- saga.init_lsp_saga {
---     symbol_in_winbar = {
---         in_custom = true,
---         separator = " » ",
---     },
---     code_action_lightbulb = {
---         enable_in_insert = false,
---         virtual_text = false,
---     },
---     code_action_icon = "",
---     custom_kind = require("catppuccin.groups.integrations.lsp_saga").custom_kind(),
--- }
 
 for _, type in pairs(diagnostic) do
     local hl = "DiagnosticSign" .. type
@@ -45,17 +33,16 @@ lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_pub
 local map = vim.keymap.set
 local opts = { buffer = true, noremap = true, silent = true }
 local function on_attach(client)
-    -- map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>", opts)
-    -- map({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts)
-    -- map("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts)
-    -- map("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts)
-    -- map("n", "[e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
-    -- map("n", "]e", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
-    -- map("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts)
-    -- map("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts)
-    -- -- TODO: Make it automaticly
-    -- map("n", "<leader>cd", "<cmd>Lspsaga show_line_diagnostics<CR>", opts)
-    -- map("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts)
+    map("n", "gh", "<cmd>Lspsaga lsp_finder<CR>", opts)
+    map({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts)
+    map("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts)
+    map("n", "gd", "<cmd>Lspsaga peek_definition<CR>", opts)
+    map("n", "[e", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
+    map("n", "]e", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
+    map("n", "<leader>o", "<cmd>LSoutlineToggle<CR>", opts)
+    map("n", "<leader>k", "<cmd>Lspsaga hover_doc<CR>", opts)
+    map("n", "<leader>cd", "<cmd>Lspsaga show_line_diagnostics<CR>", opts)
+    map("n", "<leader>cd", "<cmd>Lspsaga show_cursor_diagnostics<CR>", opts)
     -- map("n", "<leader>gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>', keymap_opts)
     -- map("n", "<leader>gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>', keymap_opts)
     -- map("n", "<leader>gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>', keymap_opts)
@@ -130,7 +117,6 @@ local servers = {
         },
     },
 }
-
 local client_capabilities = require("cmp_nvim_lsp").default_capabilities()
 client_capabilities.offsetEncoding = { "utf-8" }
 
@@ -154,16 +140,16 @@ for server, config in pairs(servers) do
 end
 
 -- null-ls setup
-local null_fmt = null_ls.builtins.formatting
-local null_diag = null_ls.builtins.diagnostics
+local formatting = null_ls.builtins.formatting
+local diagnostics = null_ls.builtins.diagnostics
 -- local null_act = null_ls.builtins.code_actions
 null_ls.setup {
     sources = {
-        null_fmt.prettier,
-        null_fmt.rustfmt,
-        null_fmt.shfmt,
-        null_fmt.stylua,
-        null_diag.selene,
+        formatting.prettier,
+        formatting.rustfmt,
+        formatting.shfmt,
+        formatting.stylua,
+        diagnostics.selene,
         -- null_act.gitsigns,
     },
     on_attach = on_attach,

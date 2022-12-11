@@ -1,16 +1,13 @@
-local present, impatient = pcall(require, 'impatient')
+require("impatient").enable_profile()
 
-if present then
-  impatient.enable_profile()
+function _G.lazy(plugin, timer)
+    if plugin then
+        timer = timer or 0
+        vim.defer_fn(function()
+            require("packer").loader(plugin)
+        end, timer)
+    end
 end
--- function _G.lazy(plugin, timer)
---     if plugin then
---         timer = timer or 0
---         vim.defer_fn(function()
---             require("packer").loader(plugin)
---         end, timer)
---     end
--- end
 
 require "plugins"
 require "config.mappings"

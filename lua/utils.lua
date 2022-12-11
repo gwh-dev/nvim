@@ -1,4 +1,4 @@
-local api, fn = vim.api, vim.fn
+local fn = vim.fn
 local M = {}
 
 -- From: https://github.com/jghauser/mkdir.nvim
@@ -9,6 +9,7 @@ function M.mkdir()
     if dir:find "%l+://" == 1 then
         return
     end
+
     if fn.isdirectory(dir) == 0 then
         fn.mkdir(dir, "p")
     end

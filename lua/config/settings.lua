@@ -1,5 +1,7 @@
 local g = vim.g
 
+vim.o.winbar = " "
+
 local builtin = {
     "gzip",
     "2html_plugin",
@@ -25,6 +27,19 @@ for i = 1, #builtin do
     g["loaded_" .. builtin[i]] = 0
 end
 
+g.clipboard = {
+    name = "xclip",
+    copy = {
+        ["+"] = "xclip -quiet -i -selection clipboard",
+        ["*"] = "xclip -quiet -i --selection primary",
+    },
+    paste = {
+        ["+"] = "xclip -o -selection clipboard",
+        ["*"] = "xclip  -o -selection primary",
+    },
+    cache_enabled = 1,
+}
+
 local opt = vim.opt
 opt.wildoptions = "pum"
 opt.wildignorecase = true -- Ignore case when completing file names and directories
@@ -32,6 +47,7 @@ opt.wildcharm = 26 -- equals set wildcharm=<C-Z>, used in the mapping section
 opt.pumheight = 20 -- Limit the amount of autocomplete items shown
 opt.textwidth = 100
 opt.scrolloff = 7
+opt.clipboard = "unnamedplus"
 opt.whichwrap:append "<,>,h,l"
 opt.inccommand = "nosplit"
 opt.lazyredraw = true

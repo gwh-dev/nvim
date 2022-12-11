@@ -1,5 +1,1 @@
-std = "neovim"
-
-[rules]
-
-global_usage = "allow"
+std="lua51+vim"
