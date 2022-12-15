@@ -1,5 +1,6 @@
 local map, g = vim.keymap.set, vim.g
 -- Leader/local leader
+
 g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
@@ -26,28 +27,27 @@ map("n", "<A-j>", "<cmd>resize -2<CR>")
 map("n", "<A-k>", "<cmd>resize +2<CR>")
 map("n", "<A-h>", "<cmd>vertical resize -2<CR>")
 map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
--- Move selected line / block of text in visual mode
--- map("x", "K", ":move '<-2<CR>gv-gv")
--- map("x", "J", ":move '>+1<CR>gv-gv")
 
 local nowait = { nowait = true, silent = true }
 map("n", "<leader>h", "<cmd>noh<CR>", nowait)
--- terminal
-map("n", "<A-d>", "<cmd>Lspsaga open_floaterm<CR>", nowait)
-map("t", "<A-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], nowait)
+
 -- Telescope
-map("n", "<leader>fi", [[<cmd>Telescope find_files<CR>]], nowait)
-map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], nowait)
-map("n", "<leader>d", [[<cmd>Telescope diagnostics<CR>]], nowait)
-map("n", "<leader>b", [[<cmd>Telescope buffers<CR>]], nowait)
+map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], nowait)
+map("n", "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], nowait)
+map("n", "<leader>F", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], nowait)
+map("n", "<leader>l", [[<cmd>Telescope live_grep theme=get_dropdown<CR>]], nowait)
+map("n", "<leader>r", "<cmd>Telescope frecency theme=get_dropdown<CR>", nowait)
+
+-- SymbolOutline
+map("n", "<leader>o", [[<cmd>SymbolsOutline<CR>]], nowait)
 
 -- packer
-map("n", "<localleader>s", [[<cmd>Sync<cr>]], nowait)
-map("n", "<localleader>i", [[<cmd>Install<cr>]], nowait)
-map("n", "<localleader>t", [[<cmd>Status<cr>]], nowait)
-map("n", "<localleader>u", [[<cmd>Update<cr>]], nowait)
-map("n", "<localleader>c", [[<cmd>Clean<cr>]], nowait)
-map("n", "<localleader>m", [[<cmd>Compile<cr>]], nowait)
+map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
+map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], nowait)
+map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], nowait)
+map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], nowait)
+-- map("n", "<localleader>c", [[<cmd>PackerClean<cr>]], nowait)
+-- map("n", "<localleader>C", [[<cmd>PackerCompile<cr>]], nowait)
 
 -- Delete buffers
-map("n", "<localleader>d", [[<cmd>BufDel<cr>]], nowait)
+map("n", "<localleader>q", [[<cmd>BufDel<cr>]], nowait)
