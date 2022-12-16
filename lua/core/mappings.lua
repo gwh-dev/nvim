@@ -34,13 +34,14 @@ map("n", "<leader>h", "<cmd>noh<CR>", nowait)
 -- Telescope
 map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], nowait)
 map("n", "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], nowait)
-map("n", "<leader>F", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], nowait)
-map("n", "<leader>l", [[<cmd>Telescope live_grep theme=get_dropdown<CR>]], nowait)
-map("n", "<leader>r", "<cmd>Telescope frecency theme=get_dropdown<CR>", nowait)
+map("n", "<localleader>c", [[<cmd>Telescope colorscheme theme=get_ivy<CR>]], nowait)
+map("n", "<leader>e", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], nowait)
+map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], nowait)
 
 -- SymbolOutline
-map("n", "<leader>o", [[<cmd>SymbolsOutline<CR>]], nowait)
+-- map("n", "<leader>o", [[<cmd>SymbolsOutline<CR>]], nowait)
 
+map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
 -- packer
 map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
 map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], nowait)
