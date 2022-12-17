@@ -13,6 +13,7 @@ packadd fidget.nvim
 packadd SchemaStore.nvim
 ]]
 
+local lspconfig = require "lspconfig"
 local diagnostic = { "Error", "Warn", "Info", "Hint" }
 for _, type in pairs(diagnostic) do
     local hl = "DiagnosticSign" .. type
@@ -55,52 +56,46 @@ lsp.handlers["textDocument/signatureHelp"] = lsp.with(lsp.handlers.signature_hel
     border = "rounded",
 })
 
-lsp.handlers["window/showMessage"] = function(err, method, params, client_id)
-    vim.notify(method.message, (diagnostic)[params.type])
-end
+-- lsp.handlers["window/showMessage"] = function(err, method, params, client_id)
+--     vim.notify(method.message, (diagnostic)[params.type])
+-- end
 
 require("lsp_signature").setup { bind = true, handler_opts = { border = "rounded" }, toggle_key = "<C-k>" }
 local function on_attach(client, bufnr)
+    local cap = client.server_capabilities
     local map = function(m, lhs, rhs)
         local opts = { remap = false, silent = true, buffer = bufnr }
         vim.keymap.set(m, lhs, rhs, opts)
     end
 
-    -- LSP actions
     map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>")
-
-    map("n", "<leader>a", function()
-        require("core.utils").code_action()
-    end)
-
     map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
     map("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
-    map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
-
-    -- Not used
-    -- map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>")
-    -- map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>")
-    -- map("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>")
-    -- map("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<cr>")
-
+    -- map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
     -- Diagnostics
     map("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>")
     map("n", "]d", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>')
     map("n", "[d", '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>')
-
     -- Telescope
     map("n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>')
     map("n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>')
     map("n", "gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>')
 
-    if client.server_capabilities.documentFormattingProvider then
-        map("n", "<leader>f", function()
-            require("core.utils").format()
-        end)
+    if
+        (cap.document_formatting or cap.document_range_formatting)
+        or (cap.documentFormattingProvider or cap.documentRangeFormattingProvider)
+    then
+        cmd "command! -buffer -range -bang LspFormat lua require('core.utils').format(<line1>, <line2>, <count>, '<bang>' == '!')"
+        map("n", "<leader>f", "<cmd>LspFormat<CR>")
+    end
+
+    if cap.code_action or cap.codeActionProvider then
+        cmd 'command! -buffer -range LspCodeAction lua require("core.utils").code_action(<range> ~= 0, <line1>, <line2>)'
+        map("n", "<leader>a", "<cmd>LspCodeAction<CR>")
     end
 
     cmd "augroup lsp_aucmds"
-    if client.server_capabilities.documentHighlightProvider then
+    if cap.documentHighlightProvider then
         cmd "au CursorHold <buffer> lua vim.lsp.buf.document_highlight()"
         cmd "au CursorMoved <buffer> lua vim.lsp.buf.clear_references()"
     end
@@ -108,12 +103,17 @@ local function on_attach(client, bufnr)
 end
 
 local function prefer_null_ls_fmt(client)
-    client.server_capabilities.documentHighlightProvider = false
-    client.server_capabilities.documentFormattingProvider = false
+    local cap = client.server_capabilities
+    cap.documentHighlightProvider = false
+    cap.documentFormattingProvider = false
+    cap.documentRangeFormattingProvider = false
+    cap.document_formatting = false
+    cap.document_range_formatting = false
     on_attach(client)
 end
 
 local servers = {
+    rust_analyzer = {},
     sumneko_lua = {
         prefer_null_ls = true,
         settings = {
@@ -175,9 +175,9 @@ require("mason").setup {
 }
 
 for server, config in pairs(servers) do
-    require("mason-lspconfig").setup {
-        ensure_installed = { server }, -- Make sure everything is installed
-    }
+    -- require("mason-lspconfig").setup {
+    --     ensure_installed = { server }, -- Make sure everything is installed
+    -- }
     if config.prefer_null_ls then
         if config.on_attach then
             local old_on_attach = config.on_attach
@@ -194,10 +194,12 @@ for server, config in pairs(servers) do
 
     config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
     require("mason-lspconfig").setup_handlers {
-        require("lspconfig")[server].setup(config),
+        function(server_name)
+            server_name = server
+            lspconfig[server_name].setup(config)
+        end,
     }
 end
-
 -- null-ls setup
 local null_ls = require "null-ls"
 local formatting = null_ls.builtins.formatting

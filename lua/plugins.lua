@@ -1,17 +1,32 @@
 local M = {}
 
+-- lua-language-server
 function M.plugins(use)
+    -- use "nvim-tree/nvim-web-devicons"
     -- Colorschemes
     -- use { "olimorris/onedarkpro.nvim" }
-    use { "catppuccin/nvim", as = "catppuccin" }
+    -- use { "catppuccin/nvim", as = "catppuccin" }
+    use { "sainnhe/gruvbox-material" } -- I love this colorscheme but it give 5ms more to startup. That's bad... :(
+    -- use "Murtaza-Udaipurwala/gruvqueen"
+    -- use "luisiacc/gruvbox-baby"
+    -- use "eddyekofo94/gruvbox-flat.nvim"
+    -- use { "tssm/nvim-random-colors" } -- Greate plugin random colorscheme changer
 
     -- Utils
     use {
         "ojroques/nvim-bufdel",
         cmd = "BufDel",
-        config = function()
-            require("bufdel").setup()
-        end,
+        config = [[require("bufdel").setup()]],
+    }
+    use {
+        "monkoose/matchparen.nvim",
+        event = "BufRead",
+        config = [[require("matchparen").setup()]],
+    }
+    use {
+        "mbbill/undotree",
+        cmd = "UndotreeToggle",
+        config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
     }
 
     -- LSP Support
@@ -22,8 +37,15 @@ function M.plugins(use)
     use { "jay-babu/mason-null-ls.nvim", opt = true }
     use { "ray-x/lsp_signature.nvim", opt = true }
     use { "j-hui/fidget.nvim", opt = true }
+    use {
+        "smjonas/inc-rename.nvim",
+        config = function()
+            require("inc_rename").setup()
+        end,
+    }
 
     -- Additional Servers
+    -- TODO: Make it work with the lazyload and config
     use { "b0o/SchemaStore.nvim", opt = true }
     use { "simrat39/rust-tools.nvim", ft = "rust" }
 
@@ -43,8 +65,8 @@ function M.plugins(use)
             { "hrsh7th/cmp-nvim-lua", after = "nvim-cmp" },
             { "hrsh7th/cmp-buffer", after = "nvim-cmp" },
             { "hrsh7th/cmp-path", after = "nvim-cmp" },
-            { "lukas-reineke/cmp-under-comparator", opt = true },
-            { "onsails/lspkind.nvim", opt = true },
+            { "lukas-reineke/cmp-under-comparator" },
+            { "onsails/lspkind.nvim" },
         },
         event = "InsertEnter",
         wants = { "LuaSnip", "nvim-autopairs" },
@@ -81,16 +103,27 @@ function M.plugins(use)
         config = [[require("colorizer").setup()]],
     }
 
-    use { "nvim-telescope/telescope-fzy-native.nvim", opt = true }
+    use {
+        "nvim-telescope/telescope-fzy-native.nvim",
+        opt = true,
+        cmd = "Telescope",
+        run = function()
+            local job_output = require("core.utils").job_output
+            if vim.fn.executable "make" == 0 then
+                return
+            end
+
+            vim.fn.jobstart({ "make" }, {
+                cwd = vim.fn.getcwd() .. "/deps/fzy-lua-native",
+                on_stdout = job_output,
+            })
+        end,
+    }
     -- Search
     use {
         "nvim-telescope/telescope.nvim",
         requires = "nvim-lua/popup.nvim",
-        wants = {
-            "popup.nvim",
-            "telescope-fzy-native.nvim",
-        },
-        cmd = "Telescope",
+        after = "telescope-fzy-native.nvim",
         config = function()
             require "config.telescope"
         end,

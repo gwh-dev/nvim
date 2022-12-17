@@ -1,49 +1,43 @@
 local telescope = require "telescope"
 
 telescope.setup {
-  defaults = {
-    vimgrep_arguments = {
-      "rg",
-      "-L",
-      "--color=never",
-      "--no-heading",
-      "--with-filename",
-      "--line-number",
-      "--column",
-      "--smart-case",
+    defaults = {
+        vimgrep_arguments = {
+            "rg",
+            "-L",
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+        },
+        prompt_prefix = " ",
+        selection_caret = " ",
+        entry_prefix = " ",
+        layout_strategy = "flex",
+        layout_config = { anchor = "N" },
+        scroll_strategy = "cycle",
+        theme = require("telescope.themes").get_dropdown { layout_config = { prompt_position = "top" } },
     },
-    prompt_prefix = " ",
-    selection_caret = " ",
-    entry_prefix = " ",
-    layout_strategy = "flex",
-    layout_config = { anchor = "N" },
-    scroll_strategy = "cycle",
-    theme = require("telescope.themes").get_dropdown { layout_config = { prompt_position = "top" } },
-  },
-  extensions = {
-    fzy_native = {
-      override_generic_sorter = false,
-      override_file_sorter = true,
+    extensions = {
+        fzy_native = {
+            override_generic_sorter = true,
+            override_file_sorter = true,
+        },
     },
-  },
-  pickers = {
-    buffers = {
-      initial_mode = "normal",
-      ignore_current_buffer = true,
-      -- sort_mru = true,
-      sort_lastused = true,
-      previewer = false,
+    pickers = {
+        buffers = {
+            initial_mode = "normal",
+            ignore_current_buffer = true,
+            -- sort_mru = true,
+            sort_lastused = true,
+            previewer = false,
+        },
+        find_files = {
+            previewer = false,
+        },
     },
-    find_files = {
-      initial_mode = "normal",
-      previewer = false,
-    },
-    colorscheme = {
-      -- previewer = false,
-      enable_preview = true,
-      initial_mode = "normal",
-    },
-  },
 }
 
 telescope.load_extension "fzy_native"
