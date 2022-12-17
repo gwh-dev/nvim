@@ -1,8 +1,8 @@
 local fn, cmd, api = vim.fn, vim.cmd, vim.api
 local install_path = fn.stdpath "data" .. "/site/pack/packer/opt/packer.nvim"
 local compile_path = fn.stdpath "config" .. "/lua/packer_compiled.lua"
-
 local bootstrap = false
+
 if fn.empty(fn.glob(install_path)) > 0 then
     print("Clonning packer.nvim inside:", install_path)
     fn.system {
@@ -78,6 +78,7 @@ local commands = {
     "Clean",
     "Status",
 }
+
 for _, cmds in pairs(commands) do
     api.nvim_create_user_command("Packer" .. cmds, function()
         cmd "packadd packer.nvim"

@@ -16,8 +16,8 @@ autocmd("TextYankPost", {
 autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
     group = misc_aucmds,
     pattern = "*",
+    desc = "turn on statusline after this events",
     callback = function()
-        vim.opt.laststatus = 3
         vim.o.statusline = "%!v:lua.require('config.statusline').statusline()"
     end,
     once = true,
@@ -26,17 +26,38 @@ autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
 autocmd("BufWritePre", {
     group = misc_aucmds,
     pattern = "*",
+    desc = "Create a folder if does not exist",
     callback = function()
         require("core.utils").mkdir()
     end,
     once = true,
 })
 
+-- LSP AUTOCMDS
 autocmd("BufReadPost", {
     group = misc_aucmds,
     pattern = "*",
+    desc = "require config.lsp file after event BufReadPost",
     callback = function()
         require "config.lsp"
     end,
     once = true,
+})
+
+autocmd("ModeChanged", {
+    group = misc_aucmds,
+    pattern = { "n:i", "v:s" },
+    desc = "Disable diagnostics while typing",
+    callback = function()
+        vim.diagnostic.disable(0)
+    end,
+})
+
+autocmd("ModeChanged", {
+    group = misc_aucmds,
+    pattern = "i:n",
+    desc = "Enable diagnostics when leaving insert mode",
+    callback = function()
+        vim.diagnostic.enable(0)
+    end,
 })

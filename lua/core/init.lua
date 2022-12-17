@@ -1,16 +1,16 @@
 local cores = {
-  "packer_init",
-  "editer",
-  "autocommands",
-  "mappings",
-  "colors"
+    "editer",
+    "packer_init",
+    "autocommands",
+    "mappings",
+    "colors",
 }
 
 for _, core in ipairs(cores) do
-  local ok, err = pcall(require, "core." .. core)
-  if not ok then
-    error(("Error loading %s.lua...\n\n%s"):format(core, err))
-  end
+    local ok, err = pcall(require, "core." .. core)
+    if not ok then
+        error(("Error loading %s.lua...\n\n%s"):format(core, err))
+    end
 end
 
 -- Slow use this one

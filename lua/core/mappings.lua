@@ -1,14 +1,14 @@
-local map, g = vim.keymap.set, vim.g
+local map = vim.keymap.set
 -- Leader/local leader
-
-g.mapleader = [[ ]]
-g.maplocalleader = [[,]]
 
 local expr = { expr = true, noremap = false, silent = false }
 map("n", "j", "(v:count ? 'j' : 'gj')", expr)
 map("n", "k", "(v:count ? 'k' : 'gk')", expr)
 map("", "<Down>", "(v:count ? 'j' : 'gj')", expr)
 map("", "<Up>", "(v:count ? 'k' : 'gk')", expr)
+    map("n", "<leader>rn", function()
+        return ":IncRename " .. vim.fn.expand "<cword>"
+    end, expr)
 
 -- better navigation betwean panes
 local remap = { remap = true, silent = true }
@@ -38,10 +38,11 @@ map("n", "<localleader>c", [[<cmd>Telescope colorscheme theme=get_ivy<CR>]], now
 map("n", "<leader>e", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], nowait)
 map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], nowait)
 
+-- UndoTree
+map("n", "<leader>u", [[<cmd>UndotreeToggle<CR>]], nowait)
 -- SymbolOutline
 -- map("n", "<leader>o", [[<cmd>SymbolsOutline<CR>]], nowait)
 
-map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
 -- packer
 map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
 map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], nowait)
@@ -49,6 +50,12 @@ map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], nowait)
 map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], nowait)
 -- map("n", "<localleader>c", [[<cmd>PackerClean<cr>]], nowait)
 -- map("n", "<localleader>C", [[<cmd>PackerCompile<cr>]], nowait)
+
+-- Restart
+map("n", "<localleader>r", function()
+    vim.cmd "w!"
+    vim.cmd "source %"
+end, nowait)
 
 -- Delete buffers
 map("n", "<localleader>q", [[<cmd>BufDel<cr>]], nowait)
