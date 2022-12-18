@@ -1,16 +1,8 @@
 local M = {}
 
--- lua-language-server
 function M.plugins(use)
-    -- use "nvim-tree/nvim-web-devicons"
-    -- Colorschemes
-    -- use { "olimorris/onedarkpro.nvim" }
-    -- use { "catppuccin/nvim", as = "catppuccin" }
-    use { "sainnhe/gruvbox-material" } -- I love this colorscheme but it give 5ms more to startup. That's bad... :(
-    -- use "Murtaza-Udaipurwala/gruvqueen"
-    -- use "luisiacc/gruvbox-baby"
-    -- use "eddyekofo94/gruvbox-flat.nvim"
-    -- use { "tssm/nvim-random-colors" } -- Greate plugin random colorscheme changer
+    use { "ellisonleao/gruvbox.nvim" } -- Colorscheme
+    -- use { "stevearc/dressing.nvim" }
 
     -- Utils
     use {
@@ -18,11 +10,13 @@ function M.plugins(use)
         cmd = "BufDel",
         config = [[require("bufdel").setup()]],
     }
+
     use {
         "monkoose/matchparen.nvim",
         event = "BufRead",
         config = [[require("matchparen").setup()]],
     }
+
     use {
         "mbbill/undotree",
         cmd = "UndotreeToggle",
@@ -37,15 +31,9 @@ function M.plugins(use)
     use { "jay-babu/mason-null-ls.nvim", opt = true }
     use { "ray-x/lsp_signature.nvim", opt = true }
     use { "j-hui/fidget.nvim", opt = true }
-    use {
-        "smjonas/inc-rename.nvim",
-        config = function()
-            require("inc_rename").setup()
-        end,
-    }
 
-    -- Additional Servers
-    -- TODO: Make it work with the lazyload and config
+    -- Additional LSP Tools
+    use { "ThePrimeagen/refactoring.nvim" }
     use { "b0o/SchemaStore.nvim", opt = true }
     use { "simrat39/rust-tools.nvim", ft = "rust" }
 
@@ -78,6 +66,12 @@ function M.plugins(use)
     -- Commenting
     use {
         "numToStr/Comment.nvim",
+        requires = {
+            {
+                "JoosepAlviste/nvim-ts-context-commentstring",
+                module = "ts_context_commentstring",
+            },
+        },
         keys = {
             { "n", "gcc" },
             { "n", "gbc" },
@@ -91,10 +85,6 @@ function M.plugins(use)
             }
         end,
     }
-    use {
-        "JoosepAlviste/nvim-ts-context-commentstring",
-        module = "ts_context_commentstring",
-    }
 
     -- Colorizer
     use {
@@ -103,31 +93,15 @@ function M.plugins(use)
         config = [[require("colorizer").setup()]],
     }
 
-    use {
-        "nvim-telescope/telescope-fzy-native.nvim",
-        opt = true,
-        cmd = "Telescope",
-        run = function()
-            local job_output = require("core.utils").job_output
-            if vim.fn.executable "make" == 0 then
-                return
-            end
-
-            vim.fn.jobstart({ "make" }, {
-                cwd = vim.fn.getcwd() .. "/deps/fzy-lua-native",
-                on_stdout = job_output,
-            })
-        end,
-    }
-    -- Search
+    -- Telescope
     use {
         "nvim-telescope/telescope.nvim",
-        requires = "nvim-lua/popup.nvim",
-        after = "telescope-fzy-native.nvim",
-        config = function()
-            require "config.telescope"
-        end,
+        branch = "0.1.x",
+        requires = { "nvim-lua/plenary.nvim" },
+        cmd = "Telescope",
+        config = "require('config.telescope')",
     }
+    use { "nvim-telescope/telescope-fzf-native.nvim", run = "make" }
 
     -- Treesitter
     use {

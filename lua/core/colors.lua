@@ -1,12 +1,13 @@
-local g = vim.g
--- -- foreground option can be material, mix, or original
-g.gruvbox_material_foreground = "material"
--- background option can be hard, medium, soft
-g.gruvbox_material_background = "soft"
-g.gruvbox_material_enable_italic = 1
-g.gruvbox_material_better_performance = 1
-
-vim.cmd.colorscheme [[gruvbox-material]]
+-- require("rose-pine").setup {
+--     dark_variant = "moon",
+--     bold_vert_split = false,
+--     dim_nc_background = false,
+--     disable_background = true,
+--     disable_float_background = false,
+--     disable_italics = false,
+-- }
+-- vim.cmd.colorscheme "rose-pine"
+vim.cmd.colorscheme "gruvbox"
 
 -- local ok, catppuccin = pcall(require, "catppuccin")
 -- if not ok then

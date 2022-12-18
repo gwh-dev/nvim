@@ -23,7 +23,6 @@ local function load()
     if packer == nil then
         cmd [[ packadd packer.nvim ]]
         packer = require "packer"
-        local util = require "packer.util"
         packer.init {
             disable_commands = true,
             git = {
@@ -35,7 +34,7 @@ local function load()
             auto_reload_compiled = true,
             display = {
                 open_fn = function()
-                    local result, win, buf = util.float {
+                    local result, win, buf = require("packer.util").float {
                         border = {
                             { "╭", "FloatBorder" },
                             { "─", "FloatBorder" },

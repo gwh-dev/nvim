@@ -3,12 +3,6 @@ local lsp = vim.lsp
 
 local M = {}
 
-function M.job_output(cid, data, name)
-    for _, val in pairs(data) do
-        print(val)
-    end
-end
-
 function M.mkdir()
     local dir = fn.expand "<afile>:p:h"
 
@@ -19,6 +13,12 @@ function M.mkdir()
 
     if fn.isdirectory(dir) == 0 then
         fn.mkdir(dir, "p")
+    end
+end
+
+function M.job_output(cid, data, name)
+    for _, val in pairs(data) do
+        print(val)
     end
 end
 

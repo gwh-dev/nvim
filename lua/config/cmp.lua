@@ -9,11 +9,6 @@ local types = require "cmp.types"
 local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
 local context = require "cmp.config.context"
 
-vim.api.nvim_command [[ 
-packadd cmp-under-comparator
-packadd lspkind.nvim
-]]
-
 cmp.setup {
     enabled = function()
         -- Disable in Telescope
@@ -54,6 +49,7 @@ cmp.setup {
         { name = "nvim_lua", keyword_length = 3 },
         { name = "luasnip", keyword_length = 2 },
         { name = "buffer", keyword_length = 3 },
+        { name = "neorg" },
     },
     window = {
         documentation = vim.tbl_deep_extend("force", cmp.config.window.bordered(), {
@@ -71,7 +67,7 @@ cmp.setup {
             if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
                 word = vim.lsp.util.parse_snippet(word)
             end
-            kind.kind = strings[1] .. " "
+            kind.kind = " " .. strings[1] .. " "
             kind.menu = "[" .. strings[2] .. "]"
             if
                 entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet

@@ -57,16 +57,16 @@ local function diagnostic_status()
     local info = ""
 
     if count["errors"] ~= 0 then
-        errors = "%#DiagnosticFloatingError# E:" .. count["errors"]
+        errors = "%#DiagnosticError# E:" .. count["errors"]
     end
     if count["warnings"] ~= 0 then
-        warnings = "%#DiagnosticFloatingWarn# W:" .. count["warnings"]
+        warnings = "%#DiagnosticWarn# W:" .. count["warnings"]
     end
     if count["hints"] ~= 0 then
-        hints = "%#DiagnosticFloatingHint# H:" .. count["hints"]
+        hints = "%#DiagnosticHint# H:" .. count["hints"]
     end
     if count["info"] ~= 0 then
-        info = "%#DiagnosticFloatingInfo# I:" .. count["info"]
+        info = "%#DiagnosticInfo# I:" .. count["info"]
     end
 
     return errors .. warnings .. hints .. info

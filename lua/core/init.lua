@@ -1,6 +1,6 @@
 local cores = {
-    "editer",
     "packer_init",
+    "editer",
     "autocommands",
     "mappings",
     "colors",
@@ -13,7 +13,6 @@ for _, core in ipairs(cores) do
     end
 end
 
--- Slow use this one
 -- require("core.packer_init")
 -- require("core.settings")
 -- require("core.autocmds")

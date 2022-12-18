@@ -71,7 +71,7 @@ local function on_attach(client, bufnr)
     map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>")
     map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
     map("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
-    -- map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
+    map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
     -- Diagnostics
     map("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>")
     map("n", "]d", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>')
@@ -104,6 +104,8 @@ end
 
 local function prefer_null_ls_fmt(client)
     local cap = client.server_capabilities
+    -- cap.code_action = false
+    -- cap.codeActionProvider = false
     cap.documentHighlightProvider = false
     cap.documentFormattingProvider = false
     cap.documentRangeFormattingProvider = false
@@ -175,9 +177,9 @@ require("mason").setup {
 }
 
 for server, config in pairs(servers) do
-    -- require("mason-lspconfig").setup {
-    --     ensure_installed = { server }, -- Make sure everything is installed
-    -- }
+    require("mason-lspconfig").setup {
+        ensure_installed = { server }, -- Make sure everything is installed
+    }
     if config.prefer_null_ls then
         if config.on_attach then
             local old_on_attach = config.on_attach
@@ -204,7 +206,7 @@ end
 local null_ls = require "null-ls"
 local formatting = null_ls.builtins.formatting
 local diagnostics = null_ls.builtins.diagnostics
--- local code_action = null_ls.builtins.code_actions
+local code_actions = null_ls.builtins.code_actions
 
 null_ls.setup {
     sources = {
@@ -212,7 +214,9 @@ null_ls.setup {
         formatting.rustfmt,
         formatting.shfmt,
         formatting.stylua,
+        formatting.cbfmt,
         diagnostics.selene,
+        code_actions.refactoring,
     },
     on_attach = on_attach,
 }

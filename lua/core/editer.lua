@@ -45,10 +45,16 @@ opt.clipboard = "unnamedplus"
 opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true
+opt.hlsearch = false
+opt.incsearch = true
+opt.isfname:append "@-@"
 
 opt.number = true
 opt.relativenumber = true
 opt.termguicolors = true
+opt.signcolumn = "yes"
+opt.cmdheight = 0
+opt.colorcolumn = "120"
 -- opt.guicursor = "a:blinkon400-blinkwait700-blinkoff250"
 opt.guicursor = "a:blinkwait700-blinkoff400-blinkon250"
 opt.laststatus = 3
@@ -57,10 +63,10 @@ opt.smartcase = true
 
 opt.tabstop = 4
 opt.softtabstop = 4
-opt.expandtab = true
 opt.shiftwidth = 4
-opt.smartindent = true
+opt.expandtab = true
 
+opt.smartindent = true
 opt.hidden = true
 opt.updatetime = 50
 opt.timeoutlen = 1000
