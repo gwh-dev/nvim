@@ -3,11 +3,17 @@ local luasnip = require "luasnip"
 luasnip.setup { region_check_events = "InsertEnter", delete_check_events = "InsertEnter" }
 require("luasnip.loaders.from_vscode").lazy_load()
 
+vim.cmd [[
+packadd cmp-under-comparator
+packadd lspkind.nvim
+packadd nvim-autopairs
+]]
+
 local cmp = require "cmp"
 local lspkind = require "lspkind"
 local types = require "cmp.types"
-local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
 local context = require "cmp.config.context"
+local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
 
 cmp.setup {
     enabled = function()
@@ -44,19 +50,19 @@ cmp.setup {
         end,
     },
     sources = {
+        { name = "nvim_lsp_signature_help" },
         { name = "path" },
         { name = "nvim_lsp", keyword_length = 3 },
         { name = "nvim_lua", keyword_length = 3 },
         { name = "luasnip", keyword_length = 2 },
         { name = "buffer", keyword_length = 3 },
-        { name = "neorg" },
     },
     window = {
         documentation = vim.tbl_deep_extend("force", cmp.config.window.bordered(), {
             max_height = 15,
             max_width = 60,
         }),
-        -- completion = cmp.config.window.bordered(),
+        completion = cmp.config.window.bordered(),
     },
     formatting = {
         fields = { "kind", "abbr", "menu" },
@@ -97,9 +103,10 @@ cmp.setup {
 
         ["<Tab>"] = cmp.mapping(function(fallback)
             local col = vim.fn.col "." - 1
-
             if cmp.visible() then
                 cmp.select_next_item(cmp_select_opts)
+            elseif luasnip.expand_or_locally_jumpable() then
+                luasnip.expand_or_jump()
             elseif col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
                 fallback()
             else
@@ -107,11 +114,11 @@ cmp.setup {
             end
         end, { "i", "s" }),
 
-        -- when menu is visible, navigate to previous item on list
-        -- else, revert to default behavior
         ["<S-Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item(cmp_select_opts)
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
             else
                 fallback()
             end

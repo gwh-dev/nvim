@@ -2,22 +2,22 @@ local lsp = vim.lsp
 local fn = vim.fn
 local cmd = vim.cmd
 
-cmd [[ 
+cmd [[
 packadd nvim-lspconfig
 packadd null-ls.nvim
 packadd mason.nvim
 packadd mason-lspconfig.nvim
 packadd mason-null-ls.nvim
-packadd lsp_signature.nvim
 packadd fidget.nvim
 packadd SchemaStore.nvim
 ]]
+-- packadd lsp_signature.nvim
 
 local lspconfig = require "lspconfig"
 local diagnostic = { "Error", "Warn", "Info", "Hint" }
 for _, type in pairs(diagnostic) do
     local hl = "DiagnosticSign" .. type
-    fn.sign_define(hl, { numhl = hl, texthl = hl })
+    fn.sign_define(hl, { numhl = hl })
 end
 
 vim.diagnostic.config {
@@ -56,11 +56,6 @@ lsp.handlers["textDocument/signatureHelp"] = lsp.with(lsp.handlers.signature_hel
     border = "rounded",
 })
 
--- lsp.handlers["window/showMessage"] = function(err, method, params, client_id)
---     vim.notify(method.message, (diagnostic)[params.type])
--- end
-
-require("lsp_signature").setup { bind = true, handler_opts = { border = "rounded" }, toggle_key = "<C-k>" }
 local function on_attach(client, bufnr)
     local cap = client.server_capabilities
     local map = function(m, lhs, rhs)
@@ -72,10 +67,12 @@ local function on_attach(client, bufnr)
     map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
     map("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
     map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
+
     -- Diagnostics
     map("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>")
     map("n", "]d", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>')
     map("n", "[d", '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>')
+
     -- Telescope
     map("n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>')
     map("n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>')
@@ -169,6 +166,7 @@ local capabilities = lsp.protocol.make_client_capabilities()
 if not packer_plugins["cmp-nvim-lsp"].loaded then -- it's a global
     cmd [[packadd cmp-nvim-lsp]]
 end
+
 local client_capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 client_capabilities.offsetEncoding = { "utf-8" }
 
@@ -202,6 +200,7 @@ for server, config in pairs(servers) do
         end,
     }
 end
+
 -- null-ls setup
 local null_ls = require "null-ls"
 local formatting = null_ls.builtins.formatting

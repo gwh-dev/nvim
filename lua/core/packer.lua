@@ -4,7 +4,7 @@ local compile_path = fn.stdpath "config" .. "/lua/packer_compiled.lua"
 local bootstrap = false
 
 if fn.empty(fn.glob(install_path)) > 0 then
-    print("Clonning packer.nvim inside:", install_path)
+    print(string.format("Clonning packer.nvim inside:%s\nAfter cloning and syncing it will quit neovim", install_path))
     fn.system {
         "git",
         "clone",
@@ -14,6 +14,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
         install_path,
     }
     api.nvim_command "packadd packer.nvim"
+    print "Done cloning packer.nvim"
     bootstrap = true
 end
 
@@ -62,9 +63,9 @@ end
 
 local plugins = setmetatable({}, {
     __index = function(_, key)
-        if not packer then
+        -- if not packer then
             load()
-        end
+        -- end
         return packer[key]
     end,
 })
@@ -86,14 +87,13 @@ for _, cmds in pairs(commands) do
 end
 
 local group = api.nvim_create_augroup("PackerHooks", { clear = true })
+local autocmd = api.nvim_create_autocmd
 if bootstrap then
     plugins.sync()
-    api.nvim_create_autocmd("User", {
+    autocmd("User", {
         group = group,
         pattern = "PackerComplete",
-        callback = function()
-            vim.cmd "quitall"
-        end,
+        command = "quitall", -- // quit neovim if it's finished syncing
         once = true,
     })
 elseif fn.filereadable(compile_path) == 1 then
@@ -103,7 +103,7 @@ else
     plugins.compile()
 end
 
-api.nvim_create_autocmd("User", {
+autocmd("User", {
     group = group,
     pattern = "PackerCompileDone",
     callback = function()

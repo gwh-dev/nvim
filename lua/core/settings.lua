@@ -4,19 +4,6 @@ local g = vim.g
 g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
-g.clipboard = {
-    name = "xclip",
-    copy = {
-        ["+"] = "xclip -quiet -i -selection clipboard",
-        ["*"] = "xclip -quiet -i --selection primary",
-    },
-    paste = {
-        ["+"] = "xclip -o -selection clipboard",
-        ["*"] = "xclip  -o -selection primary",
-    },
-    cache_enabled = 1,
-}
-
 opt.list = true
 opt.listchars:append {
     tab = "❘-",
@@ -33,15 +20,12 @@ opt.backup = false
 opt.undodir = "/home/gwh/.vim/undodir"
 opt.undofile = true
 
-opt.wildoptions = "pum"
 opt.wildignorecase = true -- Ignore case when completing file names and directories
-opt.wildcharm = 26 -- equals set wildcharm=<C-Z>, used in the mapping section
-opt.pumheight = 20 -- Limit the amount of autocomplete items shown
 
 opt.completeopt = { "menu", "menuone", "noselect" }
 
 opt.scrolloff = 8
-opt.clipboard = "unnamedplus"
+-- opt.clipboard = "unnamedplus"
 opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true

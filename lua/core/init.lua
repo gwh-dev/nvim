@@ -1,9 +1,9 @@
 local cores = {
-    "packer_init",
-    "editer",
+    "packer",
+    "settings",
     "autocommands",
     "mappings",
-    "colors",
+    -- "colors",
 }
 
 for _, core in ipairs(cores) do
