@@ -7,13 +7,6 @@ function M.plugins(use)
         config = [[vim.cmd.colorscheme "gruvbox"]],
     }
 
-    -- Utils
-    use {
-        "ojroques/nvim-bufdel",
-        cmd = "BufDel",
-        config = [[require("bufdel").setup()]],
-    }
-
     -- Motions
     use {
         "ggandor/leap.nvim",
@@ -27,19 +20,6 @@ function M.plugins(use)
         keys = { "s", "S" },
         config = [[require("leap").add_default_mappings()]],
     }
-
-    use {
-        "monkoose/matchparen.nvim",
-        after = "nvim-treesitter",
-        config = [[require("matchparen").setup()]],
-    }
-
-    use {
-        "mbbill/undotree",
-        cmd = "UndotreeToggle",
-        config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
-    }
-    use { "windwp/nvim-autopairs", opt = true }
 
     -- LSP Support // I'm just downloading everything :)
     use { "neovim/nvim-lspconfig", opt = true }
@@ -121,6 +101,36 @@ function M.plugins(use)
         event = "BufRead",
         run = ":TSUpdate",
         config = [[require("config.treesitter")]],
+    }
+
+    -- Utils
+    use {
+        "ojroques/nvim-bufdel",
+        cmd = "BufDel",
+        config = [[require("bufdel").setup()]],
+    }
+
+    use {
+        "monkoose/matchparen.nvim",
+        after = "nvim-treesitter",
+        config = [[require("matchparen").setup()]],
+    }
+
+    use {
+        "kylechui/nvim-surround",
+        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+        config = function()
+            require("nvim-surround").setup {
+                -- Configuration here, or leave empty to use defaults
+            }
+        end,
+    }
+    use { "windwp/nvim-autopairs", opt = true }
+
+    use {
+        "mbbill/undotree",
+        cmd = "UndotreeToggle",
+        config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
     }
 
     -- Profiler

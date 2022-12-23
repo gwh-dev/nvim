@@ -13,7 +13,6 @@ packadd SchemaStore.nvim
 ]]
 -- packadd lsp_signature.nvim
 
-local lspconfig = require "lspconfig"
 local diagnostic = { "Error", "Warn", "Info", "Hint" }
 for _, type in pairs(diagnostic) do
     local hl = "DiagnosticSign" .. type
@@ -169,6 +168,8 @@ end
 
 local client_capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 client_capabilities.offsetEncoding = { "utf-8" }
+
+local lspconfig = require "lspconfig"
 
 require("mason").setup {
     ui = { border = "rounded" },

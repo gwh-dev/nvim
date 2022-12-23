@@ -16,15 +16,6 @@ autocmd("TextYankPost", {
     end,
 })
 
--- vim.cmd "autocmd ColorScheme * lua require('leap').init_highlight(true)"
--- autocmd("ColorScheme", {
---     pattern = "*",
---     group = GwHGroup,
---     callback = function()
---         require("leap").init_highlight(true)
---     end,
--- })
-
 autocmd({ "BufWritePre" }, {
     group = GwHGroup,
     pattern = "*",

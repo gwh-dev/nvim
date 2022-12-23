@@ -54,19 +54,11 @@ map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], nowait)
 -- UndoTree
 map("n", "<leader>u", [[<cmd>UndotreeToggle<CR>]], nowait)
 
--- SymbolOutline
--- map("n", "<leader>o", [[<cmd>SymbolsOutline<CR>]], nowait)
-
 -- packer
 map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
 map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], nowait)
 map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], nowait)
 map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], nowait)
--- map("n", "<localleader>c", [[<cmd>PackerClean<cr>]], nowait)
--- map("n", "<localleader>C", [[<cmd>PackerCompile<cr>]], nowait)
-
--- mason update
-map("n", "<localleader>U", [[<cmd>MasonUpdateAll<cr>]], nowait)
 
 -- Delete buffers
 map("n", "<localleader>q", [[<cmd>BufDel<cr>]], nowait)

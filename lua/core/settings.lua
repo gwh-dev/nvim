@@ -25,7 +25,6 @@ opt.wildignorecase = true -- Ignore case when completing file names and director
 opt.completeopt = { "menu", "menuone", "noselect" }
 
 opt.scrolloff = 8
--- opt.clipboard = "unnamedplus"
 opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true
@@ -34,13 +33,11 @@ opt.incsearch = true
 opt.isfname:append "@-@"
 
 opt.number = true
-opt.relativenumber = true
+opt.relativenumber = false
 opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.cmdheight = 0
 opt.colorcolumn = "120"
--- opt.guicursor = "a:blinkon400-blinkwait700-blinkoff250"
-opt.guicursor = "a:blinkwait700-blinkoff400-blinkon250"
 opt.laststatus = 3
 
 opt.smartcase = true
