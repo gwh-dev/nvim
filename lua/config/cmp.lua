@@ -88,14 +88,9 @@ cmp.setup {
     mapping = {
         -- confirm selection
         ["<CR>"] = cmp.mapping.confirm { select = false },
-        ["<C-y>"] = cmp.mapping.confirm { select = true },
 
         -- complete selection
         ["<C-Space>"] = cmp.mapping.complete(),
-
-        -- navigate items on the list
-        ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select_opts),
-        ["<C-n>"] = cmp.mapping.select_next_item(cmp_select_opts),
 
         -- scroll up and down in the completion documentation
         ["<C-f>"] = cmp.mapping.scroll_docs(5),

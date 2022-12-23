@@ -112,7 +112,7 @@ end
 
 local servers = {
     rust_analyzer = {},
-    sumneko_lua = {
+    sumneko_lua = {--},
         prefer_null_ls = true,
         settings = {
             Lua = {
@@ -196,7 +196,6 @@ for server, config in pairs(servers) do
     config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
     require("mason-lspconfig").setup_handlers {
         function(server_name)
-            server_name = server
             lspconfig[server_name].setup(config)
         end,
     }
