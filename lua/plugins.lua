@@ -1,12 +1,6 @@
 local M = {}
 
 function M.plugins(use)
-    -- Colorscheme
-    use {
-        "ellisonleao/gruvbox.nvim",
-        config = [[vim.cmd.colorscheme "gruvbox"]],
-    }
-
     -- Motions
     use {
         "ggandor/leap.nvim",
@@ -89,7 +83,7 @@ function M.plugins(use)
     -- Telescope
     use {
         "nvim-telescope/telescope.nvim",
-        requires = "nvim-telescope/telescope-fzy-native.nvim",
+        requires = { "nvim-telescope/telescope-fzy-native.nvim", opt = true },
         wants = "telescope-fzy-native.nvim",
         cmd = "Telescope",
         config = [[require("config.telescope")]],
@@ -118,6 +112,7 @@ function M.plugins(use)
 
     use {
         "kylechui/nvim-surround",
+        keys = { "ys", "ds", "cs" },
         tag = "*", -- Use for stability; omit to use `main` branch for the latest features
         config = function()
             require("nvim-surround").setup {
@@ -131,6 +126,13 @@ function M.plugins(use)
         "mbbill/undotree",
         cmd = "UndotreeToggle",
         config = [[vim.g.undotree_SetFocusWhenToggle = 1]],
+    }
+
+    -- Colorscheme
+    use {
+        "ellisonleao/gruvbox.nvim",
+        config = [[vim.cmd.colorscheme "gruvbox"]],
+        after = "nvim-treesitter",
     }
 
     -- Profiler

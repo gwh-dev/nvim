@@ -11,7 +11,6 @@ packadd mason-null-ls.nvim
 packadd fidget.nvim
 packadd SchemaStore.nvim
 ]]
--- packadd lsp_signature.nvim
 
 local diagnostic = { "Error", "Warn", "Info", "Hint" }
 for _, type in pairs(diagnostic) do
@@ -112,7 +111,7 @@ end
 
 local servers = {
     rust_analyzer = {},
-    sumneko_lua = {--},
+    sumneko_lua = { --},
         prefer_null_ls = true,
         settings = {
             Lua = {
@@ -195,8 +194,8 @@ for server, config in pairs(servers) do
 
     config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
     require("mason-lspconfig").setup_handlers {
-        function(server_name)
-            lspconfig[server_name].setup(config)
+        function()
+            lspconfig[server].setup(config)
         end,
     }
 end

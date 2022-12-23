@@ -62,7 +62,10 @@ cmp.setup {
             max_height = 15,
             max_width = 60,
         }),
-        completion = cmp.config.window.bordered(),
+        completion = vim.tbl_deep_extend("force", cmp.config.window.bordered(), {
+            col_offset = -3,
+            side_padding = 0,
+        }),
     },
     formatting = {
         fields = { "kind", "abbr", "menu" },
@@ -93,8 +96,8 @@ cmp.setup {
         ["<C-Space>"] = cmp.mapping.complete(),
 
         -- scroll up and down in the completion documentation
-        ["<C-f>"] = cmp.mapping.scroll_docs(5),
-        ["<C-u>"] = cmp.mapping.scroll_docs(-5),
+        -- ["<C-f>"] = cmp.mapping.scroll_docs(5),
+        -- ["<C-u>"] = cmp.mapping.scroll_docs(-5),
 
         ["<Tab>"] = cmp.mapping(function(fallback)
             local col = vim.fn.col "." - 1
