@@ -21,15 +21,11 @@ function M.plugins(use)
             {
                 "ggandor/flit.nvim",
                 keys = { "f", "F", "t", "T" },
-                config = function()
-                    require("flit").setup()
-                end,
+                config = [[require("flit").setup()]],
             },
         },
         keys = { "s", "S" },
-        config = function()
-            require("leap").add_default_mappings()
-        end,
+        config = [[require("leap").add_default_mappings()]],
     }
 
     use {
@@ -77,9 +73,7 @@ function M.plugins(use)
         },
         event = "InsertEnter",
         wants = "LuaSnip",
-        config = function()
-            require "config.cmp"
-        end,
+        config = [[require "config.cmp"]],
     }
 
     -- Commenting
@@ -115,25 +109,10 @@ function M.plugins(use)
     -- Telescope
     use {
         "nvim-telescope/telescope.nvim",
-        -- branch = "0.1.x",
+        requires = "nvim-telescope/telescope-fzy-native.nvim",
+        wants = "telescope-fzy-native.nvim",
         cmd = "Telescope",
-        config = function()
-            require "config.telescope"
-        end,
-    }
-    use {
-        "nvim-telescope/telescope-fzy-native.nvim",
-        run = function()
-            local job_output = require("core.utils").job_output()
-            if vim.fn.executable "make" == 0 then
-                return
-            end
-
-            vim.fn.jobstart({ "make" }, {
-                cwd = vim.fn.getcwd() .. "/deps/fzy-lua-native",
-                on_stdout = job_output,
-            })
-        end,
+        config = [[require("config.telescope")]],
     }
 
     -- Treesitter
@@ -141,9 +120,7 @@ function M.plugins(use)
         "nvim-treesitter/nvim-treesitter",
         event = "BufRead",
         run = ":TSUpdate",
-        config = function()
-            require "config.treesitter"
-        end,
+        config = [[require("config.treesitter")]],
     }
 
     -- Profiler
