@@ -9,7 +9,6 @@ packadd mason.nvim
 packadd mason-lspconfig.nvim
 packadd mason-null-ls.nvim
 packadd fidget.nvim
-packadd SchemaStore.nvim
 ]]
 
 local diagnostic = { "Error", "Warn", "Info", "Hint" }
@@ -110,7 +109,8 @@ local function prefer_null_ls_fmt(client)
 end
 
 local servers = {
-    rust_analyzer = {},
+    rust_analyzer = {
+    },
     sumneko_lua = { --},
         prefer_null_ls = true,
         settings = {

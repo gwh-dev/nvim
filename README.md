@@ -2,4 +2,5 @@
 - Fast (AVG 13ms)
 - **Half** Stable
 - It just work
-### No bullshit
+### TODO
+- Make more stable lsp config with cmp

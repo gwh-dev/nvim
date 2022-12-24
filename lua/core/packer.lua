@@ -58,13 +58,14 @@ local function load()
     use { "wbthomason/packer.nvim", opt = true }
     use { "nvim-lua/plenary.nvim" }
     use { "lewis6991/impatient.nvim" }
+    use { "nvim-lua/popup.nvim" }
     require("plugins").plugins(use)
 end
 
 local plugins = setmetatable({}, {
     __index = function(_, key)
         -- if not packer then
-            load()
+        load()
         -- end
         return packer[key]
     end,

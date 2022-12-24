@@ -3,16 +3,17 @@ local M = {}
 function M.plugins(use)
     -- Motions
     use {
-        "ggandor/leap.nvim",
-        requires = {
-            {
-                "ggandor/flit.nvim",
-                keys = { "f", "F", "t", "T" },
-                config = [[require("flit").setup()]],
-            },
+        {
+            "ggandor/leap.nvim",
+            keys = { "s", "S" },
+            config = [[require("leap").add_default_mappings()]],
+            requires = { "tpope/vim-repeat", after = "leap.nvim" },
         },
-        keys = { "s", "S" },
-        config = [[require("leap").add_default_mappings()]],
+        {
+            "ggandor/flit.nvim",
+            keys = { "f", "F", "t", "T" },
+            config = [[require'flit'.setup { labeled_modes = 'nv' }]],
+        },
     }
 
     -- LSP Support // I'm just downloading everything :)
@@ -25,18 +26,19 @@ function M.plugins(use)
 
     -- LSP Additionals // Not lazyloaded yet
     use { "ThePrimeagen/refactoring.nvim" }
-    use { "b0o/SchemaStore.nvim", opt = true }
-    -- use { "simrat39/rust-tools.nvim", ft = "rust" }
+    use { "b0o/SchemaStore.nvim", ft = "json" }
+    use { "simrat39/rust-tools.nvim", ft = "rust" }
 
     -- Snippets
     use { "L3MON4D3/LuaSnip", opt = true }
-    use { "rafamadriz/friendly-snippets" } -- No need for lazyloading
+    use { "rafamadriz/friendly-snippets", after = "LuaSnip" } -- No need for lazyloading
 
     -- Autocompletion
     use {
         "hrsh7th/nvim-cmp",
         requires = {
             { "hrsh7th/cmp-nvim-lsp", after = "nvim-cmp" },
+            --
             { "hrsh7th/cmp-nvim-lsp-signature-help", after = "nvim-cmp" },
             { "saadparwaiz1/cmp_luasnip", after = "cmp-nvim-lsp-signature-help" },
             { "hrsh7th/cmp-nvim-lua", after = "cmp_luasnip" },
@@ -112,13 +114,9 @@ function M.plugins(use)
 
     use {
         "kylechui/nvim-surround",
-        -- keys = { "ys", "ds", "cs" },
         tag = "*", -- Use for stability; omit to use `main` branch for the latest features
-        config = function()
-            require("nvim-surround").setup {
-                -- Configuration here, or leave empty to use defaults
-            }
-        end,
+        config = [[require("nvim-surround").setup()]],
+        after = "nvim-treesitter",
     }
     use { "windwp/nvim-autopairs", opt = true }
 
@@ -130,8 +128,9 @@ function M.plugins(use)
 
     -- Colorscheme
     use {
-        "ellisonleao/gruvbox.nvim",
-        config = [[vim.cmd.colorscheme "gruvbox"]],
+        "sainnhe/gruvbox-material",
+        -- "ellisonleao/gruvbox.nvim",
+        config = [[vim.cmd.colorscheme "gruvbox-material"]],
         after = "nvim-treesitter",
     }
 

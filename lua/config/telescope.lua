@@ -35,6 +35,7 @@ telescope.setup {
             previewer = false,
         },
         find_files = {
+            initial_mode = "normal",
             previewer = false,
         },
     },
