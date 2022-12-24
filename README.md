@@ -1,5 +1,5 @@
 # Neovim Config
-- Fast (AVG 16ms)
+- Fast (AVG 13ms)
 - **Half** Stable
 - It just work
-### No bullshit 
+### No bullshit

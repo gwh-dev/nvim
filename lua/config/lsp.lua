@@ -174,8 +174,9 @@ require("mason").setup {
     ui = { border = "rounded" },
 }
 
+local mason_lspconfig = require "mason-lspconfig"
 for server, config in pairs(servers) do
-    require("mason-lspconfig").setup {
+    mason_lspconfig.setup {
         ensure_installed = { server }, -- Make sure everything is installed
     }
     if config.prefer_null_ls then
@@ -193,8 +194,8 @@ for server, config in pairs(servers) do
     end
 
     config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
-    require("mason-lspconfig").setup_handlers {
-        function()
+    mason_lspconfig.setup_handlers {
+        [server] = function()
             lspconfig[server].setup(config)
         end,
     }

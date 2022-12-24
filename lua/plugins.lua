@@ -112,7 +112,7 @@ function M.plugins(use)
 
     use {
         "kylechui/nvim-surround",
-        keys = { "ys", "ds", "cs" },
+        -- keys = { "ys", "ds", "cs" },
         tag = "*", -- Use for stability; omit to use `main` branch for the latest features
         config = function()
             require("nvim-surround").setup {

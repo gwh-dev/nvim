@@ -1,9 +1,10 @@
 local cores = {
+
     "packer",
     "settings",
     "autocommands",
     "mappings",
-    -- "colors",
+
 }
 
 for _, core in ipairs(cores) do
