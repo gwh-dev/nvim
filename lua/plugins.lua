@@ -15,18 +15,26 @@ function M.plugins(use)
             config = [[require'flit'.setup { labeled_modes = 'nv' }]],
         },
     }
+    use {
+        "nvim-neo-tree/neo-tree.nvim", -- I like to see files in a tree way
+        config = [[vim.g.neo_tree_remove_legacy_commands = true]],
+        requires = {
+            { "MunifTanjim/nui.nvim", cmd = "Neotree" },
+            { "nvim-lua/plenary.nvim" },
+            { "nvim-tree/nvim-web-devicons" },
+        },
+        after = "nui.nvim",
+        branch = "v2.x",
+    }
 
     -- LSP Support
     use { "neovim/nvim-lspconfig", opt = true }
     use { "jose-elias-alvarez/null-ls.nvim", opt = true }
-
-    -- mason
     use { "williamboman/mason.nvim", opt = true }
     use { "williamboman/mason-lspconfig.nvim", opt = true }
     use { "jay-babu/mason-null-ls.nvim", opt = true }
-
-    -- Lsp Progress
     use { "j-hui/fidget.nvim", opt = true }
+    use { "SmiteshP/nvim-navic" }
 
     -- LSP Additionals // TODO
     ---use { "ThePrimeagen/refactoring.nvim" }
@@ -86,10 +94,11 @@ function M.plugins(use)
         config = [[require("colorizer").setup()]],
     }
 
+    use { "nvim-telescope/telescope-fzy-native.nvim", opt = true }
     -- Telescope
     use {
         "nvim-telescope/telescope.nvim",
-        requires = { "nvim-telescope/telescope-fzy-native.nvim", opt = true },
+        requires = { { "nvim-lua/plenary.nvim" } },
         wants = "telescope-fzy-native.nvim",
         cmd = "Telescope",
         config = [[require("config.telescope")]],
@@ -131,14 +140,20 @@ function M.plugins(use)
     }
 
     -- Colorscheme
+    -- use {
+    --     "sainnhe/gruvbox-material",
+    --     -- "ellisonleao/gruvbox.nvim",
+    --     config = [[vim.cmd.colorscheme "gruvbox-material"]],
+    --     after = "nvim-treesitter",
+    -- }
     use {
-        "sainnhe/gruvbox-material",
-        -- "ellisonleao/gruvbox.nvim",
-        config = [[vim.cmd.colorscheme "gruvbox-material"]],
+        "catppuccin/nvim",
+        as = "catppuccin",
+        config = [[require("config.colorscheme")]],
         after = "nvim-treesitter",
     }
 
-    -- Profiler
+    -- Profiler // Not working
     use {
         "dstein64/vim-startuptime",
         cmd = "StartupTime",

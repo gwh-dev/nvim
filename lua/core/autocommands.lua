@@ -2,12 +2,10 @@ local api = vim.api
 local fn = vim.fn
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
-local GwHGroup = augroup("GwH", { clear = true })
-local yank_group = augroup("HighlightYank", {})
-
-autocmd("BufWinEnter", { group = GwHGroup, command = "checktime" })
+local group = augroup("GwH", { clear = true })
+autocmd("BufWinEnter", { group = group, command = "checktime" })
 autocmd("TextYankPost", {
-    group = yank_group,
+    group = augroup("HighlightYank", {}),
     callback = function()
         vim.highlight.on_yank {
             higroup = "IncSearch",
@@ -17,13 +15,13 @@ autocmd("TextYankPost", {
 })
 
 autocmd({ "BufWritePre" }, {
-    group = GwHGroup,
+    group = group,
     pattern = "*",
     command = "%s/\\s\\+$//e",
 })
 
 autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
-    group = GwHGroup,
+    group = augroup("status", {}),
     pattern = "*",
     callback = function()
         vim.o.statusline = "%!v:lua.require('config.statusline').statusline()"
@@ -33,7 +31,7 @@ autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
 })
 
 autocmd("BufWritePre", {
-    group = GwHGroup,
+    group = group,
     pattern = "*",
     callback = function()
         require("core.utils").mkdir()
@@ -44,21 +42,21 @@ autocmd("BufWritePre", {
 
 -- LSP AUTOCMDS
 autocmd("BufReadPost", {
-    group = GwHGroup,
+    group = group,
     pattern = "*",
     callback = function()
         local path = fn.stdpath "data" .. "/site/pack/packer/opt/nvim-lspconfig"
         if fn.empty(fn.glob(path)) > 0 then
             return
         end
-            require "config.lsp"
+        require "config.lsp"
     end,
     once = true,
     desc = "require config.lsp file after event BufReadPost",
 })
 
 autocmd("ModeChanged", {
-    group = GwHGroup,
+    group = group,
     pattern = { "n:i", "v:s" },
     callback = function()
         vim.diagnostic.disable(0)
@@ -67,7 +65,7 @@ autocmd("ModeChanged", {
 })
 
 autocmd("ModeChanged", {
-    group = GwHGroup,
+    group = group,
     pattern = "i:n",
     callback = function()
         vim.diagnostic.enable(0)

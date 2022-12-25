@@ -121,6 +121,7 @@ cmp.setup {
             end
         end, { "i", "s" }),
     },
+    experimental = { ghost_text = true },
 }
 
 require("nvim-autopairs").setup {

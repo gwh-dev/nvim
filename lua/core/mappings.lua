@@ -27,9 +27,9 @@ map("n", "<A-k>", "<cmd>resize +2<CR>")
 map("n", "<A-h>", "<cmd>vertical resize -2<CR>")
 map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
 
-local nowait = { nowait = true, silent = true }
+local silent = { silent = true }
 -- Remove highlighting
-map("n", "<leader>h", "<cmd>noh<CR>", nowait)
+map("n", "<leader>h", "<cmd>noh<CR>", silent)
 
 -- Paste and keep yanked before with out changing it
 map("x", "<leader>p", '"_dP')
@@ -46,19 +46,22 @@ map("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
 map("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 -- Telescope
-map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], nowait)
-map("n", "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], nowait)
-map("n", "<leader>e", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], nowait)
-map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], nowait)
+map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], silent)
+map("n", "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], silent)
+map("n", "<leader>i", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], silent)
+map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], silent)
 
 -- UndoTree
-map("n", "<leader>u", [[<cmd>UndotreeToggle<CR>]], nowait)
+map("n", "<leader>u", [[<cmd>UndotreeToggle<CR>]], silent)
+
+-- NeoTree
+map("n", "<leader>e", [[<cmd>Neotree toggle source=filesystem reveal=true position=right<CR>]], silent)
 
 -- packer
-map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], nowait)
-map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], nowait)
-map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], nowait)
-map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], nowait)
+map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], silent)
+map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], silent)
+map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], silent)
+map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], silent)
 
 -- Delete buffers
-map("n", "<localleader>q", [[<cmd>BufDel<cr>]], nowait)
+map("n", "<localleader>q", [[<cmd>BufDel<cr>]], silent)

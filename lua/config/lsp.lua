@@ -35,7 +35,7 @@ vim.diagnostic.config {
 
 require("fidget").setup {
     text = {
-        spinner = "moon",
+        spinner = "dots",
     },
     window = {
         blend = 0,
@@ -94,6 +94,10 @@ local function on_attach(client, bufnr)
         cmd "au CursorMoved <buffer> lua vim.lsp.buf.clear_references()"
     end
     cmd "augroup END"
+
+    if cap.documentSymbolProvider then
+        require("nvim-navic").attach(client, bufnr)
+    end
 end
 
 local function prefer_null_ls_fmt(client)
@@ -105,12 +109,12 @@ local function prefer_null_ls_fmt(client)
     cap.documentRangeFormattingProvider = false
     cap.document_formatting = false
     cap.document_range_formatting = false
+    cap.documentSymbolProvider = false
     on_attach(client)
 end
 
 local servers = {
-    rust_analyzer = {
-    },
+    rust_analyzer = {},
     sumneko_lua = { --},
         prefer_null_ls = true,
         settings = {

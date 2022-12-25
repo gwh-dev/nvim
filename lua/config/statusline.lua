@@ -2,12 +2,32 @@ local fn = vim.fn
 local fmt = string.format
 
 local function fname()
-    local path_head = fn.expand "%:h"
-    if path_head ~= "" then
-        path_head = "%#StatusLineNC# " .. path_head .. "%#StatusLine#" .. "/%t"
+    local filename = fn.expand "%:t"
+    local extension = fn.expand "%:e"
+    local path = fn.expand "%:h"
+    local mod = "/%#Statusline#"
+
+    if not path ~= 0 then
+        if vim.api.nvim_buf_get_option(0, "mod") then
+            mod = "/%#Winbar#"
+        end
+        path = "%#StatusLineNC# " .. path .. mod .. filename .. "%*"
     end
-    local fileModified = ' %{&modified?"":""}'
-    return path_head .. fileModified
+
+    local file_icon, file_icon_color =
+        require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
+
+    local hl_group = "FileIconColor" .. extension
+
+    vim.api.nvim_set_hl(0, hl_group, { fg = file_icon_color })
+
+    if file_icon == nil then
+        file_icon = ""
+        file_icon_color = ""
+    end
+
+    file_icon = "%#" .. hl_group .. "#" .. file_icon .. "%*"
+    return string.format("%s%s", file_icon, path)
 end
 
 local function encoding()
@@ -69,7 +89,7 @@ local function diagnostic_status()
         info = "%#DiagnosticSignInfo#  " .. count["info"]
     end
 
-    return errors .. warnings .. hints .. info
+    return errors .. warnings .. hints .. info .. "%*"
 end
 
 local function clientName()
@@ -81,9 +101,69 @@ local function clientName()
     for _, client in ipairs(clients) do
         local filetypes = client.config.filetypes
         if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-            return "|  " .. string.upper(client.name)
+            return " " .. string.upper(client.name) .. "  |"
         end
     end
+    return ""
+end
+
+local navic_loaded, navic = pcall(require, "nvim-navic")
+
+navic.setup {
+    icons = {
+        File = "file ",
+        Module = "module ",
+        Namespace = "namespace ",
+        Package = "package ",
+        Class = "class ",
+        Method = "method ",
+        Property = "property ",
+        Field = "field ",
+        Constructor = "constructor ",
+        Enum = "enum ",
+        Interface = "interface ",
+        Function = "function ",
+        Variable = "variable ",
+        Constant = "constant ",
+        String = "string ",
+        Number = "number ",
+        Boolean = "boolean ",
+        Array = "array ",
+        Object = "object ",
+        Key = "key ",
+        Null = "null ",
+        EnumMember = "enum member ",
+        Struct = "struct ",
+        Event = "event ",
+        Operator = "operator ",
+        TypeParameter = "type parameter ",
+    },
+    highlight = true,
+    separator = " " .. "❭" .. " ",
+    depth_limit = 0,
+    depth_limit_indicator = "..",
+}
+
+local get_navic = function()
+    if not navic_loaded then
+        return ""
+    end
+
+    local navic_location_loaded, navic_location = pcall(navic.get_location, {})
+
+    if not navic_location_loaded then
+        return ""
+    end
+
+    if not navic.is_available() or navic_location == "error" then
+        return ""
+    end
+
+    if not navic_location == nil then
+        return "❭" .. " " .. navic_location
+        -- return require("config.navic").separator .. " " .. navic_location
+    end
+
     return ""
 end
 
@@ -97,17 +177,14 @@ end
 
 local function statusline()
     local parts = {
-        fname(),
         clientName(),
+        fname(),
+        get_navic(),
         get_paste(),
         get_readonly_space(),
-        diagnostic_status(),
-        -- diagnostic_status(), -- if i didn't put the 'statusline' highlight, it will change the lineinfo with diagnostic_status colors
-        "%#StatusLine#", -- Changing the colorscheme for lineinfo to 'Statusline' The normal color
         "%=", -- To make a large space everything down is on the right side
-        -- "%#StatusLine#", -- Changing the colorscheme for lineinfo to 'Statusline' The normal color
-        "%1l%L%*",
-        " %1c",
+        diagnostic_status(),
+        "%1l/%L:%1c%*",
         filesize(),
         encoding(),
     }
