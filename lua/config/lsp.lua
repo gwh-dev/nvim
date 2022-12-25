@@ -140,23 +140,7 @@ local servers = {
             completeUnimported = true,
         },
     },
-    jsonls = {
-        settings = {
-            json = {
-                schemas = require("schemastore").json.schemas(),
-                validate = { enable = true },
-            },
-        },
-        setup = {
-            commands = {
-                Format = {
-                    function()
-                        lsp.buf.range_formatting({}, { 0, 0 }, { fn.line "$", 0 })
-                    end,
-                },
-            },
-        },
-    },
+    jsonls = {},
 }
 
 local capabilities = lsp.protocol.make_client_capabilities()

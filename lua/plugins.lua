@@ -16,18 +16,22 @@ function M.plugins(use)
         },
     }
 
-    -- LSP Support // I'm just downloading everything :)
+    -- LSP Support
     use { "neovim/nvim-lspconfig", opt = true }
     use { "jose-elias-alvarez/null-ls.nvim", opt = true }
+
+    -- mason
     use { "williamboman/mason.nvim", opt = true }
     use { "williamboman/mason-lspconfig.nvim", opt = true }
     use { "jay-babu/mason-null-ls.nvim", opt = true }
+
+    -- Lsp Progress
     use { "j-hui/fidget.nvim", opt = true }
 
-    -- LSP Additionals // Not lazyloaded yet
-    use { "ThePrimeagen/refactoring.nvim" }
-    use { "b0o/SchemaStore.nvim", ft = "json" }
-    use { "simrat39/rust-tools.nvim", ft = "rust" }
+    -- LSP Additionals // TODO
+    ---use { "ThePrimeagen/refactoring.nvim" }
+    ---use { "b0o/SchemaStore.nvim", ft = "json" }
+    ---use { "simrat39/rust-tools.nvim", ft = "rust" }
 
     -- Snippets
     use { "L3MON4D3/LuaSnip", opt = true }

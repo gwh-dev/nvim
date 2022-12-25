@@ -10,14 +10,13 @@ packadd nvim-autopairs
 ]]
 
 local cmp = require "cmp"
-local lspkind = require "lspkind"
 local types = require "cmp.types"
 local context = require "cmp.config.context"
-local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
+local select_opts = { behavior = cmp.SelectBehavior.Select }
 
 cmp.setup {
+    preselect = types.cmp.PreselectMode.None,
     enabled = function()
-        -- Disable in Telescope
         if vim.bo.buftype == "prompt" then
             return false
         end
@@ -49,14 +48,16 @@ cmp.setup {
             luasnip.lsp_expand(args.body)
         end,
     },
-    sources = {
-        { name = "path" },
+    sources = cmp.config.sources({
+        { name = "nvim_lua", keyword_length = 3 },
         { name = "nvim_lsp", keyword_length = 3 },
         { name = "nvim_lsp_signature_help" },
-        { name = "nvim_lua", keyword_length = 3 },
         { name = "luasnip", keyword_length = 2 },
+        { name = "path" },
+    }, {
         { name = "buffer", keyword_length = 3 },
-    },
+    }),
+    confirmation = { default_behavior = types.cmp.ConfirmBehavior.Replace },
     window = {
         documentation = vim.tbl_deep_extend("force", cmp.config.window.bordered(), {
             max_height = 15,
@@ -70,7 +71,7 @@ cmp.setup {
     formatting = {
         fields = { "kind", "abbr", "menu" },
         format = function(entry, vim_item)
-            local kind = lspkind.cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
+            local kind = require("lspkind").cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
             local strings = vim.split(kind.kind, "%s", { trimempty = true })
             local word = entry:get_insert_text()
             if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
@@ -89,20 +90,18 @@ cmp.setup {
         end,
     },
     mapping = {
-        -- confirm selection
-        ["<CR>"] = cmp.mapping.confirm { select = false },
-
         -- complete selection
         ["<C-Space>"] = cmp.mapping.complete(),
-
-        -- scroll up and down in the completion documentation
-        -- ["<C-f>"] = cmp.mapping.scroll_docs(5),
-        -- ["<C-u>"] = cmp.mapping.scroll_docs(-5),
+        -- confirm selection
+        ["<CR>"] = cmp.mapping.confirm {
+            behavior = types.cmp.ConfirmBehavior.Replace,
+            select = true,
+        },
 
         ["<Tab>"] = cmp.mapping(function(fallback)
             local col = vim.fn.col "." - 1
             if cmp.visible() then
-                cmp.select_next_item(cmp_select_opts)
+                cmp.select_next_item(select_opts)
             elseif luasnip.expand_or_locally_jumpable() then
                 luasnip.expand_or_jump()
             elseif col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
@@ -114,7 +113,7 @@ cmp.setup {
 
         ["<S-Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
-                cmp.select_prev_item(cmp_select_opts)
+                cmp.select_prev_item(select_opts)
             elseif luasnip.jumpable(-1) then
                 luasnip.jump(-1)
             else
