@@ -43,7 +43,10 @@ map({ "n", "v" }, "<leader>d", '"_d')
 
 -- renamer
 map("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
-map("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+
+-- lsp Format
+-- map("n", "<leader>f", [[<cmd>LspZeroFormat<CR>]], silent)
+
 
 -- Telescope
 map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], silent)

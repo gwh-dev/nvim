@@ -5,18 +5,20 @@ function M.plugins(use)
     use {
         {
             "ggandor/leap.nvim",
-            keys = { "s", "S" },
+            keys = { "s", "S", "f", "F", "t", "T" },
             config = [[require("leap").add_default_mappings()]],
-            requires = { "tpope/vim-repeat", after = "leap.nvim" },
+            requires = "tpope/vim-repeat",
         },
         {
             "ggandor/flit.nvim",
-            keys = { "f", "F", "t", "T" },
-            config = [[require'flit'.setup { labeled_modes = 'nv' }]],
+            after = "leap.nvim",
+            config = [[require('flit').setup { labeled_modes = 'nv' }]],
         },
     }
+
+    -- File Browser
     use {
-        "nvim-neo-tree/neo-tree.nvim", -- I like to see files in a tree way
+        "nvim-neo-tree/neo-tree.nvim",
         config = [[vim.g.neo_tree_remove_legacy_commands = true]],
         requires = {
             { "MunifTanjim/nui.nvim", cmd = "Neotree" },
@@ -28,20 +30,26 @@ function M.plugins(use)
     }
 
     -- LSP Support
-    use { "neovim/nvim-lspconfig", opt = true }
-    use { "jose-elias-alvarez/null-ls.nvim", opt = true }
-    use { "williamboman/mason.nvim", opt = true }
-    use { "williamboman/mason-lspconfig.nvim", opt = true }
-    use { "jay-babu/mason-null-ls.nvim", opt = true }
-    use { "j-hui/fidget.nvim", opt = true }
+    use {
+        "neovim/nvim-lspconfig",
+        requires = {
+            { "jose-elias-alvarez/null-ls.nvim", opt = true },
+            { "williamboman/mason.nvim", opt = true },
+            { "williamboman/mason-lspconfig.nvim", opt = true },
+            { "jay-babu/mason-null-ls.nvim", opt = true },
+            { "j-hui/fidget.nvim", opt = true },
+        },
+        event = "BufReadPost",
+        config = [[require("config.lsp")]],
+    }
+
+    -- LSP Additionals
     use { "SmiteshP/nvim-navic" }
+    -- use { "ThePrimeagen/refactoring.nvim" }
+    -- use { "b0o/SchemaStore.nvim", ft = "json" }
+    -- use { "simrat39/rust-tools.nvim", ft = "rust" }
 
-    -- LSP Additionals // TODO
-    ---use { "ThePrimeagen/refactoring.nvim" }
-    ---use { "b0o/SchemaStore.nvim", ft = "json" }
-    ---use { "simrat39/rust-tools.nvim", ft = "rust" }
-
-    -- Snippets
+    -- -- Snippets
     use { "L3MON4D3/LuaSnip", opt = true }
     use { "rafamadriz/friendly-snippets", after = "LuaSnip" } -- No need for lazyloading
 
@@ -127,7 +135,7 @@ function M.plugins(use)
 
     use {
         "kylechui/nvim-surround",
-        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+        tag = "*",
         config = [[require("nvim-surround").setup()]],
         after = "nvim-treesitter",
     }
@@ -140,20 +148,14 @@ function M.plugins(use)
     }
 
     -- Colorscheme
-    -- use {
-    --     "sainnhe/gruvbox-material",
-    --     -- "ellisonleao/gruvbox.nvim",
-    --     config = [[vim.cmd.colorscheme "gruvbox-material"]],
-    --     after = "nvim-treesitter",
-    -- }
     use {
-        "catppuccin/nvim",
-        as = "catppuccin",
+        "marko-cerovac/material.nvim",
+        -- "olimorris/onedarkpro.nvim",
         config = [[require("config.colorscheme")]],
         after = "nvim-treesitter",
     }
 
-    -- Profiler // Not working
+    -- Profiler
     use {
         "dstein64/vim-startuptime",
         cmd = "StartupTime",

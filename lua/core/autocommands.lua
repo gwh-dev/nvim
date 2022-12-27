@@ -1,18 +1,19 @@
 local api = vim.api
-local fn = vim.fn
+-- local fn = vim.fn
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local group = augroup("GwH", { clear = true })
 autocmd("BufWinEnter", { group = group, command = "checktime" })
-autocmd("TextYankPost", {
-    group = augroup("HighlightYank", {}),
-    callback = function()
-        vim.highlight.on_yank {
-            higroup = "IncSearch",
-            timeout = 40,
-        }
-    end,
-})
+
+-- autocmd("TextYankPost", {
+--     group = augroup("HighlightYank", {}),
+--     callback = function()
+--         vim.highlight.on_yank {
+--             higroup = "IncSearch",
+--             timeout = 40,
+--         }
+--     end,
+-- })
 
 autocmd({ "BufWritePre" }, {
     group = group,
@@ -27,7 +28,7 @@ autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
         vim.o.statusline = "%!v:lua.require('config.statusline').statusline()"
     end,
     once = true,
-    desc = "turn on statusline after this events",
+    -- desc = "turn on statusline after this events",
 })
 
 autocmd("BufWritePre", {
@@ -41,20 +42,6 @@ autocmd("BufWritePre", {
 })
 
 -- LSP AUTOCMDS
-autocmd("BufReadPost", {
-    group = group,
-    pattern = "*",
-    callback = function()
-        local path = fn.stdpath "data" .. "/site/pack/packer/opt/nvim-lspconfig"
-        if fn.empty(fn.glob(path)) > 0 then
-            return
-        end
-        require "config.lsp"
-    end,
-    once = true,
-    desc = "require config.lsp file after event BufReadPost",
-})
-
 autocmd("ModeChanged", {
     group = group,
     pattern = { "n:i", "v:s" },

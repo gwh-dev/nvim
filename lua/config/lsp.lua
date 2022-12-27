@@ -3,7 +3,6 @@ local fn = vim.fn
 local cmd = vim.cmd
 
 cmd [[
-packadd nvim-lspconfig
 packadd null-ls.nvim
 packadd mason.nvim
 packadd mason-lspconfig.nvim
@@ -156,8 +155,6 @@ end
 local client_capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 client_capabilities.offsetEncoding = { "utf-8" }
 
-local lspconfig = require "lspconfig"
-
 require("mason").setup {
     ui = { border = "rounded" },
 }
@@ -182,11 +179,11 @@ for server, config in pairs(servers) do
     end
 
     config.capabilities = vim.tbl_deep_extend("keep", config.capabilities or {}, client_capabilities)
-    mason_lspconfig.setup_handlers {
-        [server] = function()
-            lspconfig[server].setup(config)
-        end,
-    }
+    -- mason_lspconfig.setup_handlers {
+    --     [server] = function()
+    require("lspconfig")[server].setup(config)
+    --     end,
+    -- }
 end
 
 -- null-ls setup

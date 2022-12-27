@@ -5,13 +5,14 @@ local function fname()
     local filename = fn.expand "%:t"
     local extension = fn.expand "%:e"
     local path = fn.expand "%:h"
-    local mod = "/%#Statusline#"
+    local mod = ""
 
     if not path ~= 0 then
-        if vim.api.nvim_buf_get_option(0, "mod") then
-            mod = "/%#Winbar#"
-        end
-        path = "%#StatusLineNC# " .. path .. mod .. filename .. "%*"
+        path = path .. "/" .. filename .. "%*"
+    end
+
+    if vim.api.nvim_buf_get_option(0, "mod") then
+        mod = ""
     end
 
     local file_icon, file_icon_color =
@@ -27,7 +28,7 @@ local function fname()
     end
 
     file_icon = "%#" .. hl_group .. "#" .. file_icon .. "%*"
-    return string.format("%s%s", file_icon, path)
+    return string.format("%s %s %s", file_icon, path, mod)
 end
 
 local function encoding()
@@ -108,6 +109,9 @@ local function clientName()
 end
 
 local navic_loaded, navic = pcall(require, "nvim-navic")
+if not navic_loaded then
+    return
+end
 
 navic.setup {
     icons = {
@@ -145,9 +149,9 @@ navic.setup {
 }
 
 local get_navic = function()
-    if not navic_loaded then
-        return ""
-    end
+    -- if not navic_loaded then
+    --     return ""
+    -- end
 
     local navic_location_loaded, navic_location = pcall(navic.get_location, {})
 
