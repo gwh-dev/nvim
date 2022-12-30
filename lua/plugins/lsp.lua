@@ -21,6 +21,7 @@ return {
         { 'rafamadriz/friendly-snippets' },
     },
     config = function()
+
         local lsp = require('lsp-zero')
         lsp.preset('recommended')
 
@@ -31,7 +32,6 @@ return {
             'rust_analyzer',
             'gopls',
         })
-
 
         lsp.on_attach(function(client, bufnr)
             require("nvim-navic").attach(client, bufnr)
@@ -45,5 +45,6 @@ return {
         })
 
         lsp.setup()
+
     end
 }
