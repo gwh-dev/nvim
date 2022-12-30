@@ -5,15 +5,15 @@ g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
 opt.list = true
-opt.listchars:append {
-    tab = "❘-",
-    trail = "·",
-    lead = "·",
-    extends = "»",
-    precedes = "«",
-    nbsp = "×",
-    -- eol = "↴",
-}
+opt.listchars:append({
+	tab = "❘-",
+	trail = "·",
+	lead = "·",
+	extends = "»",
+	precedes = "«",
+	nbsp = "×",
+	-- eol = "↴",
+})
 opt.termguicolors = true
 opt.swapfile = false
 opt.backup = false
@@ -30,7 +30,7 @@ opt.showmatch = true
 opt.ignorecase = true
 opt.hlsearch = false
 opt.incsearch = true
-opt.isfname:append "@-@"
+opt.isfname:append("@-@")
 opt.splitbelow = true
 opt.splitright = true
 opt.number = true

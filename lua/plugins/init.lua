@@ -4,18 +4,6 @@ return {
     { "nvim-lua/plenary.nvim" },
     { "nvim-tree/nvim-web-devicons", config = { default = true } },
 
-    -- Colorscheme
-    {
-        "luisiacc/gruvbox-baby",
-        event = "VeryLazy",
-        config = function()
-            vim.g.gruvbox_baby_telescope_theme = 1
-            vim.g.gruvbox_baby_transparent_mode = 1
-            vim.g.gruvbox_baby_background_color = "dark"
-            vim.cmd.colorscheme "gruvbox-baby"
-        end,
-    },
-
     -- Motions
     {
         "ggandor/leap.nvim",
@@ -25,13 +13,13 @@ return {
             {
                 "ggandor/flit.nvim",
                 config = function()
-                    require('flit').setup { labeled_modes = 'nv' }
-                end
-            }
+                    require("flit").setup({ labeled_modes = "nv" })
+                end,
+            },
         },
         config = function()
             require("leap").add_default_mappings()
-        end
+        end,
     },
 
     -- Utils
@@ -41,9 +29,8 @@ return {
         keys = { { "<localleader>q", "<cmd>BufDel<cr>", desc = "Buffer Delete", { silent = true } } },
         config = function()
             require("bufdel").setup()
-        end
+        end,
     },
-
 
     -- Commenting
     {
@@ -58,10 +45,10 @@ return {
             { "gb", mode = "v" },
         },
         config = function()
-            require("Comment").setup {
+            require("Comment").setup({
                 ignore = "^$", -- ignore empty lines
                 pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
-            }
+            })
         end,
     },
 
@@ -71,7 +58,7 @@ return {
         event = "BufReadPost",
         config = function()
             require("matchparen").setup()
-        end
+        end,
     },
 
     {
@@ -80,27 +67,18 @@ return {
         version = "*",
         config = function()
             require("nvim-surround").setup()
-        end
+        end,
     },
 
     {
         "mbbill/undotree",
         cmd = "UndotreeToggle",
         keys = {
-            { "<leader>u", [[<cmd>UndotreeToggle<CR>]], { silent = true } }
+            { "<leader>u", [[<cmd>UndotreeToggle<CR>]], { silent = true } },
         },
         config = function()
             vim.g.undotree_SetFocusWhenToggle = 1
-        end
-    },
-
-    -- Colorizer
-    {
-        "NvChad/nvim-colorizer.lua",
-        ft = { "css", "javascript", "vim", "html", "latex", "tex" },
-        config = function()
-            require("colorizer").setup()
-        end
+        end,
     },
 
     -- Profiler
