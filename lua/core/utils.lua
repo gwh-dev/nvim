@@ -1,61 +1,38 @@
-local fn = vim.fn
-local lsp = vim.lsp
-
 local M = {}
 
-function M.mkdir()
-    local dir = fn.expand "<afile>:p:h"
-
-    -- This handles URLs using netrw. See ':help netrw-transparent' for details.
-    if dir:find "%l+://" == 1 then
-        return
-    end
-
-    if fn.isdirectory(dir) == 0 then
-        fn.mkdir(dir, "p")
-    end
-end
-
-function M.job_output(cid, data, name)
-    for _, val in pairs(data) do
-        print(val)
-    end
-end
-
-function M.code_action(range_given, line1, line2)
-    if range_given then
-        lsp.buf.range_code_action(nil, { line1, 0 }, { line2, math.huge })
-    else
-        lsp.buf.code_action()
-    end
-end
-
--- M.format_cmd = function(line1, line2, count, bang)
-function M.format(line1, line2, count, bang)
-    local execute = vim.lsp.buf.format
-
-    if execute then
-        execute { async = bang }
-        return
-    end
-
-    local has_range = line2 == count
-    execute = vim.lsp.buf.formatting
-
-    if bang then
-        if has_range then
-            local msg = "Synchronous formatting doesn't support ranges"
-            vim.notify(msg, vim.log.levels.ERROR)
-            return
+function M.packer(rebuild)
+  if rebuild then
+    local spec = require("plugins")
+    local files = vim.fn.glob(vim.fn.stdpath("config") .. "/lua/plugins/*.lua", false, true)
+    table.insert(files, vim.fn.stdpath("config") .. "/lua/plugins/lsp/init.lua")
+    for _, file in ipairs(files) do
+      local modname = file:match("lua/(.*)%.lua"):gsub("/", ".")
+      local plugin = loadfile(file)()
+      for k, v in pairs(plugin) do
+        if type(v) == "function" then
+          if k == "init" or k == "run" or k == "config" then
+            plugin[k == "init" and "setup" or k] = ('require("%s").%s()'):format(modname, k)
+          else
+            plugin[k] = nil
+          end
         end
-        execute = vim.lsp.buf.formatting_sync
+      end
+      table.insert(spec, 1, plugin)
     end
-
-    if has_range then
-        execute = vim.lsp.buf.range_formatting
-    end
-
-    execute()
+    vim.cmd([[packadd packer.nvim]])
+    require("packer").startup({
+      spec,
+      config = {
+        profile = { enable = true },
+        opt_default = true,
+        transitive_opt = true,
+        transitive_disable = true,
+      },
+    })
+  end
+  vim.defer_fn(function()
+    vim.cmd("do VeryLazy")
+  end, 1000)
 end
 
 return M

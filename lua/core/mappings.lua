@@ -45,26 +45,7 @@ map({ "n", "v" }, "<leader>d", '"_d')
 map("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
 
 -- lsp Format
--- map("n", "<leader>f", [[<cmd>LspZeroFormat<CR>]], silent)
+map("n", "<leader>f", [[<cmd>LspZeroFormat<CR>]], silent)
 
-
--- Telescope
-map("n", "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], silent)
-map("n", "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], silent)
-map("n", "<leader>i", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], silent)
-map("n", "<leader>l", [[<cmd>Telescope live_grep<CR>]], silent)
-
--- UndoTree
-map("n", "<leader>u", [[<cmd>UndotreeToggle<CR>]], silent)
-
--- NeoTree
-map("n", "<leader>e", [[<cmd>Neotree toggle source=filesystem reveal=true position=right<CR>]], silent)
-
--- packer
-map("n", "<localleader>s", [[<cmd>PackerSync<cr>]], silent)
-map("n", "<localleader>i", [[<cmd>PackerInstall<cr>]], silent)
-map("n", "<localleader>S", [[<cmd>PackerStatus<cr>]], silent)
-map("n", "<localleader>u", [[<cmd>PackerUpdate<cr>]], silent)
-
--- Delete buffers
-map("n", "<localleader>q", [[<cmd>BufDel<cr>]], silent)
+-- Lazy Command
+map("n", "<leader>l", "<CMD>:Lazy<CR>", silent)

@@ -1,7 +1,13 @@
-local present, impatient = pcall(require, "impatient")
+vim.g.mapleader = [[ ]]
+vim.g.maplocalleader = [[,]]
 
-if present then
-    impatient.enable_profile()
-end
+require "core.lazy"
+require("core.settings")
 
-require "core"
+vim.api.nvim_create_autocmd("User", {
+    pattern = "VeryLazy",
+    callback = function()
+        require("core.autocommands")
+        require("core.mappings")
+    end,
+})
