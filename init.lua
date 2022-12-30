@@ -1,8 +1,8 @@
 vim.g.mapleader = [[ ]]
 vim.g.maplocalleader = [[,]]
 
-require "core.lazy"
 require("core.settings")
+require("core.lazy")
 
 vim.api.nvim_create_autocmd("User", {
     pattern = "VeryLazy",

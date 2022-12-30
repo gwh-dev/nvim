@@ -16,7 +16,7 @@ local function fname()
     end
 
     local file_icon, file_icon_color =
-        require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
+    require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
 
     local hl_group = "FileIconColor" .. extension
 
@@ -108,66 +108,15 @@ local function clientName()
     return ""
 end
 
-local navic_loaded, navic = pcall(require, "nvim-navic")
-if not navic_loaded then
-    return
-end
-
-navic.setup {
-    icons = {
-        File = "file ",
-        Module = "module ",
-        Namespace = "namespace ",
-        Package = "package ",
-        Class = "class ",
-        Method = "method ",
-        Property = "property ",
-        Field = "field ",
-        Constructor = "constructor ",
-        Enum = "enum ",
-        Interface = "interface ",
-        Function = "function ",
-        Variable = "variable ",
-        Constant = "constant ",
-        String = "string ",
-        Number = "number ",
-        Boolean = "boolean ",
-        Array = "array ",
-        Object = "object ",
-        Key = "key ",
-        Null = "null ",
-        EnumMember = "enum member ",
-        Struct = "struct ",
-        Event = "event ",
-        Operator = "operator ",
-        TypeParameter = "type parameter ",
-    },
-    highlight = true,
-    separator = " " .. "❭" .. " ",
-    depth_limit = 0,
-    depth_limit_indicator = "..",
-}
-
-local get_navic = function()
-    -- if not navic_loaded then
-    --     return ""
-    -- end
-
-    local navic_location_loaded, navic_location = pcall(navic.get_location, {})
-
-    if not navic_location_loaded then
-        return ""
+local function get_navic()
+    if package.loaded["nvim-navic"] then
+        local navic = require("nvim-navic")
+        local location = navic.get_location()
+        if not navic.is_available() or location == "error" then
+            return ""
+        end
+        return location:len() > 2000 and "navic error" or location
     end
-
-    if not navic.is_available() or navic_location == "error" then
-        return ""
-    end
-
-    if not navic_location == nil then
-        return "❭" .. " " .. navic_location
-        -- return require("config.navic").separator .. " " .. navic_location
-    end
-
     return ""
 end
 

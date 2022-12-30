@@ -1,20 +1,18 @@
 return {
-    "MunifTanjim/nui.nvim",
-    "nvim-lua/plenary.nvim",
-
-    -- Icons
-    {
-        "nvim-tree/nvim-web-devicons",
-        config = { default = true },
-    },
+    -- essentials
+    { "MunifTanjim/nui.nvim" },
+    { "nvim-lua/plenary.nvim" },
+    { "nvim-tree/nvim-web-devicons", config = { default = true } },
 
     -- Colorscheme
     {
-        "ellisonleao/gruvbox.nvim",
-        after = "nvim-treesitter",
+        "luisiacc/gruvbox-baby",
         event = "VeryLazy",
         config = function()
-            vim.cmd.colorscheme "gruvbox"
+            vim.g.gruvbox_baby_telescope_theme = 1
+            vim.g.gruvbox_baby_transparent_mode = 1
+            vim.g.gruvbox_baby_background_color = "dark"
+            vim.cmd.colorscheme "gruvbox-baby"
         end,
     },
 
@@ -26,11 +24,9 @@ return {
             "tpope/vim-repeat",
             {
                 "ggandor/flit.nvim",
-                -- after = "leap.nvim",
                 config = function()
                     require('flit').setup { labeled_modes = 'nv' }
                 end
-
             }
         },
         config = function()
@@ -47,38 +43,6 @@ return {
             require("bufdel").setup()
         end
     },
-
-    -- LSP
-    {
-        'VonHeikemen/lsp-zero.nvim',
-        event = "BufReadPre",
-        dependencies = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
-
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
-        },
-        config = function()
-            local lsp = require('lsp-zero')
-            lsp.preset('recommended')
-            lsp.setup()
-        end
-    },
-    { "SmiteshP/nvim-navic" },
-
-    -- Treesitter
 
 
     -- Commenting
@@ -100,6 +64,7 @@ return {
             }
         end,
     },
+
     -- utils
     {
         "monkoose/matchparen.nvim",
