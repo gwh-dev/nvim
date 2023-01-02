@@ -44,6 +44,7 @@ return {
 				cursorline = true, -- Use cursorline highlighting?
 			},
 		})
+        -- vim.cmd.colorscheme "onedark"
 		onedarkpro.load()
 	end,
 }

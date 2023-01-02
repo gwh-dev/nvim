@@ -125,7 +125,6 @@ function M.config()
             local opts = { remap = false, silent = true, buffer = bufnr }
             vim.keymap.set(m, lhs, rhs, opts)
         end
-
         -- LSP
         map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>")
         map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
@@ -155,8 +154,8 @@ function M.config()
             (cap.document_formatting or cap.document_range_formatting)
             or (cap.documentFormattingProvider or cap.documentRangeFormattingProvider)
         then
-            cmd "command! -buffer -range -bang LspFormat lua require('core.utils').format(<line1>, <line2>, <count>, '<bang>' == '!')"
-            map("n", "<leader>f", "<cmd>LspFormat<CR>")
+            cmd 'command! -buffer -range -bang LspFormat lua require("core.utils").format_command(<range> ~= 0, <line1>, <line2>, "<bang>" == "!")'
+            map("n", "<leader>f", "<cmd>LspFormat<cr>")
         end
 
         if cap.code_action or cap.codeActionProvider then

@@ -6,8 +6,6 @@ local M = {
         "saadparwaiz1/cmp_luasnip",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-nvim-lua",
-        "hrsh7th/cmp-cmdline",
-        "dmitmel/cmp-cmdline-history",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-nvim-lsp-signature-help",
@@ -39,6 +37,15 @@ local M = {
         local lspkind = require "lspkind"
         local types = require "cmp.types"
         local context = require "cmp.config.context"
+        local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
+        local function check_back_space()
+            local col = vim.fn.col "." - 1
+            if col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
+                return true
+            else
+                return false
+            end
+        end
 
         cmp.setup {
             preselect = types.cmp.PreselectMode.None,
@@ -82,6 +89,7 @@ local M = {
                 { name = "nvim_lsp_signature_help" },
             }, {
                 { name = "buffer", keyword_length = 3 },
+                { name = "neorg" },
             }),
             confirmation = { default_behavior = types.cmp.ConfirmBehavior.Replace },
             window = {
@@ -125,22 +133,21 @@ local M = {
                 },
                 -- Super Tab Next
                 ["<Tab>"] = cmp.mapping(function(fallback)
-                    local col = vim.fn.col "." - 1
                     if cmp.visible() then
-                        cmp.select_next_item()
+                        cmp.select_next_item(cmp_select_opts)
                     elseif luasnip.expand_or_jumpable() then
                         luasnip.expand_or_jump()
-                    elseif col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
-                        cmp.complete()
-                    else
+                    elseif check_back_space() then
                         fallback()
+                    else
+                        cmp.complete()
                     end
                 end, { "i", "s" }),
 
-                -- Super Tab Previes
+                -- Super Tab Prev
                 ["<S-Tab>"] = cmp.mapping(function(fallback)
                     if cmp.visible() then
-                        cmp.select_prev_item()
+                        cmp.select_prev_item(cmp_select_opts)
                     elseif luasnip.jumpable(-1) then
                         luasnip.jump(-1)
                     else
@@ -155,39 +162,6 @@ local M = {
             "confirm_done",
             require("nvim-autopairs.completion.cmp").on_confirm_done { map_char = { tex = "" } }
         )
-
-        cmp.setup.cmdline(":", {
-            mapping = cmp.mapping.preset.cmdline(),
-            sources = cmp.config.sources({
-                { name = "path" },
-            }, {
-                {
-                    name = "cmdline",
-                    option = {
-                        ignore_cmds = { "Man", "!" },
-                    },
-                },
-                { name = "cmdline_history" },
-            }),
-            formatting = {
-                format = lspkind.cmp_format {
-                    mode = "none",
-                    maxwidth = 50,
-                    ellipsis_char = "...",
-                    before = function(entry, vim_item)
-                        vim_item.kind = lspkind.presets.default[vim_item.kind] .. " " .. vim_item.kind
-                        vim_item.abbr = vim.fn.strcharpart(vim_item.abbr, 0, 50) -- hack to clamp cmp-cmdline-history len
-                        vim_item.menu = ({
-                            cmdline_history = "[HIST]",
-                            cmdline = "[CMD]",
-                            fuzzy_path = "[PATH]",
-                            buffer = "[BUFF]",
-                        })[entry.source.name]
-                        return vim_item
-                    end,
-                },
-            },
-        })
     end,
 }
 return M
