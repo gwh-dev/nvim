@@ -7,4 +7,5 @@ vim.api.nvim_create_autocmd("User", {
         require "core.autocommands"
         require "core.mappings"
     end,
+    once = true,
 })

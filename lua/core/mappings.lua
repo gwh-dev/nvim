@@ -44,8 +44,5 @@ map({ "n", "v" }, "<leader>d", '"_d')
 -- renamer
 map("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
 
--- lsp Format
-map("n", "<leader>f", [[<cmd>LspZeroFormat<CR>]], silent)
-
 -- Lazy Command
-map("n", "<leader>l", "<CMD>:Lazy<CR>", silent)
+map("n", "<leader>l", "<cmd>:Lazy<cr>", silent)

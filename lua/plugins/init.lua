@@ -1,5 +1,5 @@
 return {
-    -- essentials
+    -- Essentials
     { "MunifTanjim/nui.nvim" },
     { "nvim-lua/plenary.nvim" },
     { "nvim-tree/nvim-web-devicons", config = { default = true } },
@@ -9,12 +9,11 @@ return {
         "ggandor/leap.nvim",
         keys = { "s", "S", "f", "F", "t", "T" },
         dependencies = {
-            "tpope/vim-repeat",
             {
                 "ggandor/flit.nvim",
-                config = function()
-                    require("flit").setup({ labeled_modes = "nv" })
-                end,
+                config = {
+                    labeled_modes = "nv",
+                },
             },
         },
         config = function()
@@ -22,21 +21,23 @@ return {
         end,
     },
 
-    -- Utils
+    -- Search
     {
-        "ojroques/nvim-bufdel",
-        cmd = "BufDel",
-        keys = { { "<localleader>q", "<cmd>BufDel<cr>", desc = "Buffer Delete", { silent = true } } },
-        config = function()
-            require("bufdel").setup()
-        end,
+        "folke/trouble.nvim",
+        keys = {
+            { "<leader>t", "<cmd>TroubleToggle<cr>", desc = "Trouble" },
+        },
+        config = {
+            auto_open = false,
+            use_diagnostic_signs = true, -- en
+        },
     },
 
     -- Commenting
     {
         "numToStr/Comment.nvim",
         dependencies = {
-            { "JoosepAlviste/nvim-ts-context-commentstring" },
+            "JoosepAlviste/nvim-ts-context-commentstring",
         },
         keys = {
             { "gcc", mode = "n" },
@@ -45,25 +46,41 @@ return {
             { "gb", mode = "v" },
         },
         config = function()
-            require("Comment").setup({
+            require("Comment").setup {
                 ignore = "^$", -- ignore empty lines
                 pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
-            })
+            }
         end,
     },
 
     -- utils
     {
+        "ojroques/nvim-bufdel",
+        keys = { { "<localleader>q", "<cmd>BufDel<cr>", desc = "Buffer Delete" } },
+        config = true,
+    },
+
+    {
+        "NvChad/nvim-colorizer.lua",
+        keys = { { "<localleader>c", "<cmd>ColorizerToggle<cr>", desc = "Colorizer" } },
+        config = true,
+    },
+
+    {
         "monkoose/matchparen.nvim",
         event = "BufReadPost",
-        config = function()
-            require("matchparen").setup()
-        end,
+        config = true,
+    },
+
+    {
+        "nacro90/numb.nvim",
+        event = "CmdLineEnter",
+        config = true,
     },
 
     {
         "kylechui/nvim-surround",
-        event = "BufReadPost",
+        event = "VeryLazy",
         version = "*",
         config = function()
             require("nvim-surround").setup()
@@ -72,7 +89,6 @@ return {
 
     {
         "mbbill/undotree",
-        cmd = "UndotreeToggle",
         keys = {
             { "<leader>u", [[<cmd>UndotreeToggle<CR>]], { silent = true } },
         },
@@ -85,8 +101,5 @@ return {
     {
         "dstein64/vim-startuptime",
         cmd = "StartupTime",
-        config = function()
-            vim.g.startuptime_tries = 10
-        end,
     },
 }

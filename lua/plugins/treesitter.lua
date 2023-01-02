@@ -4,18 +4,7 @@ return {
 	build = ":TSUpdate",
 	config = function()
 		require("nvim-treesitter.configs").setup({
-
-			ensure_installed = {
-				"vim",
-				"lua",
-				"rust",
-				"cpp",
-				"c",
-				"go",
-				"gomod",
-				"gowork",
-			},
-			auto_install = true,
+			ensure_installed = "all",
 			sync_install = false,
 
 			autopairs = { enable = true },

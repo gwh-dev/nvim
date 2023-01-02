@@ -6,10 +6,10 @@ return {
 	},
 	cmd = "Telescope",
 	keys = {
-		{ "<leader>d", [[<cmd>Telescope diagnostics theme=get_ivy<CR>]], { silent = true } },
-		{ "<leader>b", [[<cmd>Telescope buffers theme=get_ivy<CR>]], { silent = true } },
-		{ "<leader>i", [[<cmd>Telescope find_files theme=get_dropdown<CR>]], { silent = true } },
-		{ "<leader>g", [[<cmd>Telescope live_grep<CR>]], { silent = true } },
+		{ "<leader>d", "<cmd>Telescope diagnostics theme=get_ivy<cr>", desc = "Telescope Diagnostic" },
+		{ "<leader>b", "<cmd>Telescope buffers theme=get_ivy<cr>", desc = "Telescope Buffers" },
+		{ "<leader>i", "<cmd>Telescope find_files theme=get_dropdown<cr>", desc = "Telescope Find Files" },
+		{ "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Telescope Live Grep" },
 	},
 	config = function()
 		local telescope = require("telescope")
@@ -41,6 +41,10 @@ return {
 				},
 			},
 			pickers = {
+				diagnostics = {
+					previewer = false,
+					initial_mode = "normal",
+				},
 				buffers = {
 					initial_mode = "normal",
 					ignore_current_buffer = true,

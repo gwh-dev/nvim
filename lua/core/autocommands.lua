@@ -31,15 +31,6 @@ autocmd({ "BufWritePre" }, {
 	command = "%s/\\s\\+$//e",
 })
 
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
-	group = vim.api.nvim_create_augroup("status", {}),
-	pattern = "*",
-	callback = function()
-		vim.o.statusline = "%!v:lua.require('core.statusline').statusline()"
-	end,
-	once = true,
-})
-
 autocmd("BufWritePre", {
 	group = vim.api.nvim_create_augroup("auto_create_dir", { clear = true }),
 	callback = function(event)
