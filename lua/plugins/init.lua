@@ -1,10 +1,10 @@
 return {
     -- Essentials
+    { "lewis6991/impatient.nvim" },
     { "MunifTanjim/nui.nvim" },
     { "nvim-lua/plenary.nvim" },
     { "nvim-tree/nvim-web-devicons", config = { default = true } },
 
-    -- Motions
     {
         "ggandor/leap.nvim",
         keys = { "s", "S", "f", "F", "t", "T" },
@@ -21,11 +21,10 @@ return {
         end,
     },
 
-    -- Search
     {
         "folke/trouble.nvim",
         keys = {
-            { "<leader>t", "<cmd>TroubleToggle<cr>", desc = "Trouble" },
+            { "<leader>t", "<cmd>TroubleToggle<cr>", desc = "Trouble Diagnostics" },
         },
         config = {
             auto_open = false,
@@ -61,30 +60,16 @@ return {
     },
 
     {
-        "NvChad/nvim-colorizer.lua",
-        keys = { { "<localleader>c", "<cmd>ColorizerToggle<cr>", desc = "Colorizer" } },
-        config = true,
-    },
-
-    {
         "monkoose/matchparen.nvim",
-        event = "BufReadPost",
-        config = true,
-    },
-
-    {
-        "nacro90/numb.nvim",
-        event = "CmdLineEnter",
+        event = "VeryLazy",
         config = true,
     },
 
     {
         "kylechui/nvim-surround",
-        event = "VeryLazy",
         version = "*",
-        config = function()
-            require("nvim-surround").setup()
-        end,
+        event = "VeryLazy",
+        config = true,
     },
 
     {

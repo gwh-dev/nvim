@@ -7,6 +7,11 @@ local M = {
         { "williamboman/mason-lspconfig.nvim", config = { automatic_installation = true } },
         { "jose-elias-alvarez/null-ls.nvim" },
         {
+            "dnlhc/glance.nvim",
+            cmd = "Glance",
+            config = true,
+        },
+        {
             "j-hui/fidget.nvim",
             config = {
                 text = {
@@ -23,14 +28,9 @@ local M = {
     },
 }
 
-local fn = vim.fn
-local lsp = vim.lsp
-local cmd = vim.cmd
-M.navic = false
-
 M.servers = {
     rust_analyzer = {},
-    sumneko_lua = { --},
+    sumneko_lua = {
         prefer_null_ls = true,
         settings = {
             Lua = {
@@ -44,9 +44,9 @@ M.servers = {
                 workspace = {
                     -- Make the server aware of Neovim runtime files
                     library = {
-                        [fn.expand "$VIMRUNTIME/lua"] = true,
-                        [fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
-                        [fn.stdpath "config" .. "/lua"] = true,
+                        [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+                        [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
+                        [vim.fn.stdpath "config" .. "/lua"] = true,
                     },
                 },
             },
@@ -87,10 +87,12 @@ function M.check()
 end
 
 function M.config()
+    local lsp = vim.lsp
+    local cmd = vim.cmd
     local diagnostic = { "Error", "Warn", "Info", "Hint" }
     for _, type in pairs(diagnostic) do
         local hl = "DiagnosticSign" .. type
-        fn.sign_define(hl, { numhl = hl })
+        vim.fn.sign_define(hl, { numhl = hl })
     end
 
     vim.diagnostic.config {
@@ -128,17 +130,26 @@ function M.config()
         map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>")
         map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
         map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<cr>")
-        map("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
+
+        map("n", "gd", "<cmd>Glance definitions<cr>")
+        map("n", "gr", "<cmd>Glance references<cr>")
+        map("n", "go", "<cmd>Glance type_definitions<cr>")
+        map("n", "gi", "<cmd>Glance implementations<cr>")
 
         -- Diagnostics
         map("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>")
         map("n", "]d", '<cmd>lua vim.diagnostic.goto_next { float = {scope = "line"} }<cr>')
         map("n", "[d", '<cmd>lua vim.diagnostic.goto_prev { float = {scope = "line"} }<cr>')
 
-        -- Telescope
-        map("n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>')
-        map("n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>')
-        map("n", "gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>')
+        -- Disable
+        -- map("n", "gd", "<cmd>Trouble lsp_definitions<cr>")
+        -- map("n", "gr", "<cmd>Trouble references<cr>")
+        -- map("n", "go", "<cmd>Trouble type_definitions<cr>")
+        -- map("n", "gi", "<cmd>Trouble implementations<cr>")
+        -- map("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
+        -- map("n", "gd", '<cmd>lua require"telescope.builtin".lsp_definitions()<CR>')
+        -- map("n", "gi", '<cmd>lua require"telescope.builtin".lsp_implementations()<CR>')
+        -- map("n", "gr", '<cmd>lua require"telescope.builtin".lsp_references()<CR>')
 
         if
             (cap.document_formatting or cap.document_range_formatting)
@@ -162,7 +173,6 @@ function M.config()
 
         if cap.documentSymbolProvider then
             require("nvim-navic").attach(client, bufnr)
-            M.navic = true
         end
     end
 

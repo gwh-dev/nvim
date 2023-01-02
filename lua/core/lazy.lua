@@ -56,3 +56,5 @@ require("lazy").setup("plugins", {
 	},
 	debug = false,
 })
+
+require("impatient")

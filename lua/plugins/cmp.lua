@@ -6,6 +6,8 @@ local M = {
         "saadparwaiz1/cmp_luasnip",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-nvim-lua",
+        "hrsh7th/cmp-cmdline",
+        "dmitmel/cmp-cmdline-history",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-nvim-lsp-signature-help",
@@ -34,6 +36,7 @@ local M = {
         }
 
         local cmp = require "cmp"
+        local lspkind = require "lspkind"
         local types = require "cmp.types"
         local context = require "cmp.config.context"
 
@@ -73,10 +76,10 @@ local M = {
             },
             sources = cmp.config.sources({
                 { name = "nvim_lua", keyword_length = 3 },
-                { name = "nvim_lsp", keyword_length = 3 },
-                { name = "nvim_lsp_signature_help" },
                 { name = "luasnip", keyword_length = 2 },
+                { name = "nvim_lsp" },
                 { name = "path" },
+                { name = "nvim_lsp_signature_help" },
             }, {
                 { name = "buffer", keyword_length = 3 },
             }),
@@ -94,7 +97,7 @@ local M = {
             formatting = {
                 fields = { "kind", "abbr", "menu" },
                 format = function(entry, vim_item)
-                    local kind = require("lspkind").cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
+                    local kind = lspkind.cmp_format { mode = "symbol_text" }(entry, vim_item)
                     local strings = vim.split(kind.kind, "%s", { trimempty = true })
                     local word = entry:get_insert_text()
                     if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
@@ -147,10 +150,44 @@ local M = {
             },
             experimental = { ghost_text = true },
         }
+
         cmp.event:on(
             "confirm_done",
             require("nvim-autopairs.completion.cmp").on_confirm_done { map_char = { tex = "" } }
-        ) -- autopairs with cmp
+        )
+
+        cmp.setup.cmdline(":", {
+            mapping = cmp.mapping.preset.cmdline(),
+            sources = cmp.config.sources({
+                { name = "path" },
+            }, {
+                {
+                    name = "cmdline",
+                    option = {
+                        ignore_cmds = { "Man", "!" },
+                    },
+                },
+                { name = "cmdline_history" },
+            }),
+            formatting = {
+                format = lspkind.cmp_format {
+                    mode = "none",
+                    maxwidth = 50,
+                    ellipsis_char = "...",
+                    before = function(entry, vim_item)
+                        vim_item.kind = lspkind.presets.default[vim_item.kind] .. " " .. vim_item.kind
+                        vim_item.abbr = vim.fn.strcharpart(vim_item.abbr, 0, 50) -- hack to clamp cmp-cmdline-history len
+                        vim_item.menu = ({
+                            cmdline_history = "[HIST]",
+                            cmdline = "[CMD]",
+                            fuzzy_path = "[PATH]",
+                            buffer = "[BUFF]",
+                        })[entry.source.name]
+                        return vim_item
+                    end,
+                },
+            },
+        })
     end,
 }
 return M
