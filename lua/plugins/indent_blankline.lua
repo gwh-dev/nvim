@@ -11,6 +11,7 @@ local M = {
 		show_first_indent_level = false,
 		buftype_exclude = { "terminal", "nofile" },
 		filetype_exclude = {
+            "norg",
 			"help",
 			"startify",
 			"dashboard",

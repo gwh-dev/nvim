@@ -28,7 +28,22 @@ autocmd({ "FileType" }, {
 autocmd({ "BufEnter" }, {
     group = group,
     pattern = "*.norg",
-    command = ":set nofoldenable",
+    callback = function()
+        vim.opt.relativenumber = false
+        vim.opt.cursorline = false
+        vim.opt.laststatus = 0
+        vim.cmd [[Neorg inject-metadata]]
+    end,
+})
+
+autocmd({ "BufLeave" }, {
+    group = group,
+    pattern = "*.norg",
+    callback = function()
+        vim.opt.relativenumber = true
+        vim.opt.cursorline = true
+        vim.opt.laststatus = 3
+    end,
 })
 
 autocmd({ "BufWritePre" }, {

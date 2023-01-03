@@ -38,14 +38,6 @@ local M = {
         local types = require "cmp.types"
         local context = require "cmp.config.context"
         local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
-        local function check_back_space()
-            local col = vim.fn.col "." - 1
-            if col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
-                return true
-            else
-                return false
-            end
-        end
 
         cmp.setup {
             preselect = types.cmp.PreselectMode.None,
@@ -133,11 +125,12 @@ local M = {
                 },
                 -- Super Tab Next
                 ["<Tab>"] = cmp.mapping(function(fallback)
+                    local col = vim.fn.col "." - 1
                     if cmp.visible() then
                         cmp.select_next_item(cmp_select_opts)
                     elseif luasnip.expand_or_jumpable() then
                         luasnip.expand_or_jump()
-                    elseif check_back_space() then
+                    elseif col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
                         fallback()
                     else
                         cmp.complete()

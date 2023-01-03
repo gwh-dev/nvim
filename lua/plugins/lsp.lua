@@ -1,6 +1,6 @@
 local M = {
     "neovim/nvim-lspconfig",
-    event = "BufReadPre",
+    event = "BufReadPost",
     dependencies = {
         { "hrsh7th/cmp-nvim-lsp" },
         { "williamboman/mason.nvim", config = { ui = { border = "rounded" } } },

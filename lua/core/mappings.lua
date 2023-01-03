@@ -5,9 +5,6 @@ map("n", "j", "(v:count ? 'j' : 'gj')", expr)
 map("n", "k", "(v:count ? 'k' : 'gk')", expr)
 map("", "<Down>", "(v:count ? 'j' : 'gj')", expr)
 map("", "<Up>", "(v:count ? 'k' : 'gk')", expr)
-map("n", "<leader>s", function()
-	return ":IncRename " .. vim.fn.expand("<cword>")
-end, expr)
 
 local remap = { remap = true, silent = true }
 -- better navigation betwean panes

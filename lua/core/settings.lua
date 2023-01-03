@@ -18,6 +18,7 @@ g.loaded_perl_provider = 0
 -- 	-- eol = "↴",
 -- })
 opt.termguicolors = true
+vim.opt.foldenable = false
 opt.swapfile = false
 opt.backup = false
 opt.undodir = "/home/gwh/.vim/undodir"
@@ -31,7 +32,7 @@ opt.completeopt = { "menu", "menuone", "noselect" }
 -- opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true
-opt.hlsearch = false
+opt.hlsearch = true
 opt.incsearch = true
 opt.isfname:append "@-@"
 opt.splitbelow = true
