@@ -2,29 +2,6 @@ local M = {
     "neovim/nvim-lspconfig",
     event = "BufReadPost",
     dependencies = {
-        { "hrsh7th/cmp-nvim-lsp" },
-        { "williamboman/mason.nvim", config = { ui = { border = "rounded" } } },
-        { "williamboman/mason-lspconfig.nvim", config = { automatic_installation = true } },
-        { "jose-elias-alvarez/null-ls.nvim" },
-        {
-            "dnlhc/glance.nvim",
-            cmd = "Glance",
-            config = true,
-        },
-        {
-            "j-hui/fidget.nvim",
-            config = {
-                text = {
-                    spinner = "dots",
-                },
-                window = {
-                    blend = 0,
-                },
-                sources = {
-                    ["null-ls"] = { ignore = true },
-                },
-            },
-        },
     },
 }
 
@@ -227,6 +204,7 @@ function M.config()
             formatting.stylua,
             formatting.cbfmt,
             diagnostics.selene,
+            -- code_actions.refactoring,
         },
         on_attach = on_attach,
     }

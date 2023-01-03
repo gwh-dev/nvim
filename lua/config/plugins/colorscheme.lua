@@ -20,7 +20,7 @@ return {
                 gitsigns = true,
                 indentline = true,
                 trouble = true,
-                dashboard = true,
+                dashboard = false,
                 -- disable
                 nvim_dap_ui = false,
                 nvim_dap = false,
@@ -49,7 +49,6 @@ return {
                 cursorline = true, -- Use cursorline highlighting?
             },
         }
-        -- vim.cmd.colorscheme "onedark"
         onedarkpro.load()
     end,
 }
