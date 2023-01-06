@@ -1,12 +1,15 @@
 return {
     "olimorris/onedarkpro.nvim",
-    event = "BufReadPre",
+    ft = "alpha",
     config = function()
         local onedarkpro = require "onedarkpro"
         onedarkpro.setup {
             highlights = {
                 CursorColumn = {
                     bg = "${cursorline}",
+                },
+                IndentBlanklineContextChar = {
+                    fg = "${gray}",
                 },
             },
             plugins = {

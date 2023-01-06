@@ -29,17 +29,17 @@ map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
 
 local silent = { silent = true }
 -- Remove highlighting
-map("n", "<leader>h", "<cmd>noh<CR>", silent)
+-- map("n", "<leader>h", "<cmd>noh<CR>", silent)
 
--- Paste and keep yanked before with out changing it
-map("x", "<leader>p", '"_dP')
+-- -- Paste and keep yanked before with out changing it
+-- map("x", "<leader>p", '"_dP')
 
--- Yank to the clipboard // you need to use space-p
-map({ "n", "v" }, "<leader>y", "+y")
-map("n", "<leader>Y", '"+Y')
+-- -- Yank to the clipboard // you need to use space-p
+-- map({ "n", "v" }, "<leader>y", "+y")
+-- map("n", "<leader>Y", '"+Y')
 
--- Delete with out yanking
-map({ "n", "v" }, "<leader>d", '"_d')
+-- -- Delete with out yanking
+-- map({ "n", "v" }, "<leader>d", '"_d')
 
 -- Lazy Command
 map("n", "<leader>l", "<cmd>:Lazy<cr>", silent)

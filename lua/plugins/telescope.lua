@@ -6,7 +6,6 @@ return {
     },
     cmd = "Telescope",
     keys = {
-        { "<leader>d", "<cmd>Telescope diagnostics theme=get_ivy<cr>", desc = "Telescope Diagnostic" },
         { "<leader>b", "<cmd>Telescope buffers theme=get_ivy<cr>", desc = "Telescope Buffers" },
         { "<leader>i", "<cmd>Telescope find_files theme=get_dropdown<cr>", desc = "Telescope Find Files" },
         { "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Telescope Live Grep" },

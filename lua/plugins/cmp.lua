@@ -116,13 +116,16 @@ local M = {
                 end,
             },
             mapping = {
+
                 -- complete selection
                 ["<C-Space>"] = cmp.mapping.complete(),
+
                 -- confirm selection
                 ["<CR>"] = cmp.mapping.confirm {
                     behavior = types.cmp.ConfirmBehavior.Replace,
                     select = true,
                 },
+
                 -- Super Tab Next
                 ["<Tab>"] = cmp.mapping(function(fallback)
                     local col = vim.fn.col "." - 1
@@ -131,9 +134,9 @@ local M = {
                     elseif luasnip.expand_or_jumpable() then
                         luasnip.expand_or_jump()
                     elseif col == 0 or vim.fn.getline("."):sub(col, col):match "%s" then
-                        fallback()
-                    else
                         cmp.complete()
+                    else
+                        fallback()
                     end
                 end, { "i", "s" }),
 
