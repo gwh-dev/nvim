@@ -7,17 +7,52 @@ local M = {
     },
 
     {
+        "akinsho/nvim-bufferline.lua",
+        event = "BufAdd",
+        init = function()
+            vim.keymap.set("n", "H", "<cmd>:BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
+            vim.keymap.set("n", "L", "<cmd>:BufferLineCycleNext<CR>", { desc = "Next Buffer" })
+        end,
+        config = {
+            options = {
+                diagnostics = "nvim_lsp",
+                show_close_icon = false,
+                always_show_bufferline = false,
+                separator_style = "thick",
+                diagnostics_indicator = function(_, _, diag)
+                    local s = {}
+                    local severitys = { error = " ", warning = " ", hint = " ", info = " " }
+                    for severity, icon in ipairs(severitys) do
+                        if diag[severity] then
+                            table.insert(s, icon[severity] .. diag[severity])
+                        end
+                    end
+                    return table.concat(s, " ")
+                end,
+                offsets = {
+                    {
+                        filetype = "neo-tree",
+                        text = "Neo-tree",
+                        highlight = "Directory",
+                        text_align = "left",
+                    },
+                },
+            },
+        },
+    },
+
+    {
         "j-hui/fidget.nvim",
         event = "BufReadPre",
         config = {
             text = {
                 spinner = "moon",
             },
-            align = {
-                bottom = true,
-            },
+            -- align = {
+            --     bottom = true,
+            -- },
             window = {
-                relative = "editor",
+                -- relative = "editor",
                 blend = 0,
             },
             sources = {

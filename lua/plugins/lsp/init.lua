@@ -82,6 +82,9 @@ local M = {
     config = function(plugin)
         require("plugins.lsp.handlers").setup(plugin.servers)
         require("plugins.lsp.utils").on_attach(function(client, bufnr)
+            if client.server_capabilities.documentSymbolProvider then
+                require("nvim-navic").attach(client, bufnr)
+            end
             require("plugins.lsp.utils").autoformat(client, bufnr)
             require("plugins.lsp.mappings").on_attach(client, bufnr)
         end)

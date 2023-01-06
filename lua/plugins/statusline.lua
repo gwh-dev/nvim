@@ -1,103 +1,224 @@
+local function lsp_client(msg)
+    msg = msg or ""
+    local buf_clients = vim.lsp.buf_get_clients()
+    local method = {
+        "FORMATTING",
+        "DIAGNOSTICS",
+        "CODE_ACTION",
+    }
+    if next(buf_clients) == nil then
+        if type(msg) == "boolean" or #msg == 0 then
+            return ""
+        end
+        return msg
+    end
+
+    local buf_ft = vim.bo.filetype
+    local buf_client_names = {}
+
+    for _, value in pairs(method) do
+        local supported = require("plugins.lsp.utils").list_registered(buf_ft, require("null-ls").methods[value])
+        vim.list_extend(buf_client_names, supported)
+    end
+    -- add client
+    for _, client in pairs(buf_clients) do
+        if client.name ~= "null-ls" then
+            table.insert(buf_client_names, client.name)
+        end
+    end
+
+    return "[" .. table.concat(buf_client_names, ", ") .. "]"
+end
+
 return {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    config = function()
-        local colors = require("onedarkpro.helpers").get_colors()
-        local config = require("onedarkpro.config").config
+    {
+        "nvim-lualine/lualine.nvim",
+        event = "VeryLazy",
+        config = function()
+            local colors = require("onedarkpro.helpers").get_colors()
+            local config = require("onedarkpro.config").config
 
-        local inactive_bg = config.options.highlight_inactive_windows and colors.color_column or colors.bg
-        local onedarkpro = {
-            normal = {
-                a = { bg = colors.green, fg = colors.bg },
-                b = { bg = colors.fg_gutter, fg = colors.green },
-                c = { bg = colors.bg_statusline, fg = colors.fg },
-            },
+            local inactive_bg = config.options.highlight_inactive_windows and colors.color_column or colors.bg
+            local onedarkpro = {
+                normal = {
+                    a = { bg = colors.green, fg = colors.bg },
+                    b = { bg = colors.fg_gutter, fg = colors.green },
+                    c = { bg = colors.bg_statusline, fg = colors.fg },
+                },
 
-            insert = {
-                a = { bg = colors.blue, fg = colors.bg },
-                b = { bg = colors.fg_gutter, fg = colors.blue },
-            },
+                insert = {
+                    a = { bg = colors.blue, fg = colors.bg },
+                    b = { bg = colors.fg_gutter, fg = colors.blue },
+                },
 
-            command = {
-                a = { bg = colors.purple, fg = colors.bg },
-                b = { bg = colors.fg_gutter, fg = colors.purple },
-            },
+                command = {
+                    a = { bg = colors.purple, fg = colors.bg },
+                    b = { bg = colors.fg_gutter, fg = colors.purple },
+                },
 
-            visual = {
-                a = { bg = colors.yellow, fg = colors.bg },
-                b = { bg = colors.fg_gutter, fg = colors.yellow },
-            },
+                visual = {
+                    a = { bg = colors.yellow, fg = colors.bg },
+                    b = { bg = colors.fg_gutter, fg = colors.yellow },
+                },
 
-            replace = {
-                a = { bg = colors.red, fg = colors.bg },
-                b = { bg = colors.fg_gutter, fg = colors.red },
-            },
+                replace = {
+                    a = { bg = colors.red, fg = colors.bg },
+                    b = { bg = colors.fg_gutter, fg = colors.red },
+                },
 
-            inactive = {
-                a = { bg = inactive_bg, fg = colors.blue },
-                b = { bg = inactive_bg, fg = colors.fg_gutter_inactive, gui = "bold" },
-                c = { bg = inactive_bg, fg = colors.fg_gutter_inactive },
-            },
-        }
-        require("lualine").setup {
-            options = {
-                theme = onedarkpro,
-                section_separators = { left = "", right = "" },
-                component_separators = { left = "", right = "" },
-                icons_enabled = true,
-                globalstatus = true,
-                disabled_filetypes = { statusline = { "alpha", "lazy" } },
-            },
-            sections = {
-                lualine_a = { { "mode", separator = { left = "" } } },
-                lualine_b = { "branch" },
-                lualine_c = {
-                    { "diagnostics", sources = { "nvim_diagnostic" } },
-                    { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-                    { "filename", path = 1, symbols = { modified = "", readonly = "", unnamed = "" } },
-                    {
-                        function()
-                            local navic = require "nvim-navic"
-                            local ret = navic.get_location()
-                            return ret:len() > 2000 and "navic error" or ret
-                        end,
-                        cond = function()
-                            if package.loaded["nvim-navic"] then
+                inactive = {
+                    a = { bg = inactive_bg, fg = colors.blue },
+                    b = { bg = inactive_bg, fg = colors.fg_gutter_inactive, gui = "bold" },
+                    c = { bg = inactive_bg, fg = colors.fg_gutter_inactive },
+                },
+            }
+            require("lualine").setup {
+                options = {
+                    theme = onedarkpro,
+                    section_separators = { left = "", right = "" },
+                    component_separators = { left = "", right = "" },
+                    icons_enabled = true,
+                    globalstatus = true,
+                    disabled_filetypes = { statusline = { "alpha", "lazy" } },
+                },
+                sections = {
+                    lualine_a = { { "mode" } }, -- separator = { left = "" } } },
+                    lualine_b = { "branch" },
+                    lualine_c = {
+                        { "diagnostics", sources = { "nvim_diagnostic" } },
+                        {
+                            "filetype",
+                            icon_only = true,
+                            padding = { left = 1, right = 0 },
+                            cond = function()
+                                if not package.loaded["nvim-navic"] then
+                                    return true
+                                end
+                            end,
+                        },
+                        {
+                            "filename",
+                            path = 1,
+                            symbols = { modified = "", readonly = "", unnamed = "" },
+                            cond = function()
+                                if not package.loaded["nvim-navic"] then
+                                    return true
+                                end
+                            end,
+                        },
+                    },
+                    lualine_x = {
+                        { lsp_client, icon = " ", color = { fg = colors.violet, gui = "bold" } },
+                        {
+                            function()
+                                return require("lazy.status").updates()
+                            end,
+                            cond = require("lazy.status").has_updates,
+                            color = { fg = colors.orange },
+                        },
+                        {
+                            function()
+                                local stats = require("lazy").stats()
+                                local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+                                return " " .. ms .. "ms"
+                            end,
+                            color = { fg = colors.orange },
+                        },
+                    },
+                    lualine_y = { "location" },
+                    lualine_z = { { "filesize" } }, --separator = { right = "" } } },
+                },
+                inactive_sections = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = {},
+                    lualine_x = {},
+                    lualine_y = {},
+                    lualine_z = {},
+                },
+                winbar = {
+                    lualine_b = {
+                        {
+                            "filetype",
+                            separator = { right = "" },
+                            colored = false,
+                            padding = { left = 1, right = 0 },
+                            cond = function()
+                                if package.loaded["nvim-navic"] then
+                                    local navic = require "nvim-navic"
+                                    return navic.is_available()
+                                end
+                            end,
+                        },
+                    },
+                    lualine_c = {
+                        {
+                            "filename",
+                            path = 1,
+                            separator = { right = "" },
+                            symbols = { modified = "", readonly = "", unnamed = "" },
+                            cond = function()
+                                if package.loaded["nvim-navic"] then
+                                    local navic = require "nvim-navic"
+                                    return navic.is_available()
+                                end
+                            end,
+                        },
+                        {
+                            function()
                                 local navic = require "nvim-navic"
-                                return navic.is_available()
-                            end
-                        end,
+                                local ret = navic.get_location()
+                                return ret:len() > 2000 and "navic error" or ret
+                            end,
+                            cond = function()
+                                if package.loaded["nvim-navic"] then
+                                    local navic = require "nvim-navic"
+                                    return navic.is_available()
+                                end
+                            end,
+                            color = { bg = colors.bg_statusline },
+                        },
                     },
                 },
-                lualine_x = {
-                    {
-                        function()
-                            return require("lazy.status").updates()
-                        end,
-                        cond = require("lazy.status").has_updates,
-                        color = { fg = colors.orange },
-                    },
-                    {
-                        function()
-                            local stats = require("lazy").stats()
-                            local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
-                            return " " .. ms .. "ms"
-                        end,
-                        color = { fg = colors.orange },
-                    },
-                },
-                lualine_y = { "location" },
-                lualine_z = { { "filesize", separator = { right = "" } } },
+                extensions = { "neo-tree" },
+            }
+        end,
+    },
+    {
+        "SmiteshP/nvim-navic",
+        config = {
+            icons = {
+                File = "file ",
+                Module = "module ",
+                Namespace = "namespace ",
+                Package = "package ",
+                Class = "class ",
+                Method = "method ",
+                Property = "property ",
+                Field = "field ",
+                Constructor = "constructor ",
+                Enum = "enum ",
+                Interface = "interface ",
+                Function = "function ",
+                Variable = "variable ",
+                Constant = "constant ",
+                String = "string ",
+                Number = "number ",
+                Boolean = "boolean ",
+                Array = "array ",
+                Object = "object ",
+                Key = "key ",
+                Null = "null ",
+                EnumMember = "enum member ",
+                Struct = "struct ",
+                Event = "event ",
+                Operator = "operator ",
+                TypeParameter = "type parameter ",
             },
-            inactive_sections = {
-                lualine_a = {},
-                lualine_b = {},
-                lualine_c = {},
-                lualine_x = {},
-                lualine_y = {},
-                lualine_z = {},
-            },
-            extensions = { "neo-tree" },
-        }
-    end,
+            highlight = true,
+            separator = " " .. "❭" .. " ",
+            depth_limit = 5,
+            depth_limit_indicator = "..",
+        },
+    },
 }

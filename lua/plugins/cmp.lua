@@ -37,7 +37,7 @@ local M = {
         local lspkind = require "lspkind"
         local types = require "cmp.types"
         local context = require "cmp.config.context"
-        local cmp_select_opts = { behavior = cmp.SelectBehavior.Select }
+        local cmp_select_opts = { behavior = types.cmp.SelectBehavior.Select }
 
         cmp.setup {
             preselect = types.cmp.PreselectMode.None,
@@ -116,12 +116,16 @@ local M = {
                 end,
             },
             mapping = {
-
-                -- complete selection
-                ["<C-Space>"] = cmp.mapping.complete(),
-
+                ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
+                ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+                ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+                ["<C-y>"] = cmp.config.disable,
+                ["<C-e>"] = cmp.mapping {
+                    i = cmp.mapping.abort(),
+                    c = cmp.mapping.close(),
+                },
                 -- confirm selection
-                ["<CR>"] = cmp.mapping.confirm {
+                ["<cr>"] = cmp.mapping.confirm {
                     behavior = types.cmp.ConfirmBehavior.Replace,
                     select = true,
                 },
@@ -129,6 +133,7 @@ local M = {
                 -- Super Tab Next
                 ["<Tab>"] = cmp.mapping(function(fallback)
                     local col = vim.fn.col "." - 1
+
                     if cmp.visible() then
                         cmp.select_next_item(cmp_select_opts)
                     elseif luasnip.expand_or_jumpable() then
