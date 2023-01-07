@@ -4,21 +4,25 @@ local g = vim.g
 g.mapleader = [[ ]]
 g.maplocalleader = [[,]]
 
+g.clipboard = { -- I don't Know if this help or not
+    name = "xclip",
+    copy = {
+        ["+"] = "xclip -quiet -i -selection clipboard",
+        ["*"] = "xclip -quiet -i --selection primary",
+    },
+    paste = {
+        ["+"] = "xclip -o -selection clipboard",
+        ["*"] = "xclip  -o -selection primary",
+    },
+    cache_enabled = 1,
+}
+
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
--- opt.list = true
--- opt.listchars:append({
--- 	-- tab = "❘-",
--- 	-- trail = "·",
--- 	-- lead = "·",
--- 	extends = "»",
--- 	precedes = "«",
--- 	nbsp = "×",
--- 	-- eol = "↴",
--- })
 opt.termguicolors = true
-vim.opt.foldenable = false
+opt.foldenable = false
+
 opt.swapfile = false
 opt.backup = false
 opt.undodir = "/home/gwh/.vim/undodir"
@@ -29,7 +33,7 @@ opt.wildignorecase = true
 opt.ignorecase = true
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.scrolloff = 8
--- opt.lazyredraw = true
+opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true
 opt.hlsearch = true

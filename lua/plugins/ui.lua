@@ -1,4 +1,5 @@
 vim.cmd "lua vim.g.neo_tree_remove_legacy_commands = 1"
+
 local M = {
     {
         "monkoose/matchparen.nvim",
@@ -6,40 +7,20 @@ local M = {
         config = true,
     },
 
-    {
-        "akinsho/nvim-bufferline.lua",
-        event = "BufAdd",
-        init = function()
-            vim.keymap.set("n", "H", "<cmd>:BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
-            vim.keymap.set("n", "L", "<cmd>:BufferLineCycleNext<CR>", { desc = "Next Buffer" })
-        end,
-        config = {
-            options = {
-                diagnostics = "nvim_lsp",
-                show_close_icon = false,
-                always_show_bufferline = false,
-                separator_style = "thick",
-                diagnostics_indicator = function(_, _, diag)
-                    local s = {}
-                    local severitys = { error = " ", warning = " ", hint = " ", info = " " }
-                    for severity, icon in ipairs(severitys) do
-                        if diag[severity] then
-                            table.insert(s, icon[severity] .. diag[severity])
-                        end
-                    end
-                    return table.concat(s, " ")
-                end,
-                offsets = {
-                    {
-                        filetype = "neo-tree",
-                        text = "Neo-tree",
-                        highlight = "Directory",
-                        text_align = "left",
-                    },
-                },
-            },
-        },
-    },
+    -- {
+    --     "romgrk/barbar.nvim",
+    --     event = "BufAdd",
+    --     init = function()
+    --         vim.keymap.set("n", "b[", "<cmd>:BufferPrevious<CR>", { desc = "Previous Buffer" })
+    --         vim.keymap.set("n", "b]", "<cmd>:BufferNext<CR>", { desc = "Next Buffer" })
+    --     end,
+    --     config = function()
+    --         require("bufferline").setup {
+    --             auto_hide = true,
+    --             closable = false,
+    --         }
+    --     end,
+    -- },
 
     {
         "j-hui/fidget.nvim",
@@ -48,11 +29,11 @@ local M = {
             text = {
                 spinner = "moon",
             },
-            -- align = {
-            --     bottom = true,
-            -- },
+            align = {
+                bottom = true,
+            },
             window = {
-                -- relative = "editor",
+                relative = "editor",
                 blend = 0,
             },
             sources = {
@@ -60,7 +41,6 @@ local M = {
             },
         },
     },
-
     {
         "nvim-neo-tree/neo-tree.nvim",
         cmd = "Neotree",
@@ -68,13 +48,11 @@ local M = {
             { "<leader>e", [[<cmd>Neotree toggle<cr>]], desc = "File Browser" },
         },
         config = {
-            filesystem = {
-                follow_current_file = true,
-                hijack_netrw_behavior = "open_current",
-            },
+            hide_root_node = true,
+            enable_git_status = false,
+            enable_diagnostics = false,
         },
     },
-
     {
         "b0o/incline.nvim",
         event = "BufReadPre",

@@ -1,11 +1,13 @@
 local function lsp_client(msg)
     msg = msg or ""
+
     local buf_clients = vim.lsp.buf_get_clients()
     local method = {
         "FORMATTING",
         "DIAGNOSTICS",
         "CODE_ACTION",
     }
+
     if next(buf_clients) == nil then
         if type(msg) == "boolean" or #msg == 0 then
             return ""
@@ -16,10 +18,13 @@ local function lsp_client(msg)
     local buf_ft = vim.bo.filetype
     local buf_client_names = {}
 
-    for _, value in pairs(method) do
-        local supported = require("plugins.lsp.utils").list_registered(buf_ft, require("null-ls").methods[value])
+    for value in pairs(method) do
+        local utils = require "plugins.lsp.utils"
+        local null_ls = require "null-ls"
+        local supported = utils.list_registered(buf_ft, null_ls.methods[method[value]])
         vim.list_extend(buf_client_names, supported)
     end
+
     -- add client
     for _, client in pairs(buf_clients) do
         if client.name ~= "null-ls" then
@@ -76,7 +81,7 @@ return {
                 options = {
                     theme = onedarkpro,
                     section_separators = { left = "", right = "" },
-                    component_separators = { left = "", right = "" },
+                    component_separators = {},
                     icons_enabled = true,
                     globalstatus = true,
                     disabled_filetypes = { statusline = { "alpha", "lazy" } },
@@ -85,7 +90,6 @@ return {
                     lualine_a = { { "mode" } }, -- separator = { left = "" } } },
                     lualine_b = { "branch" },
                     lualine_c = {
-                        { "diagnostics", sources = { "nvim_diagnostic" } },
                         {
                             "filetype",
                             icon_only = true,
@@ -108,6 +112,7 @@ return {
                         },
                     },
                     lualine_x = {
+                        { "diagnostics", sources = { "nvim_diagnostic" } },
                         { lsp_client, icon = " ", color = { fg = colors.violet, gui = "bold" } },
                         {
                             function()

@@ -1,5 +1,6 @@
 return {
     "olimorris/onedarkpro.nvim",
+    event = "BufReadPre",
     -- ft = "alpha",
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
@@ -9,7 +10,7 @@ return {
                 CursorColumn = {
                     bg = "${cursorline}",
                 },
-                IndentBlanklineContextChar = {
+                MiniIndentscopeSymbol = {
                     fg = "${gray}",
                 },
             },
@@ -23,6 +24,7 @@ return {
                 treesitter = true,
                 gitsigns = true,
                 indentline = true,
+                barbar = true,
                 -- disable
                 trouble = false,
                 dashboard = false,
@@ -44,7 +46,6 @@ return {
                 marks = false,
                 lsp_saga = false,
                 aerial = false,
-                barbar = false,
                 copilot = false,
                 hop = false,
             },

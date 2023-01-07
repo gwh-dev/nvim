@@ -16,6 +16,16 @@ autocmd("TextYankPost", {
     end,
 })
 
+autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
+    group = group,
+    pattern = "*",
+    callback = function()
+        vim.o.statusline = "%!v:lua.require('core.statusline').statusline()"
+    end,
+    once = true,
+    desc = "turn on statusline after this events",
+})
+
 autocmd({ "FileType" }, {
     group = group,
     pattern = { "json", "jsonc" },
@@ -64,7 +74,6 @@ autocmd("BufWritePre", {
     end,
 })
 
--- LSP AUTOCMDS
 autocmd("ModeChanged", {
     group = group,
     pattern = { "n:i", "v:s" },

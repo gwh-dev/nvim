@@ -13,6 +13,11 @@ map("n", "<C-j>", "<C-w>j", remap)
 map("n", "<C-k>", "<C-w>k", remap)
 map("n", "<C-l>", "<C-w>l", remap)
 
+vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
+vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+
 -- jump betwean lines and center the cursor
 map("n", "<C-d>", "<C-d>zz", remap)
 map("n", "<C-u>", "<C-u>zz", remap)
@@ -21,6 +26,9 @@ map("n", "<C-u>", "<C-u>zz", remap)
 map("n", "n", "nzzzv", remap)
 map("n", "N", "Nzzzv", remap)
 
+-- Change tmux session
+map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", remap)
+
 -- Resize with arrows
 map("n", "<A-j>", "<cmd>resize -2<CR>")
 map("n", "<A-k>", "<cmd>resize +2<CR>")
@@ -28,18 +36,9 @@ map("n", "<A-h>", "<cmd>vertical resize -2<CR>")
 map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
 
 local silent = { silent = true }
+
 -- Remove highlighting
--- map("n", "<leader>h", "<cmd>noh<CR>", silent)
-
--- -- Paste and keep yanked before with out changing it
--- map("x", "<leader>p", '"_dP')
-
--- -- Yank to the clipboard // you need to use space-p
--- map({ "n", "v" }, "<leader>y", "+y")
--- map("n", "<leader>Y", '"+Y')
-
--- -- Delete with out yanking
--- map({ "n", "v" }, "<leader>d", '"_d')
+map("n", "<leader>h", "<cmd>noh<CR>", silent)
 
 -- Lazy Command
 map("n", "<leader>l", "<cmd>:Lazy<cr>", silent)

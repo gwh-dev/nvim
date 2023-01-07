@@ -1,6 +1,6 @@
 local M = {
     "neovim/nvim-lspconfig",
-    event = "BufReadPost",
+    event = "BufReadPre",
 
     dependencies = {
         { "hrsh7th/cmp-nvim-lsp" },
@@ -11,6 +11,7 @@ local M = {
             -- Null-ls Tools
             tools = {
                 "prettierd",
+                "prettier",
                 "stylua",
                 "selene",
                 "luacheck",
@@ -18,6 +19,7 @@ local M = {
                 "shellcheck",
                 "deno",
                 "shfmt",
+                "cbfmt",
                 "black",
                 "isort",
                 "flake8",

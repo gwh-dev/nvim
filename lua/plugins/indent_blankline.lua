@@ -1,11 +1,21 @@
 return {
     "lukas-reineke/indent-blankline.nvim",
     event = "BufReadPre",
+    dependencies = {
+        "echasnovski/mini.indentscope",
+        config = function()
+            require("mini.indentscope").setup {
+                draw = {
+                    delay = 50,
+                },
+            }
+        end,
+    },
     config = {
         char = "│",
         use_treesitter_scope = false,
         show_trailing_blankline_indent = false,
-        show_current_context = true,
+        -- show_current_context = true,
         space_char_blankline = " ",
         use_treesitter = true,
         show_first_indent_level = false,

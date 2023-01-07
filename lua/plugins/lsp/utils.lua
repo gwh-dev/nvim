@@ -27,14 +27,6 @@ function M.list_registered(filetype, method)
     return registered_providers[method] or {}
 end
 
--- local nls_sources = require "null-ls.sources"
-
--- function M.list_supported(filetype)
---     local supported_linters = nls_sources.get_supported(filetype, "diagnostics")
---     table.sort(supported_linters)
---     return supported_linters
--- end
-
 function M.format()
     local buf = vim.api.nvim_get_current_buf()
     local ft = vim.bo[buf].filetype

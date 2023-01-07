@@ -1,7 +1,6 @@
 return {
     "nvim-telescope/telescope.nvim",
     dependencies = {
-        { "nvim-lua/popup.nvim" },
         { "nvim-telescope/telescope-fzy-native.nvim" },
     },
     cmd = "Telescope",
