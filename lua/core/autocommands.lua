@@ -4,7 +4,7 @@ local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
 local group = augroup("GwH", { clear = true })
 
-autocmd("BufWinEnter", { group = group, command = "checktime" })
+autocmd({ "FocusGained", "TermClose", "TermLeave" }, { group = group, command = "checktime" })
 
 autocmd("TextYankPost", {
     group = augroup("HighlightYank", {}),
@@ -16,15 +16,46 @@ autocmd("TextYankPost", {
     end,
 })
 
-autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
+-- go to last loc when opening a buffer
+autocmd("BufReadPost", {
     group = group,
-    pattern = "*",
     callback = function()
-        vim.o.statusline = "%!v:lua.require('core.statusline').statusline()"
+        local mark = vim.api.nvim_buf_get_mark(0, '"')
+        local lcount = vim.api.nvim_buf_line_count(0)
+        if mark[1] > 0 and mark[1] <= lcount then
+            pcall(vim.api.nvim_win_set_cursor, 0, mark)
+        end
     end,
-    once = true,
-    desc = "turn on statusline after this events",
 })
+
+-- Close neo-tree and start aplha when buffers == 0
+-- autocmd("User", {
+--     group = group,
+--     pattern = "BDeletePost*",
+--     callback = function(event)
+--         local fallback_name = vim.api.nvim_buf_get_name(event.buf)
+--         local fallback_ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
+--         local fallback_on_empty = fallback_name == "" and fallback_ft == ""
+
+--         if fallback_on_empty then
+--             require("neo-tree").close_all()
+--             vim.cmd "Alpha"
+--             vim.cmd(event.buf .. "bwipeout")
+--         end
+--     end,
+-- })
+
+-- Enable the custom statusline -- old
+-- autocmd({ "BufEnter", "BufWinEnter", "CursorMoved", "WinLeave" }, {
+--     group = group,
+--     pattern = "*",
+--     callback = function()
+-- vim.o.statusline = "%!v:lua.require('core.statusline').statusline()"
+--         vim.o.statuscolumn = "%@v:lua.ScFa@%C%T%@v:lua.ScLa@%s%T@v:lua.ScNa@%=%{v:lua.ScLn()}%T"
+--     end,
+--     once = true,
+--     desc = "turn on statusline after this events",
+-- })
 
 autocmd({ "FileType" }, {
     group = group,

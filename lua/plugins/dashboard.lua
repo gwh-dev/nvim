@@ -1,9 +1,9 @@
 return {
     "goolord/alpha-nvim",
+    cmd = "Alpha",
     config = function()
         local alpha = require "alpha"
 
-        -- Основано на https://github.com/goolord/alpha-nvim/discussions/16#discussioncomment-1927405
         local path = require "plenary.path"
 
         local dashboard = require "alpha.themes.dashboard"
@@ -169,12 +169,10 @@ return {
                     opts = { hl = "SpecialComment", position = "center" },
                 },
                 { type = "padding", val = 1 },
-                colored_btn("f", "  Find file", ":Telescope find_files<CR>", "Constant"),
-                colored_btn("g", "  Find text", ":Telescope live_grep<CR>", "Constant"),
-                colored_btn("n", "  New file", ":ene <BAR> startinsert <CR>", "Constant"),
-                colored_btn("e", "  Open explorer", ":Neotree focus toggle <CR>", "Constant"),
+
+                colored_btn("n", "  New File", ":ene <BAR> startinsert <CR>", "Constant"),
                 colored_btn("c", "  Configuration", ":e ~/.config/nvim/init.lua <CR>", "Constant"),
-                colored_btn("u", "  Update plugins", ":Lazy sync<CR>", "Constant"),
+                colored_btn("u", "  Sync Plugins", ":Lazy sync<CR>", "Constant"),
                 colored_btn("q", "  Quit", ":qa<CR>", "Constant"),
             },
             position = "center",

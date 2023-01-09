@@ -1,44 +1,71 @@
 local map = vim.keymap.set
 
-local expr = { expr = true, noremap = false, silent = false }
-map("n", "j", "(v:count ? 'j' : 'gj')", expr)
-map("n", "k", "(v:count ? 'k' : 'gk')", expr)
-map("", "<Down>", "(v:count ? 'j' : 'gj')", expr)
-map("", "<Up>", "(v:count ? 'k' : 'gk')", expr)
+-- better up/down
+map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
-local remap = { remap = true, silent = true }
--- better navigation betwean panes
-map("n", "<C-h>", "<C-w>h", remap)
-map("n", "<C-j>", "<C-w>j", remap)
-map("n", "<C-k>", "<C-w>k", remap)
-map("n", "<C-l>", "<C-w>l", remap)
+-- Move to window using the <ctrl> hjkl keys
+map("n", "<C-h>", "<C-w>h", { desc = "Go to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Go to right window" })
 
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+-- Resize window using <ctrl> arrow keys
+map("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+map("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+
+-- Move Lines
+map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move down" })
+map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move down" })
+map("i", "<A-j>", "<Esc>:m .+1<CR>==gi", { desc = "Move down" })
+map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move up" })
+map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move up" })
+map("i", "<A-k>", "<Esc>:m .-2<CR>==gi", { desc = "Move up" })
 
 -- jump betwean lines and center the cursor
-map("n", "<C-d>", "<C-d>zz", remap)
-map("n", "<C-u>", "<C-u>zz", remap)
+map("n", "<C-d>", "<C-d>zz")
+map("n", "<C-u>", "<C-u>zz")
 
--- navigate in hlsearch and center the cursor
-map("n", "n", "nzzzv", remap)
-map("n", "N", "Nzzzv", remap)
+-- better indenting
+map("v", "<", "<gv")
+map("v", ">", ">gv")
+
+-- Create a new file
+map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
+
+-- highlights under cursor
+map("n", "<leader>hl", vim.show_pos, { desc = "Highlight Groups at cursor" }) -- for neovim >= 0.9.0
 
 -- Change tmux session
-map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", remap)
-
--- Resize with arrows
-map("n", "<A-j>", "<cmd>resize -2<CR>")
-map("n", "<A-k>", "<cmd>resize +2<CR>")
-map("n", "<A-h>", "<cmd>vertical resize -2<CR>")
-map("n", "<A-l>", "<cmd>vertical resize +2<CR>")
-
-local silent = { silent = true }
+-- map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", remap)
 
 -- Remove highlighting
-map("n", "<leader>h", "<cmd>noh<CR>", silent)
+-- map("n", "n", "nzzzv", remap)  -- old
+-- map("n", "N", "Nzzzv", remap)  -- old
+map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
 
--- Lazy Command
-map("n", "<leader>l", "<cmd>:Lazy<cr>", silent)
+-- highlight all the same ones
+map({ "n", "x" }, "gw", "*N")
+
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
+map({ "n", "x", "o" }, "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
+map({ "n", "x", "o" }, "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
+
+-- Package Manager
+map("n", "<leader>l", "<cmd>:Lazy<cr>", { desc = "Lazy" })
+
+-- Buffer delete and quit
+map("n", "<localleader>q", function()
+    if vim.bo.filetype == "neo-tree" then
+        require("neo-tree").close_all()
+    else
+        return vim.cmd "BufDel"
+    end
+end, { desc = "Delete Buffer And Quit" })
+
+-- buffers
+map("n", "]b", "<cmd>:BufferLineCycleNext<CR>", { desc = "Next Buffer" })
+map("n", "[b", "<cmd>:BufferLineCyclePrev<CR>", { desc = "Previous Buffer" })
+map("n", "<leader>`", "<cmd>:e #<cr>", { desc = "Switch to Other Buffer" })

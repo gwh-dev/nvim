@@ -11,7 +11,7 @@ return {
                     bg = "${cursorline}",
                 },
                 MiniIndentscopeSymbol = {
-                    fg = "${gray}",
+                    fg = "${purple}",
                 },
             },
             plugins = {
@@ -24,8 +24,8 @@ return {
                 treesitter = true,
                 gitsigns = true,
                 indentline = true,
-                barbar = true,
                 -- disable
+                barbar = false,
                 trouble = false,
                 dashboard = false,
                 nvim_dap_ui = false,

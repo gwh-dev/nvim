@@ -1,5 +1,3 @@
-vim.cmd "lua vim.g.neo_tree_remove_legacy_commands = 1"
-
 local M = {
     {
         "monkoose/matchparen.nvim",
@@ -23,6 +21,35 @@ local M = {
     -- },
 
     {
+        "akinsho/nvim-bufferline.lua",
+        event = "BufAdd",
+        opts = {
+            options = {
+                diagnostics = "nvim_lsp",
+                always_show_bufferline = false,
+                diagnostics_indicator = function(_, _, diag)
+                    local icons = {
+                        Error = " ",
+                        Warn = " ",
+                        Hint = " ",
+                        Info = " ",
+                    }
+                    local ret = (diag.error and icons.Error .. diag.error .. " " or "")
+                        .. (diag.warning and icons.Warn .. diag.warning or "")
+                    return vim.trim(ret)
+                end,
+                offsets = {
+                    {
+                        filetype = "neo-tree",
+                        text = "Neo-tree",
+                        highlight = "Directory",
+                        text_align = "left",
+                    },
+                },
+            },
+        },
+    },
+    {
         "j-hui/fidget.nvim",
         event = "BufReadPre",
         config = {
@@ -39,18 +66,6 @@ local M = {
             sources = {
                 ["null-ls"] = { ignore = true },
             },
-        },
-    },
-    {
-        "nvim-neo-tree/neo-tree.nvim",
-        cmd = "Neotree",
-        keys = {
-            { "<leader>e", [[<cmd>Neotree toggle<cr>]], desc = "File Browser" },
-        },
-        config = {
-            hide_root_node = true,
-            enable_git_status = false,
-            enable_diagnostics = false,
         },
     },
     {

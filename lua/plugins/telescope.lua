@@ -1,36 +1,46 @@
+local utils = require "core.utils"
+
 return {
     "nvim-telescope/telescope.nvim",
     dependencies = {
         { "nvim-telescope/telescope-fzy-native.nvim" },
     },
     cmd = "Telescope",
+    version = false, -- telescope did only one release, so use HEAD for now
     keys = {
+        { "<leader>/", utils.telescope "live_grep", desc = "Find in Files (Grep)" },
+        { "<leader>sg", utils.telescope "live_grep", desc = "Grep (root dir)" },
+        { "<leader>sG", utils.telescope("live_grep", { cwd = false }), desc = "Grep (cwd)" },
+        { "<leader><space>", utils.telescope "files", desc = "Find Files (root dir)" },
         { "<leader>b", "<cmd>Telescope buffers theme=get_ivy<cr>", desc = "Telescope Buffers" },
-        { "<leader>i", "<cmd>Telescope find_files theme=get_dropdown<cr>", desc = "Telescope Find Files" },
-        { "<leader>g", "<cmd>Telescope live_grep<cr>", desc = "Telescope Live Grep" },
     },
     config = function()
         local telescope = require "telescope"
-
         telescope.setup {
             defaults = {
-                vimgrep_arguments = {
-                    "rg",
-                    "-L",
-                    "--color=never",
-                    "--no-heading",
-                    "--with-filename",
-                    "--line-number",
-                    "--column",
-                    "--smart-case",
+                prompt_prefix = " ",
+                selection_caret = " ",
+                mappings = {
+                    n = {
+                        ["q"] = function(...)
+                            return require("telescope.actions").close(...)
+                        end,
+                    },
+                    i = {
+                        ["<C-i>"] = function()
+                            utils.telescope("find_files", { no_ignore = true })()
+                        end,
+                        ["<C-h>"] = function()
+                            utils.telescope("find_files", { hidden = true })()
+                        end,
+                        ["<C-Down>"] = function(...)
+                            return require("telescope.actions").cycle_history_next(...)
+                        end,
+                        ["<C-Up>"] = function(...)
+                            return require("telescope.actions").cycle_history_prev(...)
+                        end,
+                    },
                 },
-                prompt_prefix = " ",
-                selection_caret = " ",
-                entry_prefix = " ",
-                layout_strategy = "flex",
-                layout_config = { anchor = "N" },
-                scroll_strategy = "cycle",
-                theme = require("telescope.themes").get_dropdown { layout_config = { prompt_position = "top" } },
             },
             extensions = {
                 fzy_native = {

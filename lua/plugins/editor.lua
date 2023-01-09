@@ -4,6 +4,7 @@ local M = {
         cmd = "IncRename",
         config = true,
     },
+
     {
         "anuvyklack/windows.nvim",
         event = "WinNew",
@@ -17,6 +18,46 @@ local M = {
             vim.o.equalalways = false
             require("windows").setup()
         end,
+    },
+
+    -- lua with packer.nvim
+
+    {
+        "max397574/better-escape.nvim",
+        keys = { { "jj", mode = "i" }, { "kk", mode = "i" } },
+        config = {
+            mapping = { "kk", "jj" },
+            clear_empty_lines = true,
+        },
+    },
+
+    {
+        "ojroques/nvim-bufdel",
+        cmd = "BufDel",
+        config = true,
+    },
+    {
+        "nvim-neo-tree/neo-tree.nvim",
+        cmd = "Neotree",
+        keys = {
+            {
+                "<leader>e",
+                function()
+                    require("neo-tree.command").execute { toggle = true, dir = require("core.utils").get_root() }
+                end,
+                desc = "NeoTree (root dir)",
+            },
+        },
+        init = function()
+            vim.g.neo_tree_remove_legacy_commands = 1
+        end,
+        config = {
+            filesystem = {
+                follow_current_file = true,
+                hijack_netrw_behavior = "open_current",
+            },
+            hide_root_node = true,
+        },
     },
     {
         "numToStr/Comment.nvim",
@@ -40,12 +81,6 @@ local M = {
     {
         "dnlhc/glance.nvim",
         cmd = "Glance",
-        config = true,
-    },
-
-    {
-        "ojroques/nvim-bufdel",
-        keys = { { "<localleader>q", "<cmd>BufDel<cr>", desc = "Buffer Delete" } },
         config = true,
     },
 
@@ -159,11 +194,11 @@ local M = {
                 },
             }
 
-                -- stylua: ignore
-                -- Yank to the clipboard
-                vim.keymap.set({ "n", "x"}, "<leader>y", "\"+<Plug>(YankyYank)")
-                -- stylua: ignore
-                vim.keymap.set({ "n", "x" }, "y", "<Plug>(YankyYank)")
+            -- stylua: ignore
+            -- Yank to the clipboard
+            vim.keymap.set({ "n", "x" }, "<leader>y", "\"+<Plug>(YankyYank)")
+            -- stylua: ignore
+            vim.keymap.set({ "n", "x" }, "y", "<Plug>(YankyYank)")
             vim.keymap.set({ "n", "x" }, "p", "<Plug>(YankyPutAfter)")
             vim.keymap.set({ "n", "x" }, "P", "<Plug>(YankyPutBefore)")
             vim.keymap.set({ "n", "x" }, "gp", "<Plug>(YankyGPutAfter)")

@@ -11,24 +11,19 @@ function M.on_attach(client, buffer)
     self:map("gt", "Glance type_definitions", { desc = "Goto Type Definition" })
     -- self:map("gD", "Telescope lsp_declarations", { desc = "Goto Declaration" })
     self:map("K", vim.lsp.buf.hover, { desc = "Hover" })
+    self:map("gk", vim.lsp.buf.signature_help, { desc = "Signature Help", has = "signatureHelp" })
     self:map("[d", M.diagnostic_goto(true), { desc = "Next Diagnostic" })
     self:map("]d", M.diagnostic_goto(false), { desc = "Prev Diagnostic" })
     self:map("]e", M.diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
     self:map("[e", M.diagnostic_goto(false, "ERROR"), { desc = "Prev Error" })
     self:map("]w", M.diagnostic_goto(true, "WARNING"), { desc = "Next Warning" })
     self:map("[w", M.diagnostic_goto(false, "WARNING"), { desc = "Prev Warning" })
-
-    self:map(
-        "<C-k>",
-        vim.lsp.buf.signature_help,
-        { desc = "Signature Help", mode = { "i", "n" }, has = "signatureHelp" }
-    )
     self:map("<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action", mode = { "n", "v" }, has = "codeAction" })
 
-    local utils = require "plugins.lsp.utils"
+    local utils = require "plugins.lsp.format"
     self:map("<leader>f", utils.format, { desc = "Format Document", has = "documentFormatting" })
     self:map("<leader>f", utils.format, { desc = "Format Range", mode = "v", has = "documentRangeFormatting" })
-    self:map("<leader>rn", utils.rename, { expr = true, desc = "Rename", has = "rename" })
+    self:map("<leader>rn", M.rename, { expr = true, desc = "Rename", has = "rename" })
 
     if client.name == "tsserver" and pcall(require, "typescript") then
         self:map("<leader>co", "TypescriptOrganizeImports", { desc = "Organize Imports" })
@@ -56,6 +51,14 @@ function M:map(lhs, rhs, opts)
         ---@diagnostic disable-next-line: no-unknown
         { silent = true, buffer = self.buffer, expr = opts.expr, desc = opts.desc }
     )
+end
+
+function M.rename()
+    if pcall(require, "inc_rename") then
+        return ":IncRename " .. vim.fn.expand "<cword>"
+    else
+        vim.lsp.buf.rename()
+    end
 end
 
 function M.diagnostic_goto(next, severity)

@@ -19,7 +19,7 @@ local function lsp_client(msg)
     local buf_client_names = {}
 
     for value in pairs(method) do
-        local utils = require "plugins.lsp.utils"
+        local utils = require "core.utils"
         local null_ls = require "null-ls"
         local supported = utils.list_registered(buf_ft, null_ls.methods[method[value]])
         vim.list_extend(buf_client_names, supported)

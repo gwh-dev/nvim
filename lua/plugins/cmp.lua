@@ -1,4 +1,4 @@
-local M = {
+return {
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
     dependencies = {
@@ -73,16 +73,26 @@ local M = {
                     luasnip.lsp_expand(args.body)
                 end,
             },
-            sources = cmp.config.sources({
+            sources = cmp.config.sources {
                 { name = "nvim_lua", keyword_length = 3 },
                 { name = "luasnip", keyword_length = 2 },
                 { name = "nvim_lsp" },
                 { name = "path" },
                 { name = "nvim_lsp_signature_help" },
-            }, {
-                { name = "buffer", keyword_length = 3 },
-                { name = "neorg" },
-            }),
+                {
+                    name = "buffer",
+                    option = {
+                        get_bufnrs = function()
+                            local bufs = {}
+                            for _, win in ipairs(vim.api.nvim_list_wins()) do
+                                bufs[vim.api.nvim_win_get_buf(win)] = true
+                            end
+                            return vim.tbl_keys(bufs)
+                        end,
+                    },
+                },
+                -- { name = "neorg" },
+            },
             confirmation = { default_behavior = types.cmp.ConfirmBehavior.Replace },
             window = {
                 documentation = vim.tbl_deep_extend("force", cmp.config.window.bordered(), {
@@ -97,24 +107,38 @@ local M = {
             formatting = {
                 fields = { "kind", "abbr", "menu" },
                 format = function(entry, vim_item)
-                    local kind = lspkind.cmp_format { mode = "symbol_text" }(entry, vim_item)
+                    local kind = lspkind.cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
                     local strings = vim.split(kind.kind, "%s", { trimempty = true })
-                    local word = entry:get_insert_text()
-                    if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
-                        word = vim.lsp.util.parse_snippet(word)
-                    end
-                    kind.kind = " " .. strings[1] .. " "
-                    kind.menu = "[" .. strings[2] .. "]"
-                    if
-                        entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
-                        and string.sub(kind.abbr, -1, -1) == "~"
-                    then
-                        word = word .. "~"
-                    end
-                    kind.abbr = word
+                    kind.kind = " " .. (strings[1] or "") .. " "
+                    kind.menu = "    (" .. (strings[2] or "") .. ")"
+
                     return kind
                 end,
             },
+            -- formatting = {
+            --     fields = { "kind", "abbr", "menu" },
+            --     format = function(entry, vim_item)
+            --         local kind = lspkind.cmp_format { mode = "symbol_text" }(entry, vim_item)
+            --         local strings = vim.split(kind.kind, "%s", { trimempty = true })
+            --         local word = entry:get_insert_text()
+            --         if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
+            --             word = vim.lsp.util.parse_snippet(word)
+            --         end
+            --         kind.kind = " " .. strings[1] .. " "
+            --         kind.menu = "[" .. strings[2] .. "]"
+            --         if
+            --             entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
+            --             and string.sub(kind.abbr, -1, -1) == "~"
+            --         then
+            --             word = word .. "~"
+            --         end
+            --         kind.abbr = word
+            --         return kind
+            --     end,
+            -- },
+            -- formatting = {
+            --     format = lspkind.cmp_format(),
+            -- },
             mapping = {
                 ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
                 ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
@@ -159,4 +183,3 @@ local M = {
         )
     end,
 }
-return M
