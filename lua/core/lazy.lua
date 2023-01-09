@@ -12,16 +12,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup {
-    spec = {
-        -- import LazyVim plugins
-        { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-        -- import/override with your plugins
-        { import = "plugins" },
-        -- import any extras modules here
-        -- { import = "lazyvim.plugins.extras.lang.typescript" },
-        -- { import = "lazyvim.plugins.extras.lang.json" },
-    },
+require("lazy").setup("plugins", {
     defaults = { lazy = true },
     checker = { enabled = true },
     performance = {
@@ -64,6 +55,6 @@ require("lazy").setup {
         },
     },
     debug = false,
-}
+})
 
 require "impatient"
