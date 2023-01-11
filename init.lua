@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd("User", {
         require "core.autocommands"
         require "core.mappings"
         if vim.bo.filetype == "" then
-            pcall(vim.cmd, "Alpha")
+            vim.cmd "Alpha"
         end
     end,
     once = true,
