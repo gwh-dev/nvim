@@ -5,21 +5,6 @@ local M = {
         config = true,
     },
 
-    -- {
-    --     "romgrk/barbar.nvim",
-    --     event = "BufAdd",
-    --     init = function()
-    --         vim.keymap.set("n", "b[", "<cmd>:BufferPrevious<CR>", { desc = "Previous Buffer" })
-    --         vim.keymap.set("n", "b]", "<cmd>:BufferNext<CR>", { desc = "Next Buffer" })
-    --     end,
-    --     config = function()
-    --         require("bufferline").setup {
-    --             auto_hide = true,
-    --             closable = false,
-    --         }
-    --     end,
-    -- },
-
     {
         "akinsho/nvim-bufferline.lua",
         event = "BufAdd",

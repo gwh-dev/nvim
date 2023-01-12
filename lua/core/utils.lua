@@ -18,18 +18,13 @@ function M.list_registered(filetype, method)
     return registered_providers[method] or {}
 end
 
----@param on_attach fun(client, bufnr)
+---@param on_attach fun(client, buffer)
 function M.on_attach(on_attach)
     vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
-            if vim.b.lsp_attached then
-                return
-            end
-            vim.b.lsp_attached = true
-
-            local bufnr = args.buf
+            local buffer = args.buf
             local client = vim.lsp.get_client_by_id(args.data.client_id)
-            on_attach(client, bufnr)
+            on_attach(client, buffer)
         end,
     })
 end

@@ -1,7 +1,7 @@
 return {
     "olimorris/onedarkpro.nvim",
     event = "BufReadPre",
-    -- ft = "alpha",
+    ft = "alpha",
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
         local onedarkpro = require "onedarkpro"
@@ -24,10 +24,10 @@ return {
                 treesitter = true,
                 gitsigns = true,
                 indentline = true,
+                dashboard = true,
                 -- disable
                 barbar = false,
                 trouble = false,
-                dashboard = false,
                 nvim_dap_ui = false,
                 nvim_dap = false,
                 nvim_notify = false,

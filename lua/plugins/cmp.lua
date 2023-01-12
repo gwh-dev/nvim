@@ -174,7 +174,7 @@ return {
                     end
                 end, { "i", "s" }),
             },
-            experimental = { ghost_text = true },
+            -- experimental = { ghost_text = true },
         }
 
         cmp.event:on(

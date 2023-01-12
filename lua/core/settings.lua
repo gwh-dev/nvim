@@ -23,6 +23,8 @@ g.loaded_perl_provider = 0
 opt.termguicolors = true
 opt.foldenable = false
 
+vim.o.winbar = " "
+
 opt.splitkeep = "screen"
 vim.o.shortmess = "filnxtToOFWIcC"
 opt.swapfile = false
@@ -35,7 +37,7 @@ opt.wildignorecase = true
 opt.ignorecase = true
 opt.completeopt = { "menu", "menuone", "noselect" }
 opt.scrolloff = 8
--- opt.lazyredraw = true
+opt.lazyredraw = true
 opt.showmatch = true
 opt.ignorecase = true
 opt.hlsearch = true

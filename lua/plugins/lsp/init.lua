@@ -10,7 +10,6 @@ return {
         servers = {
             rust_analyzer = {},
             sumneko_lua = {
-                prefer_null_ls = true,
                 settings = {
                     Lua = {
                         runtime = {
@@ -116,8 +115,8 @@ return {
                     formatting.cbfmt,
                     diagnostics.selene,
                     diagnostics.flake8,
-                    code_actions.gitsigns,
-                    -- formatting.prettierd,
+                    -- code_actions.gitsigns,
+                    formatting.prettierd,
                 },
             }
         end,
@@ -155,5 +154,51 @@ return {
                 end
             end
         end,
+    },
+
+    {
+        "SmiteshP/nvim-navic",
+        init = function()
+            vim.g.navic_silence = true
+            require("core.utils").on_attach(function(client, buffer)
+                if client.server_capabilities.documentSymbolProvider then
+                    require("nvim-navic").attach(client, buffer)
+                end
+            end)
+        end,
+        config = {
+            icons = {
+                File = "file ",
+                Module = "module ",
+                Namespace = "namespace ",
+                Package = "package ",
+                Class = "class ",
+                Method = "method ",
+                Property = "property ",
+                Field = "field ",
+                Constructor = "constructor ",
+                Enum = "enum ",
+                Interface = "interface ",
+                Function = "function ",
+                Variable = "variable ",
+                Constant = "constant ",
+                String = "string ",
+                Number = "number ",
+                Boolean = "boolean ",
+                Array = "array ",
+                Object = "object ",
+                Key = "key ",
+                Null = "null ",
+                EnumMember = "enum member ",
+                Struct = "struct ",
+                Event = "event ",
+                Operator = "operator ",
+                TypeParameter = "type parameter ",
+            },
+            highlight = true,
+            separator = " " .. "❭" .. " ",
+            depth_limit = 5,
+            depth_limit_indicator = "..",
+        },
     },
 }
