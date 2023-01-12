@@ -14,10 +14,6 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 
 require("lazy").setup("plugins", {
-    install = {
-		missing = true,
-		colorscheme = { "gruvbox" },
-	},
     defaults = { lazy = true },
     checker = { enabled = true },
     performance = {
@@ -61,5 +57,3 @@ require("lazy").setup("plugins", {
     },
     debug = false,
 })
-
-require "impatient"

@@ -6,6 +6,20 @@ local M = {
     },
 
     {
+        "mvllow/modes.nvim",
+        event = "VeryLazy",
+        config = {
+            colors = {
+                copy = "#e5c07b",
+                delete = "#e06c75",
+                insert = "#56b6c2",
+                visual = "#c678dd",
+            },
+            ignore_filetypes = { "neo-tree", "TelescopePrompt" },
+        },
+    },
+
+    {
         "akinsho/nvim-bufferline.lua",
         event = "BufAdd",
         opts = {

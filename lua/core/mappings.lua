@@ -38,17 +38,10 @@ map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 -- highlights under cursor
 map("n", "<leader>hl", vim.show_pos, { desc = "Highlight Groups at cursor" }) -- for neovim >= 0.9.0
 
--- Change tmux session
--- map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", remap)
-
 -- Remove highlighting
--- map("n", "n", "nzzzv", remap)  -- old
--- map("n", "N", "Nzzzv", remap)  -- old
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
-
 -- highlight all the same ones
 map({ "n", "x" }, "gw", "*N")
-
 -- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
 map({ "n", "x", "o" }, "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map({ "n", "x", "o" }, "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })

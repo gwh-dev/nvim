@@ -20,10 +20,11 @@ function M.on_attach(client, buffer)
     self:map("[w", M.diagnostic_goto(false, "WARNING"), { desc = "Prev Warning" })
     self:map("<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action", mode = { "n", "v" }, has = "codeAction" })
 
-    local utils = require "plugins.lsp.format"
-    self:map("<leader>f", utils.format, { desc = "Format Document", has = "documentFormatting" })
-    self:map("<leader>f", utils.format, { desc = "Format Range", mode = "v", has = "documentRangeFormatting" })
+    local lsp = require "plugins.lsp.format"
+    self:map("<leader>f", lsp.format, { desc = "Format Document", has = "documentFormatting" })
+    self:map("<leader>f", lsp.format, { desc = "Format Range", mode = "v", has = "documentRangeFormatting" })
     self:map("<leader>rn", M.rename, { expr = true, desc = "Rename", has = "rename" })
+    -- self:map("<leader>rn", require("plugins.lsp.ui").rename(), { desc = "Rename", has = "rename" })
 
     if client.name == "tsserver" and pcall(require, "typescript") then
         self:map("<leader>co", "TypescriptOrganizeImports", { desc = "Organize Imports" })
