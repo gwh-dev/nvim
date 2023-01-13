@@ -6,6 +6,12 @@ return {
             "mason.nvim",
             "williamboman/mason-lspconfig.nvim",
             "hrsh7th/cmp-nvim-lsp",
+            {
+                "kosayoda/nvim-lightbulb",
+                init = function()
+                    vim.fn.sign_define("LightBulbSign", { text = "ﯧ", texthl = "@class" })
+                end,
+            },
         },
         servers = {
             rust_analyzer = {},
@@ -48,12 +54,13 @@ return {
             require("core.utils").on_attach(function(client, buffer)
                 require("plugins.lsp.format").on_attach(client, buffer)
                 require("plugins.lsp.mappings").on_attach(client, buffer)
+                require("nvim-lightbulb").setup { autocmd = { enabled = true } }
             end)
 
             local diagnostic = { "Error", "Warn", "Info", "Hint" }
             for _, type in pairs(diagnostic) do
                 local hl = "DiagnosticSign" .. type
-                vim.fn.sign_define(hl, { numhl = hl })
+                vim.fn.sign_define(hl, { numhl = hl, culhl = hl, texthl = hl, linehl = hl })
             end
             vim.diagnostic.config {
                 virtual_text = false,

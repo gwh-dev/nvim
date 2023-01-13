@@ -1,8 +1,10 @@
-local M = {
+return {
     {
         "smjonas/inc-rename.nvim",
         cmd = "IncRename",
-        config = true,
+        config = {
+            input_buffer_type = "dressing",
+        },
     },
 
     {
@@ -210,5 +212,3 @@ local M = {
         end,
     },
 }
-
-return M

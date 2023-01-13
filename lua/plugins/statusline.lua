@@ -89,18 +89,6 @@ return {
                 sections = {
                     lualine_a = { { "mode" } }, -- separator = { left = "" } } },
                     lualine_b = { "branch" },
-                    lualine_c = {
-                        {
-                            "filetype",
-                            icon_only = true,
-                            padding = { left = 1, right = 0 },
-                            cond = function()
-                                if not package.loaded["nvim-navic"] then
-                                    return true
-                                end
-                            end,
-                        },
-                    },
                     lualine_x = {
                         { "diagnostics", sources = { "nvim_diagnostic" } },
                         { lsp_client, icon = " ", color = { fg = colors.violet, gui = "bold" } },
@@ -136,14 +124,9 @@ return {
                         {
                             "filetype",
                             separator = { right = "" },
-                            colored = false,
+                            icon_only = true,
+                            -- colored = false,
                             padding = { left = 1, right = 0 },
-                            cond = function()
-                                if package.loaded["nvim-navic"] then
-                                    local navic = require "nvim-navic"
-                                    return navic.is_available()
-                                end
-                            end,
                         },
                     },
                     lualine_c = {

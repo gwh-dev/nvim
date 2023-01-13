@@ -6,9 +6,6 @@ vim.api.nvim_create_autocmd("User", {
     callback = function()
         require "core.autocommands"
         require "core.mappings"
-        if vim.bo.filetype == "" then
-            vim.cmd "Alpha"
-        end
     end,
     once = true,
 })
