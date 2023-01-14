@@ -22,22 +22,12 @@ return {
         end,
     },
 
-    -- lua with packer.nvim
-
-    {
-        "max397574/better-escape.nvim",
-        keys = { { "jj", mode = "i" }, { "kk", mode = "i" } },
-        config = {
-            mapping = { "kk", "jj" },
-            clear_empty_lines = true,
-        },
-    },
-
     {
         "ojroques/nvim-bufdel",
         cmd = "BufDel",
         config = true,
     },
+
     {
         "nvim-neo-tree/neo-tree.nvim",
         cmd = "Neotree",
@@ -128,6 +118,12 @@ return {
         config = function()
             require("leap").add_default_mappings()
         end,
+    },
+
+    {
+        "abecodes/tabout.nvim",
+        event = "InsertEnter",
+        config = true,
     },
 
     {

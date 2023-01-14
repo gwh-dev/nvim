@@ -2,11 +2,6 @@ return {
     "lewis6991/gitsigns.nvim",
     event = "BufReadPre",
     config = function()
-        if not package.loaded.trouble then
-            package.preload.trouble = function()
-                return true
-            end
-        end
         require("gitsigns").setup {
             on_attach = function(bufnr)
                 local gs = package.loaded.gitsigns
@@ -60,7 +55,5 @@ return {
                 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         }
-        package.loaded.trouble = nil
-        package.preload.trouble = nil
     end,
 }

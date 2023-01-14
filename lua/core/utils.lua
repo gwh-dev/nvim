@@ -1,5 +1,7 @@
 local M = {}
 
+-- * Give all the registered providers
+---@return table
 local function list_registered_providers_names(filetype)
     local s = require "null-ls.sources"
     local available_sources = s.get_available(filetype)
@@ -13,6 +15,8 @@ local function list_registered_providers_names(filetype)
     return registered
 end
 
+-- * check if the filetype have a null_ls provider/s
+---@return table
 function M.list_registered(filetype, method)
     local registered_providers = list_registered_providers_names(filetype)
     return registered_providers[method] or {}

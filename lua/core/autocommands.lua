@@ -91,9 +91,3 @@ autocmd("ModeChanged", {
         vim.diagnostic.enable(0)
     end,
 })
-
-autocmd("User", {
-    group = group,
-    pattern = "LazySync",
-    command = "OnedarkproCache",
-})

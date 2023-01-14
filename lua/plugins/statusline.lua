@@ -1,3 +1,32 @@
+-- local colors = require "gruvbox.palette"
+
+-- local gruvbox = {
+--     normal = {
+--         a = { bg = colors.bright_green, fg = colors.dark2 },
+--         b = { bg = colors.dark2, fg = colors.bright_green },
+--         c = { bg = colors.dark0_soft, fg = colors.light0_soft },
+--     },
+
+--     insert = {
+--         a = { bg = colors.bright_blue, fg = colors.dark2 },
+--         b = { bg = colors.dark2, fg = colors.bright_blue },
+--     },
+
+--     command = {
+--         a = { bg = colors.bright_purple, fg = colors.dark2 },
+--         b = { bg = colors.dark2, fg = colors.bright_purple },
+--     },
+
+--     visual = {
+--         a = { bg = colors.bright_yellow, fg = colors.dark2 },
+--         b = { bg = colors.dark2, fg = colors.bright_yellow },
+--     },
+
+--     replace = {
+--         a = { bg = colors.bright_red, fg = colors.dark2 },
+--         b = { bg = colors.dark2, fg = colors.bright_red },
+--     },
+-- }
 local function lsp_client(msg)
     msg = msg or ""
 
@@ -40,46 +69,10 @@ return {
         "nvim-lualine/lualine.nvim",
         event = "VeryLazy",
         config = function()
-            local colors = require("onedarkpro.helpers").get_colors()
-            local config = require("onedarkpro.config").config
+            -- local colors = require "gruvbox.palette"
 
-            local inactive_bg = config.options.highlight_inactive_windows and colors.color_column or colors.bg
-            local onedarkpro = {
-                normal = {
-                    a = { bg = colors.green, fg = colors.bg },
-                    b = { bg = colors.fg_gutter, fg = colors.green },
-                    c = { bg = colors.bg_statusline, fg = colors.fg },
-                },
-
-                insert = {
-                    a = { bg = colors.blue, fg = colors.bg },
-                    b = { bg = colors.fg_gutter, fg = colors.blue },
-                },
-
-                command = {
-                    a = { bg = colors.purple, fg = colors.bg },
-                    b = { bg = colors.fg_gutter, fg = colors.purple },
-                },
-
-                visual = {
-                    a = { bg = colors.yellow, fg = colors.bg },
-                    b = { bg = colors.fg_gutter, fg = colors.yellow },
-                },
-
-                replace = {
-                    a = { bg = colors.red, fg = colors.bg },
-                    b = { bg = colors.fg_gutter, fg = colors.red },
-                },
-
-                inactive = {
-                    a = { bg = inactive_bg, fg = colors.blue },
-                    b = { bg = inactive_bg, fg = colors.fg_gutter_inactive, gui = "bold" },
-                    c = { bg = inactive_bg, fg = colors.fg_gutter_inactive },
-                },
-            }
             require("lualine").setup {
                 options = {
-                    theme = onedarkpro,
                     section_separators = { left = "", right = "" },
                     component_separators = {},
                     icons_enabled = true,
@@ -89,15 +82,16 @@ return {
                 sections = {
                     lualine_a = { { "mode" } }, -- separator = { left = "" } } },
                     lualine_b = { "branch" },
-                    lualine_x = {
+                    lualine_c = {
                         { "diagnostics", sources = { "nvim_diagnostic" } },
-                        { lsp_client, icon = " ", color = { fg = colors.violet, gui = "bold" } },
+                    },
+                    lualine_x = {
+                        { lsp_client, icon = " " },
                         {
                             function()
                                 return require("lazy.status").updates()
                             end,
                             cond = require("lazy.status").has_updates,
-                            color = { fg = colors.orange },
                         },
                         {
                             function()
@@ -105,7 +99,6 @@ return {
                                 local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
                                 return " " .. ms .. "ms"
                             end,
-                            color = { fg = colors.orange },
                         },
                     },
                     lualine_y = { "location" },
@@ -120,6 +113,7 @@ return {
                     lualine_z = {},
                 },
                 winbar = {
+                    lualine_a = {},
                     lualine_b = {
                         {
                             "filetype",
@@ -128,14 +122,14 @@ return {
                             -- colored = false,
                             padding = { left = 1, right = 0 },
                         },
-                    },
-                    lualine_c = {
                         {
                             "filename",
                             path = 1,
                             separator = { right = "" },
                             symbols = { modified = "", readonly = "", unnamed = "" },
                         },
+                    },
+                    lualine_c = {
                         {
                             function()
                                 local ret = require("nvim-navic").get_location()
@@ -146,9 +140,19 @@ return {
                                     return require("nvim-navic").is_available()
                                 end
                             end,
-                            color = { bg = colors.bg_statusline },
                         },
                     },
+                    lualine_x = {},
+                    lualine_y = {},
+                    lualine_z = {},
+                },
+                inactive_winbar = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = {},
+                    lualine_x = {},
+                    lualine_y = {},
+                    lualine_z = {},
                 },
                 extensions = { "neo-tree" },
             }

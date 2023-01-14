@@ -104,48 +104,46 @@ return {
                     side_padding = 0,
                 }),
             },
-            formatting = {
-                fields = { "kind", "abbr", "menu" },
-                format = function(entry, vim_item)
-                    local kind = lspkind.cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
-                    local strings = vim.split(kind.kind, "%s", { trimempty = true })
-                    kind.kind = " " .. (strings[1] or "") .. " "
-                    kind.menu = "    (" .. (strings[2] or "") .. ")"
-
-                    return kind
-                end,
-            },
             -- formatting = {
             --     fields = { "kind", "abbr", "menu" },
             --     format = function(entry, vim_item)
-            --         local kind = lspkind.cmp_format { mode = "symbol_text" }(entry, vim_item)
+            --         local kind = lspkind.cmp_format { mode = "symbol_text", maxwidth = 50 }(entry, vim_item)
             --         local strings = vim.split(kind.kind, "%s", { trimempty = true })
-            --         local word = entry:get_insert_text()
-            --         if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
-            --             word = vim.lsp.util.parse_snippet(word)
-            --         end
-            --         kind.kind = " " .. strings[1] .. " "
-            --         kind.menu = "[" .. strings[2] .. "]"
-            --         if
-            --             entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
-            --             and string.sub(kind.abbr, -1, -1) == "~"
-            --         then
-            --             word = word .. "~"
-            --         end
-            --         kind.abbr = word
+            --         kind.kind = " " .. (strings[1] or "") .. " "
+            --         kind.menu = "    (" .. (strings[2] or "") .. ")"
+
             --         return kind
             --     end,
             -- },
-            -- formatting = {
-            --     format = lspkind.cmp_format(),
-            -- },
+            formatting = {
+                fields = { "kind", "abbr", "menu" },
+                format = function(entry, vim_item)
+                    local kind = lspkind.cmp_format { mode = "symbol_text" }(entry, vim_item)
+                    local strings = vim.split(kind.kind, "%s", { trimempty = true })
+                    local word = entry:get_insert_text()
+                    if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
+                        word = vim.lsp.util.parse_snippet(word)
+                    end
+                    kind.kind = " " .. strings[1] .. " "
+                    kind.menu = "[" .. strings[2] .. "]"
+                    if
+                        entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
+                        and string.sub(kind.abbr, -1, -1) == "~"
+                    then
+                        word = word .. "~"
+                    end
+                    kind.abbr = word
+                    return kind
+                end,
+            },
             mapping = {
                 ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
                 ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
                 ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+
                 -- confirm selection
                 ["<cr>"] = cmp.mapping.confirm {
-                    behavior = types.cmp.ConfirmBehavior.Replace,
+                    -- behavior = types.cmp.ConfirmBehavior.Replace,
                     select = true,
                 },
 

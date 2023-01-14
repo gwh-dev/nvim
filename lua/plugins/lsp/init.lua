@@ -60,8 +60,9 @@ return {
             local diagnostic = { "Error", "Warn", "Info", "Hint" }
             for _, type in pairs(diagnostic) do
                 local hl = "DiagnosticSign" .. type
-                vim.fn.sign_define(hl, { numhl = hl, culhl = hl, texthl = hl, linehl = hl })
+                vim.fn.sign_define(hl, { numhl = hl })
             end
+
             vim.diagnostic.config {
                 virtual_text = false,
                 signs = true,
