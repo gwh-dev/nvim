@@ -44,7 +44,7 @@ require("lazy").setup("plugins", {
                 "vimball",
                 "vimballPlugin",
                 "tutor",
-                "syntax",
+                -- "syntax",
                 "rplugin",
                 "synmenu",
                 "optwin",

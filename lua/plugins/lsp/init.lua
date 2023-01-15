@@ -1,7 +1,7 @@
 return {
     {
         "neovim/nvim-lspconfig",
-        event = "BufReadPre",
+        event = { "BufRead", "BufNewFile" },
         dependencies = {
             "mason.nvim",
             "williamboman/mason-lspconfig.nvim",
@@ -105,13 +105,13 @@ return {
     -- formatters
     {
         "jose-elias-alvarez/null-ls.nvim",
-        event = "BufReadPre",
+        event = { "BufRead", "BufNewFile" },
         dependencies = { "mason.nvim" },
         config = function()
             local nls = require "null-ls"
             local formatting = nls.builtins.formatting
             local diagnostics = nls.builtins.diagnostics
-            local code_actions = nls.builtins.code_actions
+            -- local code_actions = nls.builtins.code_actions
             nls.setup {
                 debounce = 150,
                 save_after_format = false,
@@ -135,7 +135,6 @@ return {
 
         "williamboman/mason.nvim",
         cmd = "Mason",
-        keys = { { "<localleader>m", "<cmd>Mason<cr>", desc = "Mason" } },
         tools = {
             -- Null-ls Tools
             "prettierd",
@@ -163,50 +162,4 @@ return {
             end
         end,
     },
-
-    -- {
-    --     "SmiteshP/nvim-navic",
-    --     init = function()
-    --         vim.g.navic_silence = true
-    --         require("core.utils").on_attach(function(client, buffer)
-    --             if client.server_capabilities.documentSymbolProvider then
-    --                 require("nvim-navic").attach(client, buffer)
-    --             end
-    --         end)
-    --     end,
-    --     config = {
-    --         icons = {
-    --             File = "file ",
-    --             Module = "module ",
-    --             Namespace = "namespace ",
-    --             Package = "package ",
-    --             Class = "class ",
-    --             Method = "method ",
-    --             Property = "property ",
-    --             Field = "field ",
-    --             Constructor = "constructor ",
-    --             Enum = "enum ",
-    --             Interface = "interface ",
-    --             Function = "function ",
-    --             Variable = "variable ",
-    --             Constant = "constant ",
-    --             String = "string ",
-    --             Number = "number ",
-    --             Boolean = "boolean ",
-    --             Array = "array ",
-    --             Object = "object ",
-    --             Key = "key ",
-    --             Null = "null ",
-    --             EnumMember = "enum member ",
-    --             Struct = "struct ",
-    --             Event = "event ",
-    --             Operator = "operator ",
-    --             TypeParameter = "type parameter ",
-    --         },
-    --         highlight = true,
-    --         separator = " " .. "❭" .. " ",
-    --         depth_limit = 5,
-    --         depth_limit_indicator = "..",
-    --     },
-    -- },
 }

@@ -1,3 +1,4 @@
+local utils = require "core.utils"
 return {
     {
         "smjonas/inc-rename.nvim",
@@ -20,6 +21,18 @@ return {
             vim.o.equalalways = false
             require("windows").setup()
         end,
+    },
+
+    {
+        "Wansmer/treesj",
+        keys = { "<leader>m", mode = "n" },
+        config = true,
+    },
+
+    {
+        "nacro90/numb.nvim",
+        event = "CmdlineEnter",
+        config = true,
     },
 
     {
@@ -106,17 +119,33 @@ return {
 
     {
         "ggandor/leap.nvim",
-        keys = { "s", "S", "f", "F", "t", "T" },
+        event = "VeryLazy",
+        -- event = { "BufRead", "BufNewFile" },
         dependencies = {
             {
                 "ggandor/flit.nvim",
                 config = {
                     labeled_modes = "nv",
+                    multiline = false,
                 },
             },
         },
         config = function()
-            require("leap").add_default_mappings()
+            require("leap").setup {
+                opts = {
+                    highlight_unlabeled_phase_one_targets = true,
+                },
+                safe_labels = {},
+                --stylua: ignore
+                labels = {"w","s","a","j","k","l","o","i","q","d","h","g","u","t","m","v","c","n",".","z","/","D","L",
+                    "N","H","G","M","U","T","?","Z","J","K","O","I",
+                },
+            }
+
+            vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap-forward)")
+            vim.keymap.set({ "n", "x", "o" }, "S", "<Plug>(leap-backward)")
+            vim.keymap.set({ "n", "x", "o" }, "J", utils.leap_line_forward, { desc = "Jump to line below cursor" })
+            vim.keymap.set({ "n", "x", "o" }, "K", utils.leap_line_backward, { desc = "Jump to line above cursor" })
         end,
     },
 

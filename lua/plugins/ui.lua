@@ -1,5 +1,4 @@
 local colors = require("gruvbox-baby.colors").config()
-
 return {
     {
         {
@@ -30,10 +29,10 @@ return {
             event = "VeryLazy",
             config = {
                 colors = {
-                    copy = "#ddc7a1",
-                    delete = "#ea6962",
-                    insert = "#7daea3",
-                    visual = "#d4879c",
+                    copy = colors.milk,
+                    delete = colors.red,
+                    insert = colors.bright_yellow,
+                    visual = colors.foreground,
                 },
                 ignore_filetypes = { "neo-tree", "TelescopePrompt" },
             },
@@ -85,12 +84,12 @@ return {
                         groups = {
                             InclineNormal = {
                                 guifg = colors.orange,
-                                guibg = "none",
+                                guibg = "#3c3a39",
                                 -- gui = "bold",
                             },
                             InclineNormalNC = {
                                 guifg = colors.foreground,
-                                guibg = "none",
+                                guibg = "#3c3a39",
                             },
                         },
                     },
@@ -228,7 +227,7 @@ return {
                 TypeParameter = "type parameter",
             },
             theme = {
-                normal = { fg = colors.soft_yellow, bg = "none" },
+                normal = { fg = colors.soft_yellow, bg = "#3c3a39" },
                 ellipsis = { fg = colors.soft_yellow },
                 separator = { fg = colors.pink },
                 modified = { fg = colors.light_blue },
@@ -236,6 +235,58 @@ return {
                 basename = { fg = colors.soft_yellow, bold = true },
                 context = { fg = colors.milk },
             },
+        },
+    },
+
+    {
+        "nvim-lualine/lualine.nvim",
+        event = "VeryLazy",
+        config = {
+            options = {
+                icons_enabled = true,
+                globalstatus = true,
+                component_separators = {},
+                disabled_filetypes = { statusline = { "alpha", "lazy" } },
+                refresh = {
+                    statusline = 500,
+                    tabline = nil,
+                    winbar = nil,
+                },
+            },
+            sections = {
+                lualine_a = { { "mode", separator = { left = "", right = "" } } },
+                lualine_b = { "branch" },
+                lualine_c = {
+                    { require("core.utils").lsp_client, icon = " " },
+                    { "diagnostics", sources = { "nvim_diagnostic" } },
+                },
+                lualine_x = {
+                    {
+                        function()
+                            return require("lazy.status").updates()
+                        end,
+                        cond = require("lazy.status").has_updates,
+                    },
+                    {
+                        function()
+                            local stats = require("lazy").stats()
+                            local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+                            return " " .. ms .. "ms"
+                        end,
+                    },
+                },
+                lualine_y = { "location" },
+                lualine_z = { { "filesize", separator = { left = "", right = "" } } },
+            },
+            inactive_sections = {
+                lualine_a = {},
+                lualine_b = {},
+                lualine_c = {},
+                lualine_x = {},
+                lualine_y = {},
+                lualine_z = {},
+            },
+            extensions = { "neo-tree" },
         },
     },
 }

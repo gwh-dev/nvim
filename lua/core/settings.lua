@@ -30,6 +30,7 @@ vim.o.shortmess = "filnxtToOFWIcC"
 opt.swapfile = false
 opt.backup = false
 opt.undodir = "/home/gwh/.vim/undodir"
+opt.fillchars = { eob = " " } -- make EndOfBuffer invisible
 opt.wrap = false
 opt.undofile = true
 opt.wildmode = "longest:full,full"
@@ -45,11 +46,11 @@ opt.incsearch = true
 opt.isfname:append "@-@"
 opt.splitbelow = true
 opt.splitright = true
-opt.number = true
-opt.relativenumber = true
+opt.number = false
+opt.relativenumber = false
 opt.showmode = false
 opt.cursorline = true
-opt.signcolumn = "yes"
+opt.signcolumn = "no"
 -- opt.cmdheight = 0
 opt.colorcolumn = "120"
 opt.laststatus = 3

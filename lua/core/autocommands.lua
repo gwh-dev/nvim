@@ -1,4 +1,5 @@
 vim.cmd [[autocmd FileType markdown setlocal spell]]
+-- vim.cmd [[autocmd ColorScheme * lua require('leap').init_highlight(true)]]
 local api = vim.api
 local autocmd = api.nvim_create_autocmd
 local augroup = api.nvim_create_augroup
