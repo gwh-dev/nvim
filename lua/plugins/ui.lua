@@ -1,3 +1,5 @@
+local colors = require("gruvbox-baby.colors").config()
+
 return {
     {
         {
@@ -23,39 +25,27 @@ return {
             },
         },
 
-        -- {
-        --     "mvllow/modes.nvim",
-        --     event = "VeryLazy",
-        --     config = {
-        --         colors = {
-        --             copy = "#e5c07b",
-        --             delete = "#e06c75",
-        --             insert = "#56b6c2",
-        --             visual = "#c678dd",
-        --         },
-        --         ignore_filetypes = { "neo-tree", "TelescopePrompt" },
-        --     },
-        -- },
+        {
+            "mvllow/modes.nvim",
+            event = "VeryLazy",
+            config = {
+                colors = {
+                    copy = "#ddc7a1",
+                    delete = "#ea6962",
+                    insert = "#7daea3",
+                    visual = "#d4879c",
+                },
+                ignore_filetypes = { "neo-tree", "TelescopePrompt" },
+            },
+        },
 
         {
             "akinsho/nvim-bufferline.lua",
             event = "BufAdd",
             config = {
-                -- highlights = require("catppuccin.groups.integrations.bufferline").get(),
                 options = {
                     diagnostics = "nvim_lsp",
                     always_show_bufferline = false,
-                    diagnostics_indicator = function(_, _, diag)
-                        local icons = {
-                            Error = " ",
-                            Warn = " ",
-                            Hint = " ",
-                            Info = " ",
-                        }
-                        local ret = (diag.error and icons.Error .. diag.error .. " " or "")
-                            .. (diag.warning and icons.Warn .. diag.warning or "")
-                        return vim.trim(ret)
-                    end,
                     offsets = {
                         {
                             filetype = "neo-tree",
@@ -90,22 +80,20 @@ return {
             "b0o/incline.nvim",
             event = "BufReadPre",
             config = function()
-                -- local colors = require("onedarkpro.helpers").get_colors()
-
                 require("incline").setup {
-                    -- highlight = {
-                    --     groups = {
-                    -- InclineNormal = {
-                    --     guifg = colors.orange,
-                    --     guibg = colors.bg,
-                    --     -- gui = "bold",
-                    -- },
-                    -- InclineNormalNC = {
-                    --     guifg = colors.fg,
-                    --     guibg = colors.bg,
-                    -- },
-                    --     },
-                    -- },
+                    highlight = {
+                        groups = {
+                            InclineNormal = {
+                                guifg = colors.orange,
+                                guibg = "none",
+                                -- gui = "bold",
+                            },
+                            InclineNormalNC = {
+                                guifg = colors.foreground,
+                                guibg = "none",
+                            },
+                        },
+                    },
                     window = {
                         margin = {
                             vertical = 0,
@@ -188,6 +176,65 @@ return {
                 "tuple",
                 "while",
                 "with",
+            },
+        },
+    },
+
+    {
+        "utilyre/barbecue.nvim",
+        event = "BufReadPre",
+        init = function()
+            vim.g.navic_silence = true
+            require("core.utils").on_attach(function(client, buffer)
+                if client.server_capabilities.documentSymbolProvider then
+                    require("nvim-navic").attach(client, buffer)
+                end
+            end)
+        end,
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            "SmiteshP/nvim-navic",
+            "nvim-tree/nvim-web-devicons", -- optional dependency
+        },
+        config = {
+            create_autocmd = false, -- prevent barbecue from updating itself automatically
+            show_modified = true,
+            kinds = {
+                File = "file",
+                Module = "module",
+                Namespace = "namespace",
+                Package = "package",
+                Class = "class",
+                Method = "method",
+                Property = "property",
+                Field = "field",
+                Constructor = "constructor",
+                Enum = "enum",
+                Interface = "interface",
+                Function = "function",
+                Variable = "variable",
+                Constant = "constant",
+                String = "string",
+                Number = "number",
+                Boolean = "boolean",
+                Array = "array",
+                Object = "object",
+                Key = "key",
+                Null = "null",
+                EnumMember = "enum member",
+                Struct = "struct",
+                Event = "event",
+                Operator = "operator",
+                TypeParameter = "type parameter",
+            },
+            theme = {
+                normal = { fg = colors.soft_yellow, bg = "none" },
+                ellipsis = { fg = colors.soft_yellow },
+                separator = { fg = colors.pink },
+                modified = { fg = colors.light_blue },
+                dirname = { fg = colors.blue_gray },
+                basename = { fg = colors.soft_yellow, bold = true },
+                context = { fg = colors.milk },
             },
         },
     },
