@@ -1,8 +1,11 @@
 return {
     "luisiacc/gruvbox-baby",
+    lazy = false,
     priority = 1000, -- make sure to load this before all the other start plugins
-    event = "BufReadPre",
-    dependencies = "m-demare/hlargs.nvim",
+    dependencies = {
+        "m-demare/hlargs.nvim",
+        "RRethy/vim-illuminate",
+    },
     config = function()
         vim.g.gruvbox_baby_function_style = "NONE"
         vim.g.gruvbox_baby_background_color = "soft"
@@ -35,5 +38,6 @@ return {
         }
         vim.cmd.colorscheme "gruvbox-baby"
         require("hlargs").setup()
+        require("illuminate").configure()
     end,
 }

@@ -9,6 +9,20 @@ return {
     },
 
     {
+        "danymat/neogen",
+        keys = {
+            {
+                "<leader>cc",
+                function()
+                    require("neogen").generate {}
+                end,
+                desc = "Neogen Comment",
+            },
+        },
+        opts = { snippet_engine = "luasnip" },
+    },
+
+    {
         "anuvyklack/windows.nvim",
         event = "WinNew",
         dependencies = {
@@ -121,15 +135,15 @@ return {
         "ggandor/leap.nvim",
         event = "VeryLazy",
         -- event = { "BufRead", "BufNewFile" },
-        dependencies = {
-            {
-                "ggandor/flit.nvim",
-                config = {
-                    labeled_modes = "nv",
-                    multiline = false,
-                },
-            },
-        },
+        -- dependencies = {
+        --     {
+        --         "ggandor/flit.nvim",
+        --         config = {
+        --             labeled_modes = "nv",
+        --             multiline = false,
+        --         },
+        --     },
+        -- },
         config = function()
             require("leap").setup {
                 opts = {

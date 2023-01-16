@@ -7,36 +7,36 @@ return {
             config = true,
         },
 
-        {
-            "stevearc/dressing.nvim",
-            event = "VeryLazy",
-            config = {
-                select = {
-                    backend = { "nui", "telescope", "builtin" },
-                    input = {
-                        override = function(conf)
-                            conf.col = -1
-                            conf.row = 0
-                            return conf
-                        end,
-                    },
-                },
-            },
-        },
+        -- {
+        --     "stevearc/dressing.nvim",
+        --     event = "VeryLazy",
+        --     config = {
+        --         select = {
+        --             backend = { "nui", "telescope", "builtin" },
+        --             input = {
+        --                 override = function(conf)
+        --                     conf.col = -1
+        --                     conf.row = 0
+        --                     return conf
+        --                 end,
+        --             },
+        --         },
+        --     },
+        -- },
 
-        {
-            "mvllow/modes.nvim",
-            event = "VeryLazy",
-            config = {
-                colors = {
-                    copy = colors.milk,
-                    delete = colors.red,
-                    insert = colors.bright_yellow,
-                    visual = colors.foreground,
-                },
-                ignore_filetypes = { "neo-tree", "TelescopePrompt" },
-            },
-        },
+        -- {
+        --     "mvllow/modes.nvim",
+        --     event = "VeryLazy",
+        --     config = {
+        --         colors = {
+        --             copy = colors.milk,
+        --             delete = colors.red,
+        --             insert = colors.bright_yellow,
+        --             visual = colors.foreground,
+        --         },
+        --         ignore_filetypes = { "neo-tree", "TelescopePrompt" },
+        --     },
+        -- },
 
         {
             "akinsho/nvim-bufferline.lua",
@@ -56,6 +56,7 @@ return {
                 },
             },
         },
+
         {
             "j-hui/fidget.nvim",
             event = "BufReadPre",
@@ -75,6 +76,7 @@ return {
                 },
             },
         },
+
         {
             "b0o/incline.nvim",
             event = "BufReadPre",
@@ -198,6 +200,7 @@ return {
         config = {
             create_autocmd = false, -- prevent barbecue from updating itself automatically
             show_modified = true,
+            theme = "catppuccin",
             kinds = {
                 File = "file",
                 Module = "module",
