@@ -21,10 +21,10 @@ g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 
 opt.termguicolors = true
+
+opt.foldmethod = "manual"
 opt.foldenable = false
-
 vim.o.winbar = " "
-
 opt.splitkeep = "screen"
 vim.o.shortmess = "filnxtToOFWIcC"
 opt.swapfile = false
@@ -46,11 +46,11 @@ opt.incsearch = true
 opt.isfname:append "@-@"
 opt.splitbelow = true
 opt.splitright = true
-opt.number = false
+opt.number = true
 opt.relativenumber = false
 opt.showmode = false
 opt.cursorline = true
-opt.signcolumn = "no"
+opt.signcolumn = "yes"
 -- opt.cmdheight = 0
 opt.colorcolumn = "120"
 opt.laststatus = 3

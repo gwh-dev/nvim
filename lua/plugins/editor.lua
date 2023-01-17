@@ -1,11 +1,79 @@
-local utils = require "core.utils"
+local function line_targets(winid, comp)
+    local wininfo = vim.fn.getwininfo(winid)[1]
+    local cur_line = vim.fn.line "."
+
+    -- Get targets.
+    local targets = {}
+    local state = { lnum = -1 }
+
+    while comp(state, wininfo, cur_line) do
+        -- Skip folded ranges.
+        local fold_end = vim.fn.foldclosedend(state.lnum)
+        if fold_end ~= -1 then
+            state.lnum = fold_end + 1
+        else
+            if state.lnum ~= cur_line then
+                table.insert(targets, { pos = { state.lnum, 1 } })
+            end
+            state.lnum = state.lnum + 1
+        end
+    end
+
+    if #targets == 0 then
+        return
+    end
+
+    -- Sort them by vertical screen distance from cursor.
+    local cur_screen_row = vim.fn.screenpos(winid, cur_line, 1)["row"]
+
+    local screen_rows_from_cursor = function(t)
+        local t_screen_row = vim.fn.screenpos(winid, t.pos[1], t.pos[2])["row"]
+        return math.abs(cur_screen_row - t_screen_row)
+    end
+
+    table.sort(targets, function(t1, t2)
+        return screen_rows_from_cursor(t1) < screen_rows_from_cursor(t2)
+    end)
+
+    return targets
+end
+
+local function leap_line_backward()
+    local winid = vim.api.nvim_get_current_win()
+    local comp = function(state, wininfo, line)
+        if state.lnum == -1 then
+            state.lnum = wininfo.topline
+        end
+
+        return state.lnum <= line
+    end
+    require("leap").leap {
+        targets = line_targets(winid, comp),
+        target_windows = { winid },
+    }
+end
+
+local function leap_line_forward()
+    local winid = vim.api.nvim_get_current_win()
+    local comp = function(state, wininfo, line)
+        if state.lnum == -1 then
+            state.lnum = line
+        end
+
+        return state.lnum <= wininfo.botline
+    end
+
+    require("leap").leap {
+        targets = line_targets(winid, comp),
+        target_windows = { winid },
+    }
+end
+
 return {
+
     {
         "smjonas/inc-rename.nvim",
         cmd = "IncRename",
-        config = {
-            input_buffer_type = "dressing",
-        },
     },
 
     {
@@ -75,9 +143,10 @@ return {
                 follow_current_file = true,
                 hijack_netrw_behavior = "open_current",
             },
-            hide_root_node = true,
+            -- hide_root_node = false,
         },
     },
+
     {
         "numToStr/Comment.nvim",
         dependencies = {
@@ -133,17 +202,16 @@ return {
 
     {
         "ggandor/leap.nvim",
-        event = "VeryLazy",
-        -- event = { "BufRead", "BufNewFile" },
-        -- dependencies = {
-        --     {
-        --         "ggandor/flit.nvim",
-        --         config = {
-        --             labeled_modes = "nv",
-        --             multiline = false,
-        --         },
-        --     },
-        -- },
+        event = { "BufRead", "BufNewFile" },
+        dependencies = {
+            {
+                "ggandor/flit.nvim",
+                config = {
+                    labeled_modes = "nv",
+                    multiline = false,
+                },
+            },
+        },
         config = function()
             require("leap").setup {
                 opts = {
@@ -158,16 +226,18 @@ return {
 
             vim.keymap.set({ "n", "x", "o" }, "s", "<Plug>(leap-forward)")
             vim.keymap.set({ "n", "x", "o" }, "S", "<Plug>(leap-backward)")
-            vim.keymap.set({ "n", "x", "o" }, "J", utils.leap_line_forward, { desc = "Jump to line below cursor" })
-            vim.keymap.set({ "n", "x", "o" }, "K", utils.leap_line_backward, { desc = "Jump to line above cursor" })
+            vim.keymap.set({ "n", "x", "o" }, "J", leap_line_forward, { desc = "Jump to line below cursor" })
+            vim.keymap.set({ "n", "x", "o" }, "K", leap_line_backward, { desc = "Jump to line above cursor" })
         end,
     },
 
-    {
-        "abecodes/tabout.nvim",
-        event = "InsertEnter",
-        config = true,
-    },
+    { "tpope/vim-repeat", event = "VeryLazy" },
+
+    -- {
+    --     "abecodes/tabout.nvim",
+    --     event = "InsertEnter",
+    --     config = true,
+    -- },
 
     {
         "windwp/nvim-autopairs",

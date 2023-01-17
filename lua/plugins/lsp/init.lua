@@ -14,6 +14,7 @@ return {
             },
         },
         servers = {
+            ccls = {},
             rust_analyzer = {},
             sumneko_lua = {
                 settings = {
@@ -54,7 +55,7 @@ return {
             require("core.utils").on_attach(function(client, buffer)
                 require("plugins.lsp.format").on_attach(client, buffer)
                 require("plugins.lsp.mappings").on_attach(client, buffer)
-                require("nvim-lightbulb").setup { autocmd = { enabled = true } }
+                require("nvim-lightbulb").setup { autocmd = { enabled = true }, status_text = { enable = true } }
             end)
 
             local diagnostic = { "Error", "Warn", "Info", "Hint" }

@@ -1,4 +1,40 @@
-local colors = require("gruvbox-baby.colors").config()
+local function lsp_client(msg)
+    msg = msg or ""
+
+    local buf_clients = vim.lsp.buf_get_clients()
+    local method = {
+        "FORMATTING",
+        "DIAGNOSTICS",
+        "CODE_ACTION",
+    }
+
+    if next(buf_clients) == nil then
+        if type(msg) == "boolean" or #msg == 0 then
+            return ""
+        end
+        return msg
+    end
+
+    local buf_ft = vim.bo.filetype
+    local buf_client_names = {}
+
+    for value in pairs(method) do
+        local utils = require "core.utils"
+        local null_ls = require "null-ls"
+        local supported = utils.list_registered(buf_ft, null_ls.methods[method[value]])
+        vim.list_extend(buf_client_names, supported)
+    end
+
+    -- add client
+    for _, client in pairs(buf_clients) do
+        if client.name ~= "null-ls" then
+            table.insert(buf_client_names, client.name)
+        end
+    end
+
+    return "[" .. table.concat(buf_client_names, ", ") .. "]"
+end
+
 return {
     {
         {
@@ -7,42 +43,37 @@ return {
             config = true,
         },
 
-        -- {
-        --     "stevearc/dressing.nvim",
-        --     event = "VeryLazy",
-        --     config = {
-        --         select = {
-        --             backend = { "nui", "telescope", "builtin" },
-        --             input = {
-        --                 override = function(conf)
-        --                     conf.col = -1
-        --                     conf.row = 0
-        --                     return conf
-        --                 end,
-        --             },
-        --         },
-        --     },
-        -- },
+        {
+            "RRethy/vim-illuminate",
+            event = "VeryLazy",
+            config = function()
+                require("illuminate").configure()
+            end,
+        },
 
-        -- {
-        --     "mvllow/modes.nvim",
-        --     event = "VeryLazy",
-        --     config = {
-        --         colors = {
-        --             copy = colors.milk,
-        --             delete = colors.red,
-        --             insert = colors.bright_yellow,
-        --             visual = colors.foreground,
-        --         },
-        --         ignore_filetypes = { "neo-tree", "TelescopePrompt" },
-        --     },
-        -- },
+        {
+            "stevearc/dressing.nvim",
+            event = "VeryLazy",
+            config = {
+                select = {
+                    backend = { "nui", "telescope", "builtin" },
+                    input = {
+                        override = function(conf)
+                            conf.col = -1
+                            conf.row = 0
+                            return conf
+                        end,
+                    },
+                },
+            },
+        },
 
         {
             "akinsho/nvim-bufferline.lua",
             event = "BufAdd",
             config = {
                 options = {
+                    -- highlights = require("catppuccin.groups.integrations.bufferline").get(),
                     diagnostics = "nvim_lsp",
                     always_show_bufferline = false,
                     offsets = {
@@ -58,43 +89,23 @@ return {
         },
 
         {
-            "j-hui/fidget.nvim",
-            event = "BufReadPre",
-            config = {
-                text = {
-                    spinner = "moon",
-                },
-                align = {
-                    bottom = true,
-                },
-                window = {
-                    relative = "editor",
-                    blend = 0,
-                },
-                sources = {
-                    ["null-ls"] = { ignore = true },
-                },
-            },
-        },
-
-        {
             "b0o/incline.nvim",
             event = "BufReadPre",
             config = function()
                 require("incline").setup {
-                    highlight = {
-                        groups = {
-                            InclineNormal = {
-                                guifg = colors.orange,
-                                guibg = "#3c3a39",
-                                -- gui = "bold",
-                            },
-                            InclineNormalNC = {
-                                guifg = colors.foreground,
-                                guibg = "#3c3a39",
-                            },
-                        },
-                    },
+                    -- highlight = {
+                    --     groups = {
+                    --         InclineNormal = {
+                    --             -- guifg = colors.orange,
+                    --             -- guibg = "#3c3a39",
+                    --             -- gui = "bold",
+                    --         },
+                    --         InclineNormalNC = {
+                    --             guifg = colors.foreground,
+                    --             -- guibg = "#3c3a39",
+                    --         },
+                    --     },
+                    -- },
                     window = {
                         margin = {
                             vertical = 0,
@@ -200,7 +211,7 @@ return {
         config = {
             create_autocmd = false, -- prevent barbecue from updating itself automatically
             show_modified = true,
-            theme = "catppuccin",
+            -- theme = "catppuccin",
             kinds = {
                 File = "file",
                 Module = "module",
@@ -229,23 +240,15 @@ return {
                 Operator = "operator",
                 TypeParameter = "type parameter",
             },
-            theme = {
-                normal = { fg = colors.soft_yellow, bg = "#3c3a39" },
-                ellipsis = { fg = colors.soft_yellow },
-                separator = { fg = colors.pink },
-                modified = { fg = colors.light_blue },
-                dirname = { fg = colors.blue_gray },
-                basename = { fg = colors.soft_yellow, bold = true },
-                context = { fg = colors.milk },
-            },
         },
     },
 
     {
         "nvim-lualine/lualine.nvim",
         event = "VeryLazy",
-        config = {
+        opts = {
             options = {
+                theme = "catppuccin",
                 icons_enabled = true,
                 globalstatus = true,
                 component_separators = {},
@@ -260,7 +263,7 @@ return {
                 lualine_a = { { "mode", separator = { left = "", right = "" } } },
                 lualine_b = { "branch" },
                 lualine_c = {
-                    { require("core.utils").lsp_client, icon = " " },
+                    { lsp_client, icon = " " },
                     { "diagnostics", sources = { "nvim_diagnostic" } },
                 },
                 lualine_x = {

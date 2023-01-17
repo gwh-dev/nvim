@@ -56,7 +56,7 @@ map("n", "<localleader>q", function()
     else
         return vim.cmd "BufDel"
     end
-end, { desc = "Delete Buffer And Quit" })
+end, { desc = "Delete Buffer Or Quit" })
 
 -- buffers
 map("n", "]b", "<cmd>:BufferLineCycleNext<CR>", { desc = "Next Buffer" })
